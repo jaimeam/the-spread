@@ -1,43 +1,47 @@
 This is The Spread, your energy markets briefing for Monday, the twelfth of October. This episode is written with AI, and read by an AI clone of my voice.
 
-It's a quiet tape today, with one live risk. Hurricane Isaias was due to reach the US Gulf Coast over the weekend, and offshore production shut-ins are under way. We don't yet know where it came ashore or whether it damaged anything, so this is a guide to reading the next two days of updates, not a damage report.
+The Gulf tanker war widened over the weekend, with strikes now reaching anchorages outside the Strait of Hormuz, and crude rose. Brent hit one hundred and six dollars eighty a barrel, and European gas is at its highest since early twenty twenty-three.
 
-First, and really the only story: Hurricane Isaias.
+First, the numbers. According to OilPrice dot com, Brent rose two dollars and nine cents to one hundred and six dollars eighty. West Texas Intermediate rose one dollar ninety-three to ninety-three dollars seventy-eight. Early Monday, talk of a Russia-Ukraine energy ceasefire pulled prices lower. By the US session, the Middle East attacks had outweighed it.
 
-According to the EIA, Isaias is a Category two storm. The National Oceanic and Atmospheric Administration forecast landfall on the Gulf Coast late Friday or early Saturday. The EIA calls it the first hurricane of the twenty twenty-six Atlantic season, and the largest storm system to reach the region since Hurricane Helene in September twenty twenty-four.
+An update on the Gulf. On Sunday a drone struck the tanker Petro Dolphin at Sohar Anchorage, off Oman. Two Indian seafarers are missing. Another tanker was hit by a projectile while leaving Hormuz, and gCaptain reports two more tankers struck inside the Strait. US forces disabled a cargo ship in the Gulf of Oman. Washington says the ship ignored warnings while trying to run its blockade of Iran. And on Saturday, the Houthis hit King Khalid International Airport in Riyadh with ballistic and cruise missiles.
 
-A word on timing. The EIA piece carries today's date, but its forecast is from the morning of Friday the ninth. Don't read it as a fresh warning of a landfall still to come. The storm should already have come ashore over the weekend.
+On the diplomacy, Iran's security chief called the US reply to Iran's seven conditions for reopening Hormuz "insufficient". There's no US response in the reports we've seen today.
 
-So here's what's confirmed. The EIA reports that offshore shut-ins are under way. It gives no volumes, no operators and no refinery names.
+What's new is geography. Strikes at anchorages outside the Strait add to loading and transit risk across the Gulf, and that premium is showing up in crude. Freight was already stretched. Clarksons' ClarkSea index rose twelve percent in a week, to a record eighty-four thousand, nine hundred and fifty-one dollars a day, Splash247 reported.
 
-And here's what isn't known yet. The reports we've seen today don't say where Isaias made landfall, at what strength, or whether any infrastructure was hit. Everything about refineries, ports and gas depends on that track.
+From Riyadh, Energy Minister Prince Abdulaziz said the kingdom's export capability is intact despite the attacks. That's a claim. We haven't seen export data to test it. He also said Saudi Arabia wants to expand pipeline capacity to outlets outside the Gulf to ten million barrels a day, within two to three years. That's a long-dated hedge, not near-term relief.
 
-One more caution, on the Helene comparison. The EIA is comparing the size of the storm system, not the expected energy damage. A large Category two can be disruptive or fairly harmless, depending on where it goes. So the comparison tells you nothing about the size of the hit to energy.
+On the outlook, the research house BMI expects Brent to stay above one hundred dollars for months. It doesn't see a US-Iran deal before the end of the first quarter of twenty twenty-seven at the earliest. Standard Chartered warns the market is mistaking adaptation for normalisation.
 
-Here's how the risk would travel through the market, in brief.
+The diesel angle matters most here. The International Energy Agency says Hormuz is straining global diesel markets in particular, and it's coordinating with governments. France is releasing strategic reserves. TotalEnergies will cut French diesel and heating-oil prices further from the first of November.
 
-Offshore, platform shut-ins cut US crude supply for a short time. Gulf medium-sour grades are hit hardest. If the platforms are undamaged, restarts usually follow within days. Gulf Coast buyers of sour crude feel that first. The effect is mostly offset if refineries are cutting runs at the same time.
+Who feels it: medium-sour buyers in Asia, where higher war-risk costs could widen delivered-price gaps.
 
-Refining is the bigger question. If the storm tracked into the Texas and Louisiana refining belt, plants may have cut runs or lost power. Flooding of process units is the real risk. The US Gulf Coast is Europe's swing supplier of diesel, so fewer export barrels would show up first in Northwest European diesel cracks. Latin American importers would also lose barrels. In the US, buyers in the Northeast compete with Europe for the same cargoes, which would support the New York Harbor diesel premium.
+Second story, Russia. On Sunday, President Trump said Russia and Ukraine had agreed to an energy ceasefire, effective immediately. Neither Moscow nor Kyiv has confirmed it in the reports we've seen today. Rigzone separately reports that President Zelenskyy is on a collision course with Trump.
 
-Port closures can halt exports even where refineries keep running. That usually means a short gap for European buyers, then a wave of arrivals.
+Meanwhile, the easing on Russian diesel is under fire in Washington, including from Republicans. Senator Thom Tillis said the move may be illegal. Representative Brian Fitzpatrick plans to force a House vote on a bill blocking Russian oil purchases. For context, Rigzone reports Russian product exports hit a three-month high in September.
 
-Then there's liquefied natural gas. Most US export capacity sits on that same Texas and Louisiana coast. Nothing in today's reporting confirms any impact on it. It matters because European gas prices are more sensitive going into winter. And petrochemical plants, especially ethane crackers, often shut ahead of storms and are slow to restart.
+If a truce did hold, fewer strikes on Russian refineries would eventually mean more Russian diesel for export, which would weigh on diesel cracks. But that would take time while plants are repaired. For now, the truce is one-sided and contested, and Monday showed the Gulf dominating.
 
-The key question is simple. Was this a shut-in-and-restart storm, or a damage storm? In the first case, offshore output and refinery runs are back to normal within about a week. The effect on crude is small, with at most a brief bump in diesel cracks. In the second case, flooded refineries, power loss or damaged terminals would turn this into a product story lasting weeks, felt mainly in European diesel.
+One more item. Lukoil's manager in Bulgaria says Black Sea tanker insurance has risen from about two hundred thousand dollars to two point five million per vessel. That comes from a single source.
 
-We're not putting numbers on any of this until operators or agencies publish them. The people with the most at stake are European diesel buyers, so watch for any refinery reporting flooding or power loss.
+What to watch: whether the diesel easing survives Congress.
 
-Elsewhere, there's been no new reporting today on the Strait of Hormuz, the Red Sea, Russian refining, Iran sanctions, OPEC plus, Chinese exports, European gas or inland logistics. A lack of news isn't evidence of calm. It means nothing reliable has come through. And one note on the season: a first hurricane in October is late. One storm isn't a pattern, but watch for any further systems in the Gulf before the season ends.
+Third, European gas. The Dutch Title Transfer Facility, or TTF, is trading around eighty-three euros per megawatt hour, according to OilPrice dot com. That's the highest since early twenty twenty-three. The September dip to about seventy didn't last.
 
-Here's what to watch next.
+The reason is supply. Europe faces winter with no Qatari liquefied natural gas exports, and storage that LNG Industry describes as well below fifteen-year lows. According to Gas Infrastructure Europe, EU storage was seventy-three point seven percent full on the eleventh of October, up zero point one three points on the day. The group says winter flexibility is adequate, but margins are tighter.
 
-Tuesday brings offshore shut-in and evacuation tallies, plus operator restart notices. Fast restarts point to the benign case.
+Who feels it: refiners facing higher fuel and hydrogen costs. Some switching from gas to oil could also support diesel.
 
-Tuesday and Wednesday, look for Coast Guard port status and refinery operator statements along the Texas and Louisiana coast. Any report of flooding or power loss is the trigger for a European diesel story. The status of gas export terminals and shipping channels matters for European gas.
+Fourth, Hurricane Isaias on the US Gulf Coast. In its ninth of October note, the EIA expected landfall late Friday or early Saturday. It called Isaias the largest storm to hit the region since Helene in twenty twenty-four. The Marine Minerals Administration says operators are evacuating platforms and rigs. The reports we've seen don't give shut-in volumes or refinery status yet.
 
-Wednesday or Thursday, the EIA's Weekly Petroleum Status Report gives the first weekly look at Gulf Coast refinery runs, crude imports and exports, and product exports. Today's federal holiday may push it to Thursday. It covers the week up to the storm, so the full impact may only show the week after.
+For a baseline, the EIA's figures for the week to the second of October showed commercial crude stocks at about four hundred and twenty-four million barrels, down about three point two million. Distillates were around one hundred and five million barrels, roughly flat. Gasoline was up about four hundred thousand barrels. Refinery utilisation was ninety-two point seven percent.
 
-And by Friday the sixteenth, check Northwest European diesel cracks and transatlantic product freight rates. They're a cleaner signal than the headlines of whether Europe is short of Gulf Coast barrels.
+What to watch: the next operator update, which will show the scale of the disruption.
+
+Also noted. Pakistan is urging its refiners to consider Libyan crude, to diversify away from the Gulf. And EU sanctions now cover major Russian shipyards, including yards that build commercial vessels.
+
+What to watch next. The next Marine Minerals Administration update, for the first Isaias shut-in volumes and restart timing. This week's EIA report, for the week to the ninth of October, for the distillate draw and Gulf Coast refinery runs through the storm. The House vote on Fitzpatrick's bill, which has no date yet. The first of November, when TotalEnergies' French price cuts take effect alongside the state reserve release. And the first of January twenty twenty-seven, when the EU ban on long-term Russian LNG imports begins.
 
 That's the brief. Sources for everything you heard are in the show notes.
