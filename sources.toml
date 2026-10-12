@@ -1,0 +1,113 @@
+# Source list for The Spread.
+#
+# type:       rss | ofac | gdelt | google_news
+# public_ok:  true  = safe to summarise in a public edition (free / official / primary)
+#             false = only for your private brief (e.g. your own paid subscriptions,
+#                     or headline-only aggregators of paywalled outlets)
+# segments:   hint for the tagger: upstream, midstream, refining, petchem, gas_lng,
+#             shipping, geopolitics, macro
+#
+# Feed URLs below were checked on 2026-10-12. If one dies, the pipeline logs it and moves on.
+
+# ---------- Official data & agencies ----------
+
+[[source]]
+name = "EIA - Today in Energy"
+type = "rss"
+url = "https://www.eia.gov/rss/todayinenergy.xml"
+public_ok = true
+segments = ["macro", "refining", "gas_lng"]
+
+[[source]]
+name = "EIA - Press releases"
+type = "rss"
+url = "https://www.eia.gov/rss/press_rss.xml"
+public_ok = true
+segments = ["macro"]
+
+[[source]]
+name = "EIA - What's new (all new releases, incl. STEO, WPSR)"
+type = "rss"
+url = "https://www.eia.gov/about/new/WNtest3.php"
+public_ok = true
+segments = ["macro", "refining"]
+
+[[source]]
+name = "EIA - Gasoline & diesel retail prices (Mondays)"
+type = "rss"
+url = "https://www.eia.gov/petroleum/gasdiesel/includes/gas_diesel_rss.xml"
+public_ok = true
+segments = ["refining"]
+
+[[source]]
+name = "OFAC - Recent actions (sanctions)"
+type = "ofac"
+url = "https://ofac.treasury.gov/recent-actions"
+public_ok = true
+segments = ["geopolitics", "shipping"]
+
+# ---------- Free research ----------
+
+[[source]]
+name = "Oxford Institute for Energy Studies"
+type = "rss"
+url = "https://www.oxfordenergy.org/feed/"
+public_ok = true
+segments = ["geopolitics", "gas_lng", "refining"]
+
+# ---------- News discovery (headlines + links only) ----------
+# GDELT: free global news index, good for geopolitics. Rate-limited: keep queries few.
+
+[[source]]
+name = "GDELT - refinery outages & attacks"
+type = "gdelt"
+query = '(refinery OR "crude unit" OR "cracker") (outage OR fire OR attack OR shutdown OR restart) sourcelang:english'
+public_ok = true
+segments = ["refining", "petchem"]
+
+[[source]]
+name = "GDELT - chokepoints & tankers"
+type = "gdelt"
+query = '("Strait of Hormuz" OR "Red Sea" OR "Bab el-Mandeb" OR Bosporus OR "shadow fleet") (tanker OR oil OR LNG) sourcelang:english'
+public_ok = true
+segments = ["shipping", "geopolitics"]
+
+# Google News RSS search: headlines often come from paywalled outlets.
+# Use as a *signal* that something happened, then confirm in a primary source.
+
+[[source]]
+name = "Google News - OPEC+"
+type = "google_news"
+query = "OPEC+ production decision"
+public_ok = false
+segments = ["upstream", "geopolitics"]
+
+[[source]]
+name = "Google News - diesel crack / refining margins"
+type = "google_news"
+query = "diesel crack spread refining margins"
+public_ok = false
+segments = ["refining"]
+
+[[source]]
+name = "Google News - petrochemicals"
+type = "google_news"
+query = "petrochemical cracker naphtha ethylene"
+public_ok = false
+segments = ["petchem"]
+
+[[source]]
+name = "Google News - pipelines & midstream"
+type = "google_news"
+query = "oil gas pipeline midstream outage OR expansion"
+public_ok = false
+segments = ["midstream"]
+
+# ---------- Your private subscriptions ----------
+# Add any RSS your paid subscriptions give you. Keep public_ok = false.
+# [[source]]
+# name = "My subscription"
+# type = "rss"
+# url = "https://..."
+# public_ok = false
+# segments = ["refining"]

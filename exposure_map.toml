@@ -1,0 +1,92 @@
+# Exposure map: how a shock propagates through the value chain.
+# The brief writer reads this so it reasons "event -> mechanism -> who feels it",
+# instead of just summarising headlines. Edit freely; this is your edge.
+
+[[node]]
+id = "hormuz"
+label = "Strait of Hormuz"
+keywords = ["hormuz", "persian gulf", "gulf of oman", "bandar abbas", "fujairah"]
+chain = [
+  "Gulf crude + condensate exports (Saudi, Iraq, Kuwait, UAE, Qatar, Iran) cut or delayed",
+  "Qatar/UAE LNG exports disrupted -> Asian and European gas prices",
+  "Middle East diesel/jet exports (Jubail, Ruwais, Al-Zour) fall -> Europe and East Africa short middle distillates",
+  "Tanker rates spike, ships tied up in STS transfers -> freight squeezes all routes",
+  "Medium-sour crude scarce -> sour-heavy refiners (US Gulf, India, Asia) margins hit; light-sweet premium narrows",
+  "Gulf petchem feedstock (ethane, naphtha, LPG) exports disrupted -> Asian cracker margins",
+]
+
+[[node]]
+id = "red_sea"
+label = "Red Sea / Bab el-Mandeb / Suez"
+keywords = ["red sea", "bab el-mandeb", "houthi", "suez", "sumed", "yemen"]
+chain = [
+  "East-of-Suez <-> Europe product flows reroute via Cape (+10-14 days)",
+  "Europe diesel/jet imports from India & Middle East slower and dearer",
+  "Freight and insurance up; Saudi Yanbu (Red Sea) exports become the bypass route at risk",
+]
+
+[[node]]
+id = "russia_refining"
+label = "Russian refining & export bans"
+keywords = ["russia", "rosneft", "lukoil", "ryazan", "tuapse", "novorossiysk", "primorsk", "ust-luga", "drone strike", "export ban"]
+chain = [
+  "Ukrainian strikes idle Russian CDUs -> less Russian diesel/naphtha/fuel oil exported",
+  "Russian product export bans -> Turkey, Brazil, Africa compete with Europe for US/Indian diesel",
+  "More Russian crude freed for export (if ports intact) -> pressure on Urals/ESPO discounts, India/China buying",
+  "Energy-infrastructure truce, if it holds, is bearish diesel cracks with a lag (repairs take weeks)",
+]
+
+[[node]]
+id = "sanctions_iran"
+label = "Sanctions on Iran oil & shadow fleet"
+keywords = ["ofac", "iran", "shadow fleet", "teapot", "shandong", "sdn", "designation", "nioc"]
+chain = [
+  "Designated tankers -> fewer ships willing to lift Iranian barrels -> Chinese teapot feedstock costs rise",
+  "Teapots cut runs or switch to other heavy crude -> competes with Venezuelan/Russian grades",
+  "Shrinking compliant tanker pool + shadow-fleet designations -> freight up",
+]
+
+[[node]]
+id = "opec_plus"
+label = "OPEC+ policy"
+keywords = ["opec", "opec+", "jmmc", "voluntary adjustment", "quota", "compensation"]
+chain = [
+  "Quota changes shift medium-sour availability -> OSPs (Saudi, Oman, Iraq) -> Asian refiner margins",
+  "Paper quota increases matter less when physical exports are constrained (watch flows, not headlines)",
+]
+
+[[node]]
+id = "china_exports"
+label = "China product export quotas & runs"
+keywords = ["china", "sinopec", "petrochina", "export quota", "teapot", "dalian", "yulong"]
+chain = [
+  "Lower Chinese runs/quotas -> less diesel/gasoline/jet in Asia -> pulls Middle East and Indian cargoes east, less spills to Europe",
+  "Chinese petchem build-out -> naphtha/LPG demand, pressure on European/Korean cracker margins",
+]
+
+[[node]]
+id = "us_gulf"
+label = "US Gulf Coast refining & exports"
+keywords = ["gulf coast", "hurricane", "port arthur", "baytown", "garyville", "houston ship channel", "colonial pipeline", "spr"]
+chain = [
+  "USGC is Europe's swing diesel supplier -> outages there move NWE diesel cracks",
+  "Colonial/Northeast constraints -> NY Harbor diesel premium; competes with Europe for USGC barrels",
+  "SPR releases/exchanges -> crude relief, little direct diesel relief",
+]
+
+[[node]]
+id = "europe_gas"
+label = "European gas & storage"
+keywords = ["ttf", "gas storage", "agsi", "norway", "lng terminal", "regas"]
+chain = [
+  "Low storage into winter -> high TTF -> refinery hydrogen/fuel costs up, gas-to-oil switching supports diesel/fuel oil",
+  "High gas -> European ammonia/fertiliser and petchem run cuts",
+]
+
+[[node]]
+id = "inland_logistics"
+label = "Inland logistics (Rhine, rail, trucking)"
+keywords = ["rhine", "kaub", "barge", "low water"]
+chain = [
+  "Low Rhine -> barge loads cut -> inland Germany/Switzerland product premiums spike even if ARA is supplied",
+]

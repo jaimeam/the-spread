@@ -1,0 +1,17 @@
+[podcast]
+# Working title; change any of this before you submit to Spotify.
+title = "The Spread"
+slug = "the-spread"
+description = "A short daily briefing on oil and gas, refining, petrochemicals and midstream: what moved today, and why it matters. Built from free and official sources, and written and voiced with AI."
+author = "Jaime"
+# Spotify and Apple use this to verify you own the show. It is visible in the public feed.
+email = "you@example.com"
+language = "en"
+category = "News"
+subcategory = "Business News"
+cover = "cover.png"            # in site/, square, 1400-3000 px
+base_url = ""                  # or set PODCAST_BASE_URL, e.g. https://<user>.github.io/<repo>
+
+disclosure = "This episode is written and voiced with AI, from public sources. Show notes link to every source."
+spoken_intro = "This is The Spread, your energy markets briefing for"
+spoken_outro = "That's the brief. Sources for everything you heard are in the show notes. This episode was written and voiced with AI."

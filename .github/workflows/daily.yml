@@ -1,0 +1,74 @@
+# Runs every weekday morning: brief -> podcast episode -> feed, then publishes site/ to GitHub Pages.
+# Secrets to add (repo -> Settings -> Secrets and variables -> Actions):
+#   ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID                        (required)
+#   ANTHROPIC_API_KEY and/or MISTRAL_API_KEY                       (whichever providers you use)
+#   EIA_API_KEY, AGSI_API_KEY                                      (optional)
+# Models (optional, Settings -> Secrets and variables -> Actions -> Variables tab):
+#   TAG_MODEL, BRIEF_MODEL, SCRIPT_MODEL as "provider:model", e.g. mistral:mistral-small-latest
+# Then: Settings -> Pages -> Source: GitHub Actions.
+
+name: The Spread daily
+
+on:
+  schedule:
+    - cron: "0 5 * * 1-5"   # 05:00 UTC = 07:00 Madrid in summer, 06:00 in winter
+  workflow_dispatch:         # "Run workflow" button for manual runs
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: the-spread
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+      TAG_MODEL: ${{ vars.TAG_MODEL }}
+      BRIEF_MODEL: ${{ vars.BRIEF_MODEL }}
+      SCRIPT_MODEL: ${{ vars.SCRIPT_MODEL }}
+      EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+      AGSI_API_KEY: ${{ secrets.AGSI_API_KEY }}
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+      PODCAST_BASE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Public edition only: everything this job produces is published on the open web.
+      - name: Write today's brief
+        run: python pipeline.py run --public
+
+      - name: Make the episode and feed
+        run: python podcast.py episode "briefs/$(date -u +%F)-public.md"
+
+      - name: Save to the repo
+        run: |
+          git config user.name "the-spread-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add briefs scripts site brief.db
+          git commit -m "Brief $(date -u +%F)" || echo "nothing to commit"
+          git push
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
