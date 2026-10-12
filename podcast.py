@@ -69,7 +69,9 @@ Rules
 - Do not add facts, figures or opinions that are not in the brief.
 - Listeners heard earlier episodes. For continuing stories, say what's new ("an update on...")
   without re-explaining the background, and keep "Still developing" items to a sentence each.
-- Open with: "{intro}" followed by the date spoken (e.g. "Monday, the twelfth of October").
+- Open with: "{intro}" followed by the date spoken (e.g. "Monday, the twelfth of October"),
+  then: "{disclosure}"
+- That opening is the only place to mention AI or the voice. Don't refer to it again.
 - Close with the "watch next" items, then: "{outro}"
 """
 
@@ -88,7 +90,8 @@ def write_script(brief: Path, c: dict, use_llm: bool) -> str:
     md = brief.read_text()
     if not use_llm:
         return markdown_to_plain(md)
-    system = SCRIPT_SYSTEM.format(intro=c["spoken_intro"], outro=c["spoken_outro"])
+    system = SCRIPT_SYSTEM.format(intro=c["spoken_intro"], disclosure=c["spoken_disclosure"],
+                                  outro=c["spoken_outro"])
     return pipeline.llm(f"Brief:\n\n{md}\n\nWrite the script.", pipeline.SCRIPT_MODEL, 16000, system,
                         effort="medium").strip()
 

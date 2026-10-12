@@ -441,7 +441,9 @@ Rules
   nothing new, leave it out or give it one line under "Still developing".
 - Check earlier "Watch next" items that fall due today or earlier: if the outcome is in
   today's items, report it; if it is overdue and not in the items, say it is still pending.
-- Close with "Watch next" (3-5 dated items) and "Signals I'm not sure about" (1-3 lines).
+- Close with "Watch next" (3-5 dated items), and end there.
+- Leave out signals you are unsure about: no section or aside for them. Report what the
+  items support; still flag one-sided claims and headline-only stories as above.
 - Markdown. Start with the heading "# The Spread - <weekday, date>". Target 600-900 words."""
 
 
