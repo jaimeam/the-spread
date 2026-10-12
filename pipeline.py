@@ -474,6 +474,8 @@ def write_brief(nodes: list[dict], hours: int, public: bool, use_llm: bool, cont
     brief = llm(user, BRIEF_MODEL, 16000, prompt("brief_system"), effort="medium")
     path.write_text(brief)
     con = db()
+    # A re-run replaces today's list, so only items the final brief saw count as used.
+    con.execute("DELETE FROM used WHERE edition=? AND brief_date=?", (edition(public), today))
     con.executemany("INSERT OR REPLACE INTO used VALUES (?,?,?)",
                     [(i["id"], edition(public), today) for i in items])
     con.commit()
