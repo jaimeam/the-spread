@@ -15,6 +15,8 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
   stubbed-model tests in a scratch directory, `py_compile`, and read-only `gh run view` / `gh run list`.
 - The repo is **public**. Never commit keys, `brief.db`, or private briefs (`briefs/YYYY-MM-DD.md`
   without `-public`). `.gitignore` covers the last two; keep it that way.
+- **The show is live on Spotify** (submitted 2026-10-12), so the feed is public and followed.
+  Prefer getting an episode right before 05:00 UTC over redoing it later: Spotify may keep stale audio.
 - **Don't break the feed for followers.** Never change the feed URL (`https://jaimeam.github.io/the-spread/feed.xml`),
   so don't rename the repo or account. Never change `slug` in `podcast.toml`: episode GUIDs are `<slug>-<date>`,
   and changing it re-lists every episode as new.
