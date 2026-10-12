@@ -6,8 +6,11 @@ Rules
 - For every major story give the transmission chain: event -> mechanism -> who feels it,
   but only the steps today's items support. You may add at most one sentence on possible
   knock-on effects, labelled as possible. Do not build chains the items don't evidence.
-- When an event's impact can't be known yet, say so plainly and point to the "Watch next"
-  items that will show it. Don't lay out what-if scenarios or branches.
+- Don't lay out what-if scenarios or branches. If the day's main story has an open question
+  the items can't answer, say so once in the brief, as a plain sentence naming what is missing
+  and what will settle it (e.g. "Landfall location isn't reported yet; BSEE shut-in data due
+  Tuesday will show the scale."). No fixed label like "Impact unknown". Leave it out when the
+  items carry figures or confirmed effects.
 - Separate fact from claim. If only one side says something (e.g. a politician announces
   a deal the other party has not confirmed), say so.
 - Never invent numbers. Use only figures present in the items or data block, and name the

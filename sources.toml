@@ -8,6 +8,7 @@
 #             shipping, geopolitics, macro
 #
 # Feed URLs below were checked on 2026-10-12. If one dies, the pipeline logs it and moves on.
+# Some sites block requests from GitHub's servers (e.g. OIES): they still work in local runs.
 
 # ---------- Official data & agencies ----------
 
@@ -46,6 +47,34 @@ url = "https://ofac.treasury.gov/recent-actions"
 public_ok = true
 segments = ["geopolitics", "shipping"]
 
+[[source]]
+name = "BSEE - Gulf of America offshore (incl. hurricane shut-ins)"
+type = "rss"
+url = "https://www.bsee.gov/rss.xml"
+public_ok = true
+segments = ["upstream"]
+
+[[source]]
+name = "Federal Register - OFAC notices"
+type = "rss"
+url = "https://www.federalregister.gov/api/v1/documents.rss?conditions%5Bagencies%5D%5B%5D=foreign-assets-control-office"
+public_ok = true
+segments = ["geopolitics", "shipping"]
+
+[[source]]
+name = "UK DESNZ - energy news"
+type = "rss"
+url = "https://www.gov.uk/search/news-and-communications.atom?organisations%5B%5D=department-for-energy-security-and-net-zero"
+public_ok = true
+segments = ["macro", "gas_lng", "upstream"]
+
+[[source]]
+name = "UK OFSI - sanctions"
+type = "rss"
+url = "https://www.gov.uk/search/news-and-communications.atom?organisations%5B%5D=office-of-financial-sanctions-implementation"
+public_ok = true
+segments = ["geopolitics"]
+
 # ---------- Free research ----------
 
 [[source]]
@@ -54,6 +83,79 @@ type = "rss"
 url = "https://www.oxfordenergy.org/feed/"
 public_ok = true
 segments = ["geopolitics", "gas_lng", "refining"]
+
+[[source]]
+name = "Kpler - insight blog"
+type = "rss"
+url = "https://www.kpler.com/blog/rss.xml"
+public_ok = true
+segments = ["shipping", "geopolitics", "refining"]
+
+[[source]]
+name = "Atlantic Council - EnergySource"
+type = "rss"
+url = "https://www.atlanticcouncil.org/category/blogs/energysource/feed/"
+public_ok = true
+segments = ["geopolitics", "macro"]
+
+# ---------- Free trade press ----------
+# Free to read, but copyrighted: the brief paraphrases, quotes at most 10 words, and links.
+
+[[source]]
+name = "gCaptain"
+type = "rss"
+url = "https://gcaptain.com/feed/"
+public_ok = true
+segments = ["shipping", "geopolitics"]
+
+[[source]]
+name = "Splash247"
+type = "rss"
+url = "https://splash247.com/feed/"
+public_ok = true
+segments = ["shipping"]
+
+[[source]]
+name = "Rigzone"
+type = "rss"
+url = "https://www.rigzone.com/news/rss/rigzone_latest.aspx"
+public_ok = true
+segments = ["upstream", "midstream", "macro"]
+
+[[source]]
+name = "Offshore Energy"
+type = "rss"
+url = "https://www.offshore-energy.biz/feed/"
+public_ok = true
+segments = ["upstream", "gas_lng", "shipping"]
+
+[[source]]
+name = "LNG Industry"
+type = "rss"
+url = "https://www.lngindustry.com/rss/lngindustry.xml"
+public_ok = true
+segments = ["gas_lng"]
+
+[[source]]
+name = "Hydrocarbon Engineering"
+type = "rss"
+url = "https://www.hydrocarbonengineering.com/rss/hydrocarbonengineering.xml"
+public_ok = true
+segments = ["refining", "petchem"]
+
+[[source]]
+name = "World Oil"
+type = "rss"
+url = "https://www.worldoil.com/rss?feed=news"
+public_ok = true
+segments = ["upstream"]
+
+[[source]]
+name = "OilPrice.com"
+type = "rss"
+url = "https://oilprice.com/rss/main"
+public_ok = true
+segments = ["macro", "geopolitics"]
 
 # ---------- News discovery (headlines + links only) ----------
 # GDELT: free global news index, good for geopolitics. Rate-limited: keep queries few.
