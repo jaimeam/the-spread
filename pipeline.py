@@ -547,6 +547,8 @@ def main() -> None:
         log(f"models: tag={TAG_MODEL} brief={BRIEF_MODEL}")
 
     sources = [s for s in load_toml("sources.toml")["source"] if s.get("public_ok") or not a.public]
+    if os.environ.get("GITHUB_ACTIONS"):  # these sites block GitHub's servers
+        sources = [s for s in sources if not s.get("local_only")]
     nodes = load_toml("exposure_map.toml")["node"]
 
     if a.cmd in ("run", "ingest"):

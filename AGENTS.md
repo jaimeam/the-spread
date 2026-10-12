@@ -48,7 +48,8 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 
 - Current Claude models always think, and thinking counts against `max_tokens`. Keep limits generous
   (brief/script 16k, tagging 8k). `llm()` raises on `max_tokens` / `refusal` rather than saving half an answer.
-- Some sites block GitHub's servers but work locally: OIES (403), GDELT (429). Check a new feed both
+- Some sites block GitHub's servers but work locally: OIES (403), GDELT (429). They're marked
+  `local_only = true` in `sources.toml` and skipped when `GITHUB_ACTIONS` is set. Check a new feed both
   locally and in CI logs before relying on it. Most corporate and agency sites (OPEC, IEA, BP, Shell, FERC) block scripts.
 - An episode is a full ElevenLabs request (~6-7k characters on a normal day). Credits are the binding cost;
   Claude is about $0.15-0.30 per run.
@@ -56,4 +57,3 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 ## Open items
 
 - Episode length that follows the news (short on quiet days) or skipping thin days. Not decided yet.
-- First CI run with the 14 new sources (added 2026-10-12) hasn't completed yet. The dry run was cancelled during tagging.

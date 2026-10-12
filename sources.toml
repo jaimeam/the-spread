@@ -6,9 +6,10 @@
 #                     or headline-only aggregators of paywalled outlets)
 # segments:   hint for the tagger: upstream, midstream, refining, petchem, gas_lng,
 #             shipping, geopolitics, macro
+# local_only: true = skipped on GitHub Actions (the site blocks GitHub's servers), used in local runs
 #
 # Feed URLs below were checked on 2026-10-12. If one dies, the pipeline logs it and moves on.
-# Some sites block requests from GitHub's servers (e.g. OIES): they still work in local runs.
+# Some sites block requests from GitHub's servers: those are marked local_only = true.
 
 # ---------- Official data & agencies ----------
 
@@ -82,6 +83,7 @@ name = "Oxford Institute for Energy Studies"
 type = "rss"
 url = "https://www.oxfordenergy.org/feed/"
 public_ok = true
+local_only = true   # 403/429 from GitHub's servers
 segments = ["geopolitics", "gas_lng", "refining"]
 
 [[source]]
@@ -158,13 +160,14 @@ public_ok = true
 segments = ["macro", "geopolitics"]
 
 # ---------- News discovery (headlines + links only) ----------
-# GDELT: free global news index, good for geopolitics. Rate-limited: keep queries few.
+# GDELT: free global news index, good for geopolitics. Rate-limited, and refuses GitHub's servers.
 
 [[source]]
 name = "GDELT - refinery outages & attacks"
 type = "gdelt"
 query = '(refinery OR "crude unit" OR "cracker") (outage OR fire OR attack OR shutdown OR restart) sourcelang:english'
 public_ok = true
+local_only = true   # 403/429 from GitHub's servers
 segments = ["refining", "petchem"]
 
 [[source]]
@@ -172,6 +175,7 @@ name = "GDELT - chokepoints & tankers"
 type = "gdelt"
 query = '("Strait of Hormuz" OR "Red Sea" OR "Bab el-Mandeb" OR Bosporus OR "shadow fleet") (tanker OR oil OR LNG) sourcelang:english'
 public_ok = true
+local_only = true   # 403/429 from GitHub's servers
 segments = ["shipping", "geopolitics"]
 
 # Google News RSS search: headlines often come from paywalled outlets.
