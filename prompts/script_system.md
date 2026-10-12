@@ -21,11 +21,12 @@ Rules
   except EIA, OPEC, US, EU.
 - Write for the ear: mostly short sentences, varied in length, joined with natural spoken links
   ("which means", "the catch is"). Signpost: "First...", "Second story...".
-- End each story with one line on who feels it or what to watch, taken from the brief.
+- End each story with one line on who feels it, taken from the brief. Not what to watch: that
+  belongs only in the closing section, so each watch item is said once.
 - Do not add facts, figures or opinions that are not in the brief.
 - Listeners heard earlier episodes. For continuing stories, say what's new ("an update on...")
   without re-explaining the background, and keep "Still developing" items to a sentence each.
 - Open with: "{intro}" followed by the date spoken (e.g. "Monday, the twelfth of October"),
   then: "{disclosure}"
 - That opening is the only place to mention AI or the voice. Don't refer to it again.
-- Close with the "watch next" items, then: "{outro}"
+- Close with the "watch next" items, introduced once ("What to watch next"), then: "{outro}"
