@@ -47,6 +47,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 DB_PATH = ROOT / (os.environ.get("BRIEF_DB") or "brief.db")  # CI uses its own, committed DB
 BRIEF_DIR = ROOT / "briefs"
+PROMPTS_DIR = ROOT / "prompts"  # every LLM prompt lives here, one file each
 UA = "the-spread/0.1 (personal research newsletter)"
 # `or` (not a default arg) so an empty variable from GitHub falls back too.
 TAG_MODEL = os.environ.get("TAG_MODEL") or "anthropic:claude-haiku-5-5"
@@ -56,6 +57,12 @@ PROVIDER_KEYS = {"anthropic": "ANTHROPIC_API_KEY", "mistral": "MISTRAL_API_KEY"}
 # On a safety decline these re-run the request on another model in the same call.
 FALLBACK_MODELS = {"claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-sonnet-5-5"}
 SEGMENTS = ["upstream", "midstream", "refining", "petchem", "gas_lng", "shipping", "geopolitics", "macro"]
+
+
+def prompt(name: str, **fields) -> str:
+    """Load prompts/<name>.md and fill its {placeholders}."""
+    text = (PROMPTS_DIR / f"{name}.md").read_text().rstrip("\n")
+    return text.format(**fields) if fields else text
 
 
 def log(msg: str) -> None:
@@ -374,20 +381,6 @@ def keyword_tag(item: dict, nodes: list[dict]) -> dict:
             "why": ""}
 
 
-TAG_PROMPT = """You tag news items for a professional oil, gas, refining, petrochemical and
-midstream newsletter that focuses on how geopolitics moves physical markets.
-
-For each item return an object with:
-  id         (copy it)
-  segments   subset of {segments}
-  nodes      ids from this exposure map that the item touches: {nodes}
-  relevance  0-5 (5 = moves prices/flows/margins now; 0 = off-topic, PR fluff, duplicate)
-  why        <= 20 words: the market mechanism, not a summary
-
-Return ONLY a JSON array.
-
-Items:
-{items}"""
 
 
 def tag(nodes: list[dict], use_llm: bool) -> int:
@@ -407,7 +400,7 @@ def tag(nodes: list[dict], use_llm: bool) -> int:
         items = "\n".join(json.dumps({"id": r[0], "title": r[1], "summary": r[2][:300], "source": r[3]})
                           for r in batch)
         try:
-            out = _json_from(llm(TAG_PROMPT.format(segments=SEGMENTS, nodes=node_ids, items=items),
+            out = _json_from(llm(prompt("tag", segments=SEGMENTS, nodes=node_ids, items=items),
                                     TAG_MODEL, 8000, effort="low")) or []
         except Exception as e:  # noqa: BLE001
             log(f"tagging batch failed ({e}); falling back to keywords")
@@ -422,29 +415,6 @@ def tag(nodes: list[dict], use_llm: bool) -> int:
 
 # --------------------------------------------------------------------------- brief
 
-BRIEF_SYSTEM = """You are the editor of a daily brief on oil & gas, refining, petrochemicals,
-midstream, and the events that move them. The reader is technical and busy.
-
-Rules
-- Lead with what changed in the last 24h and why it matters for flows, margins or prices.
-- For every major story give the transmission chain: event -> mechanism -> who feels it.
-  Use the exposure map; add links it is missing if the evidence supports them.
-- Separate fact from claim. If only one side says something (e.g. a politician announces
-  a deal the other party has not confirmed), say so.
-- Never invent numbers. Use only figures present in the items or data block, and name the
-  source in brackets after each figure.
-- Paraphrase. No quotes longer than 10 words. Every story ends with its source link(s).
-- If a story only appears in headline-only aggregators, mark it "(unconfirmed - headline only)".
-- "Already covered" summarises earlier editions. Do not re-tell those stories. When an item
-  continues one, lead with what changed since we last covered it, with at most one sentence
-  of recap, and skip the transmission chain unless it has changed. If a continuing story has
-  nothing new, leave it out or give it one line under "Still developing".
-- Check earlier "Watch next" items that fall due today or earlier: if the outcome is in
-  today's items, report it; if it is overdue and not in the items, say it is still pending.
-- Close with "Watch next" (3-5 dated items), and end there.
-- Leave out signals you are unsure about: no section or aside for them. Report what the
-  items support; still flag one-sided claims and headline-only stories as above.
-- Markdown. Start with the heading "# The Spread - <weekday, date>". Target 600-900 words."""
 
 
 def edition(public: bool) -> str:
@@ -496,12 +466,12 @@ def write_brief(nodes: list[dict], hours: int, public: bool, use_llm: bool, cont
     items_txt = "\n".join(json.dumps({k: i.get(k) for k in
                                       ("title", "url", "source", "published", "summary", "nodes", "why", "relevance")})
                           for i in items)
-    prompt = (f"Date: {today}. Edition: {'PUBLIC (free/primary sources only)' if public else 'PRIVATE'}.\n\n"
-              f"## Exposure map\n{map_txt}\n\n"
-              f"## Already covered (last {context_days} days, oldest first)\n{history or '(no earlier editions)'}\n\n"
-              f"## Data\n" + ("\n".join(data) or "(none today)") +
-              f"\n\n## New items from the last {hours}h ({len(items)})\n{items_txt}\n\nWrite today's brief.")
-    brief = llm(prompt, BRIEF_MODEL, 16000, BRIEF_SYSTEM, effort="medium")
+    user = prompt("brief_user", date=today,
+                  edition="PUBLIC (free/primary sources only)" if public else "PRIVATE",
+                  exposure_map=map_txt, context_days=context_days,
+                  history=history or "(no earlier editions)", data="\n".join(data) or "(none today)",
+                  hours=hours, count=len(items), items=items_txt)
+    brief = llm(user, BRIEF_MODEL, 16000, prompt("brief_system"), effort="medium")
     path.write_text(brief)
     con = db()
     con.executemany("INSERT OR REPLACE INTO used VALUES (?,?,?)",
@@ -513,16 +483,6 @@ def write_brief(nodes: list[dict], hours: int, public: bool, use_llm: bool, cont
 
 # --------------------------------------------------------------------------- memory
 
-LEDGER_PROMPT = """Summarise this energy-markets brief as a ledger entry for the editor's memory.
-Plain text, at most 200 words:
-- One line per story: what happened, its status (confirmed / claimed / developing), and the
-  key figures with their source tag. Name the exposure-map chain if one was given.
-- Then "Watch:" followed by every dated "Watch next" item, with its date.
-No preamble.
-
-Brief:
-
-{brief}"""
 
 
 def brief_files(public: bool) -> dict[str, Path]:
@@ -539,7 +499,7 @@ def ledger_summary(date: str, public: bool, brief: str) -> str:
                       (date, edition(public))).fetchone()
     if row and row[0] == h:
         return row[1]
-    summary = llm(LEDGER_PROMPT.format(brief=brief), TAG_MODEL, 4000, effort="low").strip()
+    summary = llm(prompt("ledger", brief=brief), TAG_MODEL, 4000, effort="low").strip()
     con.execute("INSERT OR REPLACE INTO ledger VALUES (?,?,?,?)", (date, edition(public), h, summary))
     con.commit()
     return summary

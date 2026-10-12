@@ -102,7 +102,9 @@ Until step 6 the feed isn't listed anywhere, but anyone with the URL can find it
 
 - **Licensing guard.** Items from `public_ok = false` sources (Google News
   headlines of paywalled outlets, your own subscriptions) never reach `--public`.
-- **Numbers are sourced.** The brief prompt forbids figures that aren't in the
+- **Prompts live in `prompts/`.** One Markdown file per LLM call (tagging, brief, ledger,
+  podcast script); `{placeholders}` are filled in by the code.
+- **Numbers are sourced.** The brief prompt (`prompts/brief_system.md`) forbids figures that aren't in the
   items or the data block, and requires a source tag after each one.
 - **Claims vs facts.** One-sided announcements are flagged as such.
 - **Dead feeds don't break runs.** Each source fails independently.
