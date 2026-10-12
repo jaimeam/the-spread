@@ -11,7 +11,8 @@ Usage
 
 Environment
   SCRIPT_MODEL           model for the script rewrite, "provider:model" (default: BRIEF_MODEL).
-                         Needs that provider's key; without it, a plain cleanup of the markdown is used.
+                         Needs that provider's key, unless you pass --no-llm (plain markdown cleanup;
+                         fine for testing, not for a real episode).
   ELEVENLABS_API_KEY     elevenlabs.io -> profile -> API keys
   ELEVENLABS_VOICE_ID    the voice to use (Voice Library -> copy voice ID)
   ELEVENLABS_MODEL       default eleven_v4 (10,000 chars per request)
@@ -40,8 +41,8 @@ SITE = ROOT / "site"
 EPISODES_DIR = SITE / "episodes"
 INDEX = SITE / "episodes.json"
 SCRIPTS = ROOT / "scripts"
-MODEL = os.environ.get("ELEVENLABS_MODEL", "eleven_v4")
-CHUNK = 4500  # stay well under the model's per-request limit
+MODEL = os.environ.get("ELEVENLABS_MODEL") or "eleven_v4"
+CHUNK = 9000  # eleven_v4 takes 10,000 chars per request, so a normal episode is one call
 BITRATE = 128_000  # mp3_44100_128
 
 
@@ -66,6 +67,8 @@ Rules
   except EIA, OPEC, US, EU.
 - Short sentences. Signpost: "First...", "Second story...", "The number to remember today...".
 - Do not add facts, figures or opinions that are not in the brief.
+- Listeners heard earlier episodes. For continuing stories, say what's new ("an update on...")
+  without re-explaining the background, and keep "Still developing" items to a sentence each.
 - Open with: "{intro}" followed by the date spoken (e.g. "Monday, the twelfth of October").
 - Close with the "watch next" items, then: "{outro}"
 """
@@ -86,7 +89,8 @@ def write_script(brief: Path, c: dict, use_llm: bool) -> str:
     if not use_llm:
         return markdown_to_plain(md)
     system = SCRIPT_SYSTEM.format(intro=c["spoken_intro"], outro=c["spoken_outro"])
-    return pipeline.llm(f"Brief:\n\n{md}\n\nWrite the script.", pipeline.SCRIPT_MODEL, 4000, system).strip()
+    return pipeline.llm(f"Brief:\n\n{md}\n\nWrite the script.", pipeline.SCRIPT_MODEL, 16000, system,
+                        effort="medium").strip()
 
 
 # --------------------------------------------------------------------------- audio
@@ -212,7 +216,10 @@ def main() -> None:
             raise SystemExit("episode needs a brief file")
         m = re.match(r"\d{4}-\d{2}-\d{2}", a.brief.name)
         date = a.date or (m.group(0) if m else dt.date.today().isoformat())
-        use_llm = not a.no_llm and pipeline.has_key(pipeline.SCRIPT_MODEL)
+        use_llm = not a.no_llm
+        if use_llm and not pipeline.has_key(pipeline.SCRIPT_MODEL):
+            key = pipeline.PROVIDER_KEYS[pipeline.split_model(pipeline.SCRIPT_MODEL)[0]]
+            raise SystemExit(f"{key} not set for SCRIPT_MODEL={pipeline.SCRIPT_MODEL}; pass --no-llm to test without it")
         SCRIPTS.mkdir(exist_ok=True)
         script = write_script(a.brief, c, use_llm)
         (SCRIPTS / f"{date}.txt").write_text(script)

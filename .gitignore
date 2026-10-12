@@ -3,3 +3,9 @@ __pycache__/
 .venv/
 .env
 .DS_Store
+
+# Local state and private output. CI keeps its own DB in state/; only public briefs are committed.
+brief.db
+briefs/*.md
+!briefs/*-public.md
+!briefs/*-sample.md

@@ -10,6 +10,7 @@ Usage
   python pipeline.py run --public        # only sources marked public_ok = true
   python pipeline.py run --no-llm        # no API key: keyword tagging + plain digest
   python pipeline.py run --fixtures fixtures   # offline test with saved feeds
+  python pipeline.py run --require-llm   # fail if a model key is missing (used in CI)
 
 Choosing models: one setting per task, written as "provider:model".
   TAG_MODEL           tags each news item      default anthropic:claude-haiku-5-5
@@ -44,7 +45,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-DB_PATH = ROOT / "brief.db"
+DB_PATH = ROOT / (os.environ.get("BRIEF_DB") or "brief.db")  # CI uses its own, committed DB
 BRIEF_DIR = ROOT / "briefs"
 UA = "the-spread/0.1 (personal research newsletter)"
 # `or` (not a default arg) so an empty variable from GitHub falls back too.
@@ -52,6 +53,8 @@ TAG_MODEL = os.environ.get("TAG_MODEL") or "anthropic:claude-haiku-5-5"
 BRIEF_MODEL = os.environ.get("BRIEF_MODEL") or "anthropic:claude-opus-5-5"
 SCRIPT_MODEL = os.environ.get("SCRIPT_MODEL") or BRIEF_MODEL
 PROVIDER_KEYS = {"anthropic": "ANTHROPIC_API_KEY", "mistral": "MISTRAL_API_KEY"}
+# On a safety decline these re-run the request on another model in the same call.
+FALLBACK_MODELS = {"claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-sonnet-5-5"}
 SEGMENTS = ["upstream", "midstream", "refining", "petchem", "gas_lng", "shipping", "geopolitics", "macro"]
 
 
@@ -241,6 +244,12 @@ def db() -> sqlite3.Connection:
     con.execute("""CREATE TABLE IF NOT EXISTS items (
         id TEXT PRIMARY KEY, source TEXT, public_ok INTEGER, title TEXT, url TEXT,
         published TEXT, summary TEXT, fetched_at TEXT, tags TEXT)""")
+    # Which items each edition has already used, so they never appear twice.
+    con.execute("""CREATE TABLE IF NOT EXISTS used (
+        item_id TEXT, edition TEXT, brief_date TEXT, PRIMARY KEY (item_id, edition))""")
+    # Short summaries of past briefs: the brief writer's memory of what it already said.
+    con.execute("""CREATE TABLE IF NOT EXISTS ledger (
+        brief_date TEXT, edition TEXT, brief_hash TEXT, summary TEXT, PRIMARY KEY (brief_date, edition))""")
     return con
 
 
@@ -297,26 +306,40 @@ def _post(url: str, body: dict, headers: dict) -> dict:
     raise RuntimeError("unreachable")
 
 
-def llm(prompt: str, spec: str, max_tokens: int = 4000, system: str = "") -> str:
-    """Send one prompt to whichever provider `spec` names and return the text."""
+def llm(prompt: str, spec: str, max_tokens: int = 16000, system: str = "", effort: str = "medium") -> str:
+    """Send one prompt to whichever provider `spec` names and return the text.
+
+    Current Claude models always think first, and thinking counts against max_tokens,
+    so keep it generous (you pay only for what's used). `effort` sets how hard it thinks.
+    A truncated or refused answer raises rather than being written out half-finished.
+    """
     provider, model = split_model(spec)
     key = os.environ[PROVIDER_KEYS[provider]]
     if provider == "anthropic":
-        body = {"model": model, "max_tokens": max_tokens, "messages": [{"role": "user", "content": prompt}]}
+        body = {"model": model, "max_tokens": max_tokens, "messages": [{"role": "user", "content": prompt}],
+                "output_config": {"effort": effort}}
+        headers = {"x-api-key": key, "anthropic-version": "2023-06-01"}
         if system:
             body["system"] = system
-        resp = _post("https://api.anthropic.com/v1/messages", body,
-                     {"x-api-key": key, "anthropic-version": "2023-06-01"})
+        if model in FALLBACK_MODELS:
+            body["fallbacks"] = "default"
+            headers["anthropic-beta"] = "server-side-fallback-2026-07-01"
+        resp = _post("https://api.anthropic.com/v1/messages", body, headers)
+        u = resp.get("usage", {})
+        log(f"{spec}: {u.get('input_tokens', 0):,} in / {u.get('output_tokens', 0):,} out tokens")
+        if resp.get("stop_reason") in ("max_tokens", "refusal"):
+            raise RuntimeError(f"{spec} stopped early: {resp['stop_reason']} {resp.get('stop_details') or ''}")
         return "".join(b.get("text", "") for b in resp["content"] if b.get("type") == "text")
     # mistral: OpenAI-style chat completions
     msgs = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": prompt}]
     resp = _post("https://api.mistral.ai/v1/chat/completions",
                  {"model": model, "max_tokens": max_tokens, "messages": msgs},
                  {"Authorization": f"Bearer {key}"})
-    return resp["choices"][0]["message"]["content"]
+    choice = resp["choices"][0]
+    if choice.get("finish_reason") == "length":
+        raise RuntimeError(f"{spec} stopped early: hit max_tokens")
+    return choice["message"]["content"]
 
-
-claude = llm  # old name, kept so nothing else breaks
 
 
 def _json_from(text: str):
@@ -376,8 +399,8 @@ def tag(nodes: list[dict], use_llm: bool) -> int:
         items = "\n".join(json.dumps({"id": r[0], "title": r[1], "summary": r[2][:300], "source": r[3]})
                           for r in batch)
         try:
-            out = _json_from(claude(TAG_PROMPT.format(segments=SEGMENTS, nodes=node_ids, items=items),
-                                    TAG_MODEL, 4000)) or []
+            out = _json_from(llm(TAG_PROMPT.format(segments=SEGMENTS, nodes=node_ids, items=items),
+                                    TAG_MODEL, 8000, effort="low")) or []
         except Exception as e:  # noqa: BLE001
             log(f"tagging batch failed ({e}); falling back to keywords")
             out = []
@@ -404,25 +427,38 @@ Rules
   source in brackets after each figure.
 - Paraphrase. No quotes longer than 10 words. Every story ends with its source link(s).
 - If a story only appears in headline-only aggregators, mark it "(unconfirmed - headline only)".
+- "Already covered" summarises earlier editions. Do not re-tell those stories. When an item
+  continues one, lead with what changed since we last covered it, with at most one sentence
+  of recap, and skip the transmission chain unless it has changed. If a continuing story has
+  nothing new, leave it out or give it one line under "Still developing".
+- Check earlier "Watch next" items that fall due today or earlier: if the outcome is in
+  today's items, report it; if it is overdue and not in the items, say it is still pending.
 - Close with "Watch next" (3-5 dated items) and "Signals I'm not sure about" (1-3 lines).
 - Markdown. Start with the heading "# The Spread - <weekday, date>". Target 600-900 words."""
 
 
+def edition(public: bool) -> str:
+    return "public" if public else "private"
+
+
 def recent_items(hours: int, public: bool, min_rel: int = 2) -> list[dict]:
+    """Items from the window that no *earlier* brief of this edition has used (re-runs today are fine)."""
     since = (now_utc() - dt.timedelta(hours=hours)).isoformat()
-    q = "SELECT source,title,url,published,summary,tags,public_ok FROM items WHERE published >= ?"
-    rows = db().execute(q + (" AND public_ok=1" if public else ""), (since,)).fetchall()
+    q = """SELECT id,source,title,url,published,summary,tags FROM items WHERE published >= ?
+           AND id NOT IN (SELECT item_id FROM used WHERE edition = ? AND brief_date < ?)"""
+    rows = db().execute(q + (" AND public_ok=1" if public else ""),
+                        (since, edition(public), dt.date.today().isoformat())).fetchall()
     out = []
-    for source, title, url, pub, summary, tags, pok in rows:
+    for iid, source, title, url, pub, summary, tags in rows:
         t = json.loads(tags or "{}")
         if t.get("relevance", 0) >= min_rel:
-            out.append({"source": source, "title": title, "url": url, "published": pub,
+            out.append({"id": iid, "source": source, "title": title, "url": url, "published": pub,
                         "summary": summary, **t})
     out.sort(key=lambda x: x["published"], reverse=True)          # newest first...
     return sorted(out, key=lambda x: -x.get("relevance", 0))       # ...within relevance
 
 
-def write_brief(nodes: list[dict], hours: int, public: bool, use_llm: bool) -> Path:
+def write_brief(nodes: list[dict], hours: int, public: bool, use_llm: bool, context_days: int = 14) -> Path:
     items = recent_items(hours, public)
     data = eia_weekly() + eu_gas_storage()
     today = dt.date.today().isoformat()
@@ -442,15 +478,75 @@ def write_brief(nodes: list[dict], hours: int, public: bool, use_llm: bool) -> P
         path.write_text("\n".join(lines))
         return path
 
+    if not items:
+        raise SystemExit(f"No relevant items in the last {hours}h; not writing a brief. Check the feed log above.")
+    items = items[:120]
+    history = ledger_context(public, context_days)
     map_txt = "\n".join(f"- {n['label']} ({n['id']}): " + " | ".join(n["chain"]) for n in nodes)
     items_txt = "\n".join(json.dumps({k: i.get(k) for k in
                                       ("title", "url", "source", "published", "summary", "nodes", "why", "relevance")})
-                          for i in items[:120])
+                          for i in items)
     prompt = (f"Date: {today}. Edition: {'PUBLIC (free/primary sources only)' if public else 'PRIVATE'}.\n\n"
-              f"## Exposure map\n{map_txt}\n\n## Data\n" + ("\n".join(data) or "(none today)") +
-              f"\n\n## Items from the last {hours}h ({len(items)})\n{items_txt}\n\nWrite today's brief.")
-    path.write_text(claude(prompt, BRIEF_MODEL, 6000, BRIEF_SYSTEM))
+              f"## Exposure map\n{map_txt}\n\n"
+              f"## Already covered (last {context_days} days, oldest first)\n{history or '(no earlier editions)'}\n\n"
+              f"## Data\n" + ("\n".join(data) or "(none today)") +
+              f"\n\n## New items from the last {hours}h ({len(items)})\n{items_txt}\n\nWrite today's brief.")
+    brief = llm(prompt, BRIEF_MODEL, 16000, BRIEF_SYSTEM, effort="medium")
+    path.write_text(brief)
+    con = db()
+    con.executemany("INSERT OR REPLACE INTO used VALUES (?,?,?)",
+                    [(i["id"], edition(public), today) for i in items])
+    con.commit()
+    ledger_summary(today, public, brief)  # so tomorrow's run knows what today's said
     return path
+
+
+# --------------------------------------------------------------------------- memory
+
+LEDGER_PROMPT = """Summarise this energy-markets brief as a ledger entry for the editor's memory.
+Plain text, at most 200 words:
+- One line per story: what happened, its status (confirmed / claimed / developing), and the
+  key figures with their source tag. Name the exposure-map chain if one was given.
+- Then "Watch:" followed by every dated "Watch next" item, with its date.
+No preamble.
+
+Brief:
+
+{brief}"""
+
+
+def brief_files(public: bool) -> dict[str, Path]:
+    """date -> brief file for this edition (ignores samples and other suffixes)."""
+    pat = re.compile(r"(\d{4}-\d{2}-\d{2})" + ("-public" if public else "") + r"\.md")
+    return {m.group(1): f for f in BRIEF_DIR.glob("*.md") if (m := pat.fullmatch(f.name))}
+
+
+def ledger_summary(date: str, public: bool, brief: str) -> str:
+    """Cached per brief; regenerated only if the brief file changed."""
+    h = hashlib.sha1(brief.encode()).hexdigest()[:16]
+    con = db()
+    row = con.execute("SELECT brief_hash, summary FROM ledger WHERE brief_date=? AND edition=?",
+                      (date, edition(public))).fetchone()
+    if row and row[0] == h:
+        return row[1]
+    summary = llm(LEDGER_PROMPT.format(brief=brief), TAG_MODEL, 4000, effort="low").strip()
+    con.execute("INSERT OR REPLACE INTO ledger VALUES (?,?,?,?)", (date, edition(public), h, summary))
+    con.commit()
+    return summary
+
+
+def ledger_context(public: bool, days: int) -> str:
+    """Ledger entries for this edition's briefs from the last `days` days, before today."""
+    today = dt.date.today()
+    since = (today - dt.timedelta(days=days)).isoformat()
+    out = []
+    for date, f in sorted(brief_files(public).items()):
+        if since <= date < today.isoformat():
+            try:
+                out.append(f"### {date}\n{ledger_summary(date, public, f.read_text())}")
+            except Exception as e:  # noqa: BLE001  missing memory must not block today's brief
+                log(f"ledger for {date} failed: {e}")
+    return "\n\n".join(out)
 
 
 # --------------------------------------------------------------------------- cli
@@ -460,13 +556,19 @@ def main() -> None:
     ap.add_argument("cmd", choices=["run", "ingest", "tag", "brief"])
     ap.add_argument("--public", action="store_true", help="only public_ok sources")
     ap.add_argument("--no-llm", action="store_true", help="keyword tagging, plain digest")
+    ap.add_argument("--require-llm", action="store_true",
+                    help="fail instead of falling back to --no-llm when a key is missing (for CI)")
     ap.add_argument("--hours", type=int, default=30)
+    ap.add_argument("--context-days", type=int, default=14,
+                    help="how many days of earlier briefs the writer is reminded of")
     ap.add_argument("--fixtures", type=Path, help="read saved feeds from this folder instead of the web")
     a = ap.parse_args()
 
     use_llm = not a.no_llm
     missing = {PROVIDER_KEYS[split_model(m)[0]] for m in (TAG_MODEL, BRIEF_MODEL) if not has_key(m)}
     if use_llm and missing:
+        if a.require_llm:
+            raise SystemExit(f"{', '.join(sorted(missing))} not set (--require-llm)")
         log(f"{', '.join(sorted(missing))} not set -> running with --no-llm")
         use_llm = False
     if use_llm:
@@ -480,7 +582,7 @@ def main() -> None:
     if a.cmd in ("run", "tag"):
         log(f"tagged {tag(nodes, use_llm)} items")
     if a.cmd in ("run", "brief"):
-        log(f"brief written to {write_brief(nodes, a.hours, a.public, use_llm)}")
+        log(f"brief written to {write_brief(nodes, a.hours, a.public, use_llm, a.context_days)}")
 
 
 if __name__ == "__main__":

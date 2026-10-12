@@ -6,7 +6,8 @@ an exposure map, and has Claude write the brief.
 
 ## Run it
 
-Needs Python 3.11+ and nothing else (standard library only).
+Needs Python 3.11+ and nothing else (standard library only). macOS ships 3.9 as `python3`;
+use Homebrew's (`brew install python`, then `/opt/homebrew/bin/python3`).
 
 ```bash
 export ANTHROPIC_API_KEY=...        # required for the AI steps
@@ -17,9 +18,10 @@ python pipeline.py run              # private brief -> briefs/YYYY-MM-DD.md
 python pipeline.py run --public     # public edition: only public_ok sources
 python pipeline.py run --no-llm     # no key needed: keyword digest
 python pipeline.py run --no-llm --fixtures fixtures --hours 999   # offline smoke test
+python pipeline.py run --public --require-llm   # what CI runs: fails rather than falling back
 ```
 
-To run it every morning, use cron (`0 7 * * 1-5 cd /path && python pipeline.py run`)
+Monday's CI run looks back 78 hours to cover the weekend. To run it locally every morning, use cron (`0 7 * * 1-5 cd /path && python pipeline.py run`)
 or a scheduled task.
 
 ## Choosing models
@@ -52,6 +54,16 @@ python podcast.py episode briefs/2026-10-12-public.md                # episode +
 python podcast.py episode briefs/2026-10-12-public.md --script-only  # just the script, no audio cost
 ```
 
+### Using your own voice
+
+1. ElevenLabs → Voices → Add a new voice → **Instant Voice Clone** (1-2 min of clean audio) or
+   **Professional Voice Clone** (Creator plan or above, 30+ min of audio, verified with a live
+   recording, trains in a few hours; noticeably closer to you).
+2. Record yourself reading something like a brief, in your normal "radio" tone: a quiet room,
+   no music, consistent distance from the mic, MP3 at 192 kbps or higher.
+3. When it's ready, copy the voice ID (Voices → your voice → ID) into `ELEVENLABS_VOICE_ID`.
+4. Change `disclosure` and `spoken_outro` in `podcast.toml` to say it's an AI clone of your voice.
+
 Edit `podcast.toml` before going live: the title, and above all `email` (Spotify and
 Apple send ownership verification there, and it is visible in the feed).
 
@@ -60,9 +72,11 @@ Apple send ownership verification there, and it is visible in the feed).
 1. Create a GitHub repo and push this folder to it. GitHub Pages on a private repo needs a
    paid GitHub plan; on the free plan, make the repo public. That's fine because the workflow
    only ever uses public-edition sources.
-2. Add the secrets listed at the top of `.github/workflows/daily.yml`.
+2. Add the secrets listed at the top of `.github/workflows/daily.yml`. The run fails, instead of
+   publishing a keyword digest, if the model keys are missing.
 3. Settings → Pages → Source: **GitHub Actions**.
-4. Actions → The Spread daily → **Run workflow** once to test.
+4. Actions → The Spread daily → **Run workflow** once to test. Tick **Dry run** to get just the
+   brief and script (downloadable under the run's Artifacts) with no audio cost and nothing published.
 5. Add `https://<you>.github.io/<repo>/feed.xml` to your podcast app (Pocket Casts,
    Overcast and Apple Podcasts all accept a feed URL).
 6. When you're ready to go public, submit the same feed URL in Spotify for Creators.
@@ -80,8 +94,8 @@ Until step 6 the feed isn't listed anywhere, but anyone with the URL can find it
 | `podcast.py`, `podcast.toml` | brief -> script -> MP3 -> podcast feed; show settings |
 | `site/` | What GitHub Pages serves: `cover.png`, `feed.xml`, `episodes/` |
 | `.github/workflows/daily.yml` | The weekday schedule |
-| `brief.db` | Every item seen, with tags (created on first run) |
-| `briefs/` | Output |
+| `brief.db` | Every item seen, with tags (local, git-ignored). CI keeps its public-only copy in `state/public.db` |
+| `briefs/` | Output. Only `*-public.md` is committed; private briefs stay local |
 
 ## Design choices
 
@@ -91,6 +105,10 @@ Until step 6 the feed isn't listed anywhere, but anyone with the URL can find it
   items or the data block, and requires a source tag after each one.
 - **Claims vs facts.** One-sided announcements are flagged as such.
 - **Dead feeds don't break runs.** Each source fails independently.
+- **No repeats.** An item used in one brief never reaches a later brief of the same edition.
+  After each brief, the tag model writes a short ledger entry (stories, status, key figures,
+  watch items). The next brief is given the last 14 days of entries (`--context-days`), so
+  it reports only what's new on continuing stories and follows up on earlier "Watch next" items.
 
 ## Next steps
 

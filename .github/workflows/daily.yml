@@ -13,6 +13,11 @@ on:
   schedule:
     - cron: "0 5 * * 1-5"   # 05:00 UTC = 07:00 Madrid in summer, 06:00 in winter
   workflow_dispatch:         # "Run workflow" button for manual runs
+    inputs:
+      dry_run:
+        description: "Dry run: write the brief and script only (no audio, nothing published). Download them under the run's Artifacts."
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -36,35 +41,53 @@ jobs:
       AGSI_API_KEY: ${{ secrets.AGSI_API_KEY }}
       ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
       ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+      BRIEF_DB: state/public.db   # public-only item history, committed between runs
       PODCAST_BASE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
     steps:
       - uses: actions/checkout@v4
+
+      - run: mkdir -p state
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       # Public edition only: everything this job produces is published on the open web.
+      # Monday's brief covers the weekend too (78h instead of 30h).
       - name: Write today's brief
-        run: python pipeline.py run --public
+        run: |
+          HOURS=$([ "$(date -u +%u)" = 1 ] && echo 78 || echo 30)
+          python pipeline.py run --public --require-llm --hours "$HOURS"
 
       - name: Make the episode and feed
-        run: python podcast.py episode "briefs/$(date -u +%F)-public.md"
+        run: python podcast.py episode "briefs/$(date -u +%F)-public.md" ${{ inputs.dry_run && '--script-only' || '' }}
+
+      - name: Keep the dry-run output
+        if: ${{ inputs.dry_run }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: dry-run
+          path: |
+            briefs/*-public.md
+            scripts/
 
       - name: Save to the repo
+        if: ${{ !inputs.dry_run }}
         run: |
           git config user.name "the-spread-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add briefs scripts site brief.db
+          git add briefs scripts site state
           git commit -m "Brief $(date -u +%F)" || echo "nothing to commit"
           git push
 
       - uses: actions/upload-pages-artifact@v3
+        if: ${{ !inputs.dry_run }}
         with:
           path: site
 
   deploy:
     needs: build
+    if: ${{ !inputs.dry_run }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages
