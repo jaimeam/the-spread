@@ -5,18 +5,18 @@
     <title>The Spread</title>
     <link>https://jaimeam.github.io/the-spread/</link>
     <atom:link href="https://jaimeam.github.io/the-spread/feed.xml" rel="self" type="application/rss+xml"/>
-    <description>A short daily briefing on oil and gas, refining, petrochemicals and midstream: what moved today, and why it matters. Built from free and official sources, and written and voiced with AI.</description>
+    <description>A short daily briefing on oil and gas, refining, petrochemicals and midstream: what moved today, and why it matters. Built from free and official sources, written with AI, and read by an AI clone of Jaime's voice.</description>
     <language>en</language>
-    <copyright>Jaime</copyright>
-    <itunes:author>Jaime</itunes:author>
-    <itunes:owner><itunes:name>Jaime</itunes:name><itunes:email>jaime.adroher@gmail.com</itunes:email></itunes:owner>
+    <copyright>Jaime Adroher</copyright>
+    <itunes:author>Jaime Adroher</itunes:author>
+    <itunes:owner><itunes:name>Jaime Adroher</itunes:name><itunes:email>jaime.adroher@gmail.com</itunes:email></itunes:owner>
     <itunes:image href="https://jaimeam.github.io/the-spread/cover.png"/>
     <itunes:category text="News"><itunes:category text="Business News"/></itunes:category>
     <itunes:explicit>false</itunes:explicit>
     <itunes:type>episodic</itunes:type>
     <item>
       <title>The Spread - Mon 12 Oct 2026</title>
-      <description>This episode is written and voiced with AI, from public sources. Show notes link to every source.
+      <description>This episode is written with AI from public sources and read by an AI clone of Jaime's voice, not recorded by Jaime. Show notes link to every source.
 
 The Spread - Monday, 12 October 2026
 
@@ -51,7 +51,7 @@ Who feels it: Polyethylene and other derivative export availability, and the dom
 
 How to read the next updates. The key question is whether this was a shut-in-and-restart storm or a damage storm.
 Shut-in-and-restart: Offshore output and refinery runs normalise within roughly a week. The net effect on crude is small, with at</description>
-      <content:encoded><![CDATA[<p>This episode is written and voiced with AI, from public sources. Show notes link to every source.</p><p>The Spread - Monday, 12 October 2026
+      <content:encoded><![CDATA[<p>This episode is written with AI from public sources and read by an AI clone of Jaime's voice, not recorded by Jaime. Show notes link to every source.</p><p>The Spread - Monday, 12 October 2026
 
 Quiet tape, one live risk. Only one new item cleared our filters in the last 78 hours, a US Gulf Coast hurricane. There are no prices or flow data in today's data block. Treat what follows as a framework for reading the next 48 hours of operator and agency updates, not as a damage assessment.
 
@@ -64,10 +64,10 @@ What changed. EIA reports that Hurricane Isaias, a Category 2 storm, was forecas
 EIA describes it as the first hurricane of the 2026 Atlantic season. It also calls it the largest storm system to reach the region since Hurricane Helene in September 2024.
 
 Timing caveat. The piece carries a 12 October publication stamp, but its forecast data is from 9 October. Landfall should therefore have happened over the weekend (10-11 October). Our items do not say where it came ashore, at what strength, or wh...</p><p><strong>Sources</strong></p><ul></ul>]]></content:encoded>
-      <enclosure url="https://jaimeam.github.io/the-spread/episodes/2026-10-12.mp3" length="7027191" type="audio/mpeg"/>
+      <enclosure url="https://jaimeam.github.io/the-spread/episodes/2026-10-12-1791833831.mp3" length="4999671" type="audio/mpeg"/>
       <guid isPermaLink="false">the-spread-2026-10-12</guid>
       <pubDate>Mon, 12 Oct 2026 06:00:00 +0000</pubDate>
-      <itunes:duration>7:19</itunes:duration>
+      <itunes:duration>5:12</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
       <itunes:episodeType>full</itunes:episodeType>
     </item>
