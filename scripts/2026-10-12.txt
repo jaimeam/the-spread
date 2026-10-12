@@ -1,0 +1,53 @@
+This is The Spread, your energy markets briefing for Monday, the twelfth of October.
+
+A quiet tape today, with one live risk. Only one new item cleared our filters in the last seventy-eight hours. It's a US Gulf Coast hurricane. There are no prices or flow data in today's data. So treat what follows as a framework for reading the next forty-eight hours of operator and agency updates. It is not a damage assessment.
+
+First, and only, story. Hurricane Isaias.
+
+Here's what changed. According to the EIA, Hurricane Isaias, a Category two storm, was forecast by the National Oceanic and Atmospheric Administration, known as NOAA, to make landfall on the Gulf Coast late Friday or early Saturday. That forecast dates from the morning of the ninth of October. The EIA's headline says offshore production shut-ins are under way. But its summary gives no volumes, no affected operators and no refinery names.
+
+The EIA describes Isaias as the first hurricane of the twenty twenty-six Atlantic season. It also calls it the largest storm system to reach the region since Hurricane Helene in September twenty twenty-four.
+
+Now, an important timing caveat. The EIA piece carries a publication date of the twelfth of October. But its forecast data is from the ninth. So landfall should already have happened, over the weekend of the tenth and eleventh. Our items do not say where the storm came ashore, at what strength, or whether any infrastructure was hit. The shut-ins are confirmed, by the EIA as an agency source. Everything else you'll hear about refineries, ports and liquefied natural gas depends on where the storm landed. And we don't know that yet.
+
+So let's walk through how a storm like this moves through energy markets.
+
+Start with offshore crude. Landfall forces evacuations and shut-ins on Gulf of Mexico platforms. US crude supply dips briefly. Gulf-produced medium-sour grades are hit hardest. If the platforms are undamaged, restarts usually follow within days. Who feels it? Buyers of sour crude on the US Gulf Coast, in the short term. That effect is mostly offset if refineries are also cutting runs.
+
+Next, refining. If the storm tracked into the Texas and Louisiana refining belt, plants may have cut runs as a precaution or lost power. Flooding of process units is the bigger risk. Here's why it matters beyond the US. The US Gulf Coast is Europe's swing diesel supplier. Lower runs plus port closures mean fewer export barrels. That would be felt in Northwest European diesel cracks, the margin refiners earn making diesel from crude. Latin American importers who rely on Gulf Coast gasoline and diesel would also lose barrels. And there's a domestic angle. Buyers in the US Northeast compete with Europe for the same Gulf Coast barrels. That supports the New York Harbor diesel premium.
+
+Third, ports and terminals. Port closures halt crude and product exports, even where refineries keep running. The effect is cargo bunching after ports reopen, and tighter prompt tanker availability on transatlantic product routes. European buyers would face a short gap, then a wave of arrivals.
+
+Fourth, liquefied natural gas, or LNG. Most US LNG export capacity sits on the Texas and Louisiana coast. Plant shutdowns, lower feedgas or channel closures would delay cargoes. That would matter for European gas, especially the prompt price at the Dutch Title Transfer Facility hub, known as TTF, heading into winter. To be clear, no item today confirms any LNG impact. This is a channel to watch, not a reported event.
+
+Fifth, petrochemicals. Again, this is conditional. Ethane crackers and related units on the Gulf Coast often shut ahead of storms. Restarting crackers is slow, and often brings flaring and off-spec periods. That affects export availability of polyethylene and other derivatives, and the domestic ethane balance.
+
+So how should you read the updates coming in? The key question is simple. Was this a shut-in-and-restart storm, or a damage storm?
+
+If it's shut-in-and-restart, offshore output and refinery runs get back to normal within roughly a week. The net effect on crude is small. At most, a brief bump in diesel cracks.
+
+If it's a damage storm, with flooded refineries, power loss or terminal damage, this becomes a weeks-long product story. And it would be felt mainly in European diesel.
+
+Until operator statements or agency shut-in tallies appear in our items, we are not putting numbers on any of this.
+
+Now, three signals we're not sure about.
+
+One. The timing looks stale. The EIA item is dated the twelfth but carries forecast data from the ninth. Either it was republished, or the date in our feed is off. Don't read it as a fresh warning of a landfall still to come.
+
+Two. The Helene comparison. The EIA is comparing the size of the storm system, not expected energy damage. A large Category two can be disruptive or benign, depending on its track. Don't infer the size of the energy impact from that comparison.
+
+Three. A first hurricane in October is late for the season. That may say something about this year's activity. But one storm is not a pattern. Keep an eye on any follow-on systems in the Gulf before the season ends.
+
+On everything else, a quick word. Nothing is carried forward from earlier editions, and the other areas we track had no new items in this window. That includes Hormuz, the Red Sea, Russian refining, Iran sanctions, OPEC plus, Chinese exports, European gas and inland logistics. Silence in our feed is not evidence of calm. It just means nothing cleared our sourcing bar.
+
+Here's what to watch next.
+
+Tuesday, the thirteenth. Offshore shut-in and evacuation tallies, plus operator restart notices. These will show whether restarts have begun. Fast restarts point to the benign scenario.
+
+The thirteenth and fourteenth. Coast Guard port status, and refinery operator statements for the Texas and Louisiana coast. Listen for any refinery reporting flooding or power loss. That's the trigger for a European diesel story. LNG terminal and channel status matters for the link to European gas prices.
+
+The fourteenth or fifteenth. The EIA's Weekly Petroleum Status Report. It's the first weekly look at Gulf Coast refinery runs, crude imports and exports, and product exports. That's the region the EIA calls Petroleum Administration for Defense District three. But it covers the week up to the storm, so the full impact may only show up the week after. And today is a US federal holiday, which may push the release to Thursday.
+
+And by the sixteenth. Northwest European diesel cracks and transatlantic product freight rates. They're a cleaner signal than headlines for whether European buyers are feeling the loss of Gulf Coast barrels.
+
+That's the brief. Sources for everything you heard are in the show notes. This episode was written and voiced with AI.
