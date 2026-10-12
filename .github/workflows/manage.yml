@@ -1,0 +1,80 @@
+# Remove or redo a published episode, then republish the site.
+# Actions -> Manage episodes -> Run workflow -> pick the action and the date.
+#   remove  takes the episode out of the feed and deletes its MP3. No credits used.
+#           Its brief and script stay in the repo as records.
+#   redo    rewrites the script and re-records the audio from that day's brief
+#           (e.g. after changing the voice or the script prompt). Uses Claude + ElevenLabs credits.
+#           To rewrite today's brief too, run "The Spread daily" again instead.
+# Podcast apps pick up the change the next time they check the feed (usually hours).
+
+name: Manage episodes
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "remove = take out of the feed (free). redo = new script + audio from that day's brief (uses credits)."
+        type: choice
+        options: [remove, redo]
+      date:
+        description: "Episode date, YYYY-MM-DD"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: the-spread   # same as the daily run, so the two never push at once
+  cancel-in-progress: false
+
+jobs:
+  change:
+    runs-on: ubuntu-latest
+    env:
+      DATE: ${{ inputs.date }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+      BRIEF_MODEL: ${{ vars.BRIEF_MODEL }}
+      SCRIPT_MODEL: ${{ vars.SCRIPT_MODEL }}
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+      PODCAST_BASE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check the date
+        run: |
+          [[ "$DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || { echo "::error::Date must look like 2026-10-12"; exit 1; }
+
+      - name: Remove the episode
+        if: ${{ inputs.action == 'remove' }}
+        run: python podcast.py remove "$DATE"
+
+      - name: Redo the episode
+        if: ${{ inputs.action == 'redo' }}
+        run: |
+          [ -f "briefs/$DATE-public.md" ] || { echo "::error::No brief for $DATE (briefs/$DATE-public.md)"; exit 1; }
+          python podcast.py episode "briefs/$DATE-public.md"
+
+      - name: Save to the repo
+        run: |
+          git config user.name "the-spread-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A scripts site
+          git commit -m "${{ inputs.action }} episode $DATE" || echo "nothing to commit"
+          git push
+
+  publish:
+    needs: change
+    uses: ./.github/workflows/publish.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

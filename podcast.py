@@ -8,6 +8,7 @@ Usage
   python podcast.py episode briefs/2026-10-12-public.md   # make today's episode + rebuild feed
   python podcast.py episode BRIEF --script-only           # write the script, skip audio
   python podcast.py feed                                  # rebuild feed.xml from site/episodes.json
+  python podcast.py remove 2026-10-12                     # drop an episode from the feed, delete its MP3
 
 Environment
   SCRIPT_MODEL           model for the script rewrite, "provider:model" (default: BRIEF_MODEL).
@@ -29,6 +30,7 @@ import json
 import os
 import re
 import sys
+import time
 import tomllib
 import urllib.request
 from pathlib import Path
@@ -181,21 +183,36 @@ def notes_from_brief(md: str, c: dict) -> tuple[str, str]:
     return f"{c['disclosure']}\n\n{plain}", html
 
 
+def remove_episode(date: str) -> None:
+    """Take an episode out of the feed and delete its MP3. Its brief and script stay as records."""
+    idx = load_index()
+    gone = [e for e in idx if e["date"] == date]
+    if not gone:
+        raise SystemExit(f"No episode dated '{date}'. Episodes: {', '.join(e['date'] for e in idx) or 'none'}")
+    for e in gone:
+        (EPISODES_DIR / e["file"]).unlink(missing_ok=True)
+    INDEX.write_text(json.dumps([e for e in idx if e["date"] != date], indent=1))
+    pipeline.log(f"removed episode {date}")
+
+
 # --------------------------------------------------------------------------- cli
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["episode", "feed"])
-    ap.add_argument("brief", nargs="?", type=Path)
+    ap.add_argument("cmd", choices=["episode", "feed", "remove"])
+    ap.add_argument("brief", nargs="?", help="episode: the brief file. remove: the episode date (YYYY-MM-DD)")
     ap.add_argument("--script-only", action="store_true")
     ap.add_argument("--no-llm", action="store_true")
     ap.add_argument("--date", help="episode date (default: from brief filename, else today)")
     a = ap.parse_args()
     c = cfg()
 
+    if a.cmd == "remove":
+        remove_episode(a.brief or a.date or "")
     if a.cmd == "episode":
         if not a.brief:
             raise SystemExit("episode needs a brief file")
+        a.brief = Path(a.brief)
         m = re.match(r"\d{4}-\d{2}-\d{2}", a.brief.name)
         date = a.date or (m.group(0) if m else dt.date.today().isoformat())
         use_llm = not a.no_llm
@@ -209,8 +226,12 @@ def main() -> None:
         if a.script_only:
             return
         EPISODES_DIR.mkdir(parents=True, exist_ok=True)
-        fname = f"{date}.mp3"
+        old = [e for e in load_index() if e["date"] == date]
+        # A redone episode gets a new file name, so apps fetch the new audio instead of a cached copy.
+        fname = f"{date}-{int(time.time())}.mp3" if old else f"{date}.mp3"
         synthesize(script, EPISODES_DIR / fname)
+        for e in old:
+            (EPISODES_DIR / e["file"]).unlink(missing_ok=True)
         notes, notes_html = notes_from_brief(a.brief.read_text(), c)
         nice = dt.date.fromisoformat(date).strftime("%a %d %b %Y")
         idx = [e for e in load_index() if e["date"] != date]

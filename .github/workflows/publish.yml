@@ -1,0 +1,39 @@
+# Publishes site/ (feed, episodes, cover) to GitHub Pages. No API calls, no credits.
+# Runs when site/ changes on main (e.g. you removed an episode locally and pushed),
+# when "Manage episodes" calls it, or by hand from the Actions tab.
+# Commits made by the daily run don't trigger it; that workflow deploys by itself.
+
+name: Publish site
+
+on:
+  push:
+    branches: [main]
+    paths: ["site/**"]
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main   # the latest commit, including one a calling workflow just pushed
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

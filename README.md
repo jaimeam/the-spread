@@ -85,6 +85,22 @@ Apple send ownership verification there, and it is visible in the feed).
 
 Until step 6 the feed isn't listed anywhere, but anyone with the URL can find it.
 
+### Removing or redoing an episode
+
+Actions → **Manage episodes** → Run workflow, then pick:
+
+- **remove**: takes the episode out of the feed and deletes its MP3 (no credits). The brief and
+  script stay in the repo, so the brief-writer still remembers that day.
+- **redo**: writes a new script and re-records the audio from that day's brief, e.g. after you
+  change the voice. Uses Claude + ElevenLabs credits. To rewrite today's brief too, run *The Spread daily* again.
+
+The site republishes within a couple of minutes. Podcast apps and Spotify update the next time they check
+the feed (usually hours), and anyone who already downloaded the episode keeps their copy.
+Old files remain in the public git history.
+
+Locally: `python podcast.py remove 2026-10-12`, commit, push. Pushing changes under `site/` republishes
+automatically (the *Publish site* workflow).
+
 ## Files
 
 | File | What it is |
@@ -95,6 +111,7 @@ Until step 6 the feed isn't listed anywhere, but anyone with the URL can find it
 | `podcast.py`, `podcast.toml` | brief -> script -> MP3 -> podcast feed; show settings |
 | `site/` | What GitHub Pages serves: `cover.png`, `feed.xml`, `episodes/` |
 | `.github/workflows/daily.yml` | The weekday schedule |
+| `.github/workflows/manage.yml`, `publish.yml` | Remove/redo an episode; republish the site |
 | `brief.db` | Every item seen, with tags (local, git-ignored). CI keeps its public-only copy in `state/public.db` |
 | `briefs/` | Output. Only `*-public.md` is committed; private briefs stay local |
 

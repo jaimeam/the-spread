@@ -27,6 +27,10 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
   Monday looks back 78h, other days 30h. `dry_run` input = brief + script as an artifact, no audio, no publish.
 - The bot commits to `main` every run (`briefs/`, `scripts/`, `site/`, `state/public.db`). Run `git pull` before working.
 - CI state lives in `state/public.db` (`BRIEF_DB`). The local `brief.db` is separate and git-ignored.
+- Removing or redoing episodes: `manage.yml` (Actions, manual) runs `podcast.py remove DATE` or re-makes
+  script + audio from `briefs/DATE-public.md`, commits, then calls `publish.yml`. `publish.yml` also deploys
+  on any push touching `site/`. A redone episode gets a new MP3 name (`DATE-<unix time>.mp3`) and keeps its GUID.
+  A `redo` spends credits and publishes, so it needs approval like any run. `remove` publishes too, so ask before running it.
 - Memory: the `used` table stops an item appearing in two briefs. The `ledger` table holds a short
   summary per brief, and the last 14 days of them are given to the brief writer (`--context-days`).
 - Secrets on GitHub: `ANTHROPIC_API_KEY`, `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`. Optional: `EIA_API_KEY`, `AGSI_API_KEY`.
@@ -52,5 +56,4 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 ## Open items
 
 - Episode length that follows the news (short on quiet days) or skipping thin days. Not decided yet.
-- A `podcast.py remove DATE` command plus a publish-on-push workflow for deleting episodes. Offered, not built.
 - First CI run with the 14 new sources (added 2026-10-12) hasn't completed yet. The dry run was cancelled during tagging.
