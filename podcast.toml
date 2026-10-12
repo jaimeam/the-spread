@@ -10,7 +10,7 @@ language = "en"
 category = "News"
 subcategory = "Business News"
 cover = "cover.png"            # in site/, square, 1400-3000 px
-base_url = ""                  # or set PODCAST_BASE_URL, e.g. https://<user>.github.io/<repo>
+base_url = "https://jaimeam.github.io/the-spread"  # PODCAST_BASE_URL overrides this
 
 # Voiced with an ElevenLabs stock voice. If you switch to a clone of your own voice, say so in both lines.
 disclosure = "This episode is written and voiced with AI, from public sources. Show notes link to every source."
