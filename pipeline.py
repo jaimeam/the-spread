@@ -149,7 +149,15 @@ def fetch_gdelt(src: dict) -> list[dict]:
     q = urllib.parse.quote(src["query"])
     url = (f"https://api.gdeltproject.org/api/v2/doc/doc?query={q}"
            "&mode=artlist&format=json&maxrecords=50&timespan=1d&sort=datedesc")
-    data = json.loads(http_get(url) or "{}")
+    # When throttled, GDELT answers 200 with a plain-text "Please limit requests..." note.
+    for attempt in range(3):
+        text = http_get(url)
+        if not text.strip() or text.lstrip().startswith("{"):
+            break
+        time.sleep(10 * (attempt + 1))
+    else:
+        raise RuntimeError(f"rate-limited: {text.strip()[:80]}")
+    data = json.loads(text or "{}")
     out = []
     for a in data.get("articles", []):
         seen = a.get("seendate", "")  # 20261012T081500Z
@@ -270,7 +278,7 @@ def ingest(sources: list[dict], fixtures: Path | None) -> int:
             new += cur.rowcount
         log(f"{src['name']}: {len(items)} items")
         if src["type"] == "gdelt" and not fixtures:
-            time.sleep(5)  # be polite to GDELT
+            time.sleep(6)  # GDELT allows one request every 5 seconds
     con.commit()
     return new
 
