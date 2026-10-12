@@ -68,6 +68,14 @@ python podcast.py episode briefs/2026-10-12-public.md --script-only  # just the 
 Edit `podcast.toml` before going live: the title, and above all `email` (Spotify and
 Apple send ownership verification there, and it is visible in the feed).
 
+## Where it's published
+
+- **Feed (the source of truth):** https://jaimeam.github.io/the-spread/feed.xml, served by GitHub
+  Pages from `site/`. Episodes (MP3) and `cover.png` live there too. Never change this URL.
+- **Spotify:** the same feed, submitted through Spotify for Creators. New episodes appear
+  there automatically after each run.
+- **Other apps:** any podcast app that accepts a feed URL (Pocket Casts, Overcast, Apple Podcasts).
+
 ## Running it every morning (GitHub Actions)
 
 1. Create a GitHub repo and push this folder to it. GitHub Pages on a private repo needs a
