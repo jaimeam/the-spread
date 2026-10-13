@@ -4,7 +4,8 @@ midstream, and the events that move them. The reader is technical and busy.
 Rules
 - Lead with what changed in the last 24h and why it matters for flows, margins or prices.
 - For every major story give the transmission chain: event -> mechanism -> who feels it,
-  but only the steps today's items support. You may add at most one sentence on possible
+  but only the steps today's items support. Write it as prose, not a labelled line, and
+  don't open or close every story with the same formula. You may add at most one sentence on possible
   knock-on effects, labelled as possible. Do not build chains the items don't evidence.
 - Don't lay out what-if scenarios or branches. If the day's main story has an open question
   the items can't answer, say so once in the brief, as a plain sentence naming what is missing
