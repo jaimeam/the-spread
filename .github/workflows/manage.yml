@@ -2,9 +2,11 @@
 # Actions -> Manage episodes -> Run workflow -> pick the action and the date.
 #   remove  takes the episode out of the feed and deletes its MP3. No credits used.
 #           Its brief and script stay in the repo as records.
-#   redo    rewrites the script and re-records the audio from that day's brief
-#           (e.g. after changing the voice or the script prompt). Uses Claude + ElevenLabs credits.
-#           To rewrite today's brief too, run "The Spread daily" again instead.
+#   redo    rewrites that day's brief from the same news items it used (no new fetch), then
+#           the script and the audio. E.g. after changing the brief or script prompts.
+#           Uses Claude + ElevenLabs credits.
+#   redo-script  keeps the brief; rewrites only the script and the audio (e.g. after changing
+#           the voice or the script prompt). Uses Claude + ElevenLabs credits.
 # Podcast apps pick up the change the next time they check the feed (usually hours).
 
 name: Manage episodes
@@ -13,9 +15,9 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "remove = take out of the feed (free). redo = new script + audio from that day's brief (uses credits)."
+        description: "remove = take out of the feed (free). redo = new brief (same news items) + script + audio. redo-script = keep the brief, new script + audio. Both redos use credits."
         type: choice
-        options: [remove, redo]
+        options: [remove, redo, redo-script]
       date:
         description: "Episode date, YYYY-MM-DD"
         required: true
@@ -37,10 +39,14 @@ jobs:
       DATE: ${{ inputs.date }}
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+      TAG_MODEL: ${{ vars.TAG_MODEL }}
       BRIEF_MODEL: ${{ vars.BRIEF_MODEL }}
       SCRIPT_MODEL: ${{ vars.SCRIPT_MODEL }}
       ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
       ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+      EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+      AGSI_API_KEY: ${{ secrets.AGSI_API_KEY }}
+      BRIEF_DB: state/public.db   # holds the items each brief used
       PODCAST_BASE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
     steps:
       - uses: actions/checkout@v4
@@ -57,8 +63,14 @@ jobs:
         if: ${{ inputs.action == 'remove' }}
         run: python podcast.py remove "$DATE"
 
-      - name: Redo the episode
+      - name: Rewrite the brief from the same items
         if: ${{ inputs.action == 'redo' }}
+        run: |
+          HOURS=$([ "$(date -u -d "$DATE" +%u)" = 1 ] && echo 78 || echo 30)
+          python pipeline.py redo --public --require-llm --date "$DATE" --hours "$HOURS"
+
+      - name: Redo the episode
+        if: ${{ startsWith(inputs.action, 'redo') }}
         run: |
           [ -f "briefs/$DATE-public.md" ] || { echo "::error::No brief for $DATE (briefs/$DATE-public.md)"; exit 1; }
           python podcast.py episode "briefs/$DATE-public.md"
@@ -67,7 +79,7 @@ jobs:
         run: |
           git config user.name "the-spread-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add -A scripts site
+          git add -A briefs scripts site state
           git commit -m "${{ inputs.action }} episode $DATE" || echo "nothing to commit"
           git push
 

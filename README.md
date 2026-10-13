@@ -99,8 +99,11 @@ Actions → **Manage episodes** → Run workflow, then pick:
 
 - **remove**: takes the episode out of the feed and deletes its MP3 (no credits). The brief and
   script stay in the repo, so the brief-writer still remembers that day.
-- **redo**: writes a new script and re-records the audio from that day's brief, e.g. after you
-  change the voice. Uses Claude + ElevenLabs credits. To rewrite today's brief too, run *The Spread daily* again.
+- **redo**: rewrites that day's brief from the same news items it used (nothing is fetched again),
+  then writes a new script and re-records the audio, e.g. after you change the prompts.
+  Uses Claude + ElevenLabs credits.
+- **redo-script**: keeps the brief; writes a new script and re-records the audio, e.g. after you
+  change the voice. Uses Claude + ElevenLabs credits.
 
 The site republishes within a couple of minutes. Podcast apps and Spotify update the next time they check
 the feed (usually hours), and anyone who already downloaded the episode keeps their copy.
