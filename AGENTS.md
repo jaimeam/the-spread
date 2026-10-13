@@ -47,6 +47,12 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 - Comparisons with earlier figures only when they matter, said flatly ("yesterday X, today Y"). Never "we reported" / "we gave you".
 - The voice is an ElevenLabs **clone of the owner's voice**. The spoken disclosure (`spoken_disclosure`)
   is said once, right after the date, and nowhere else in the audio. Show notes and the show description also disclose it.
+- Fixed running order: intro, date and disclosure → headline → "On the markets" → stories → quick hits →
+  "What to watch next" → outro. Stories are linked by topic, not numbered.
+- A revised count for the same event is a revision, not a trend. Anything older than a day is dated.
+- Episode title = the brief's top one or two `##` headlines + date. Show notes = the brief's lede, the
+  disclosure, the story list, a link to the written brief on GitHub, and every source.
+  `podcast.py notes DATE` rebuilds them for an existing episode (no audio; publishes when pushed).
 - No "Signals I'm not sure about" section, and no uncertain-signal asides. The brief ends at "Watch next".
 - Still keep fact vs claim, and "(unconfirmed - headline only)" marking.
 - Numbers only from items or the data block, with a source tag. Paraphrase; quotes of at most 10 words.

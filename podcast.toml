@@ -11,6 +11,7 @@ category = "News"
 subcategory = "Business News"
 cover = "cover.png"            # in site/, square, 1400-3000 px
 base_url = "https://jaimeam.github.io/the-spread"  # PODCAST_BASE_URL overrides this
+repo_url = "https://github.com/jaimeam/the-spread"  # show notes link to the written brief here
 
 # Voiced with an ElevenLabs clone of Jaime's voice. If you switch to a stock voice, change these lines and description.
 disclosure = "This episode is written with AI from public sources and read by an AI clone of Jaime's voice, not recorded by Jaime. Show notes link to every source."

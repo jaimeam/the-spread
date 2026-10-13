@@ -9,6 +9,7 @@ Usage
   python podcast.py episode BRIEF --script-only           # write the script, skip audio
   python podcast.py feed                                  # rebuild feed.xml from site/episodes.json
   python podcast.py remove 2026-10-12                     # drop an episode from the feed, delete its MP3
+  python podcast.py notes 2026-10-12                      # rebuild an episode's title + show notes (no audio)
 
 Environment
   SCRIPT_MODEL           model for the script rewrite, "provider:model" (default: BRIEF_MODEL).
@@ -173,14 +174,90 @@ def build_feed(c: dict) -> Path:
     return out
 
 
-def notes_from_brief(md: str, c: dict) -> tuple[str, str]:
-    """Show notes: the written brief, with sources, plus the AI-voice disclosure."""
-    plain = markdown_to_plain(md)[:3500]
-    links = re.findall(r"\[([^\]]+)\]\((https?://[^)]+)\)", md)
-    html_links = "".join(f'<li><a href="{escape(u)}">{escape(t)}</a></li>' for t, u in dict.fromkeys(links))
-    html = (f"<p>{escape(c['disclosure'])}</p>"
-            f"<p>{escape(plain[:1200])}...</p><p><strong>Sources</strong></p><ul>{html_links}</ul>")
-    return f"{c['disclosure']}\n\n{plain}", html
+NOT_STORIES = {"also noted", "still developing", "watch next"}
+
+
+def brief_sections(md: str) -> list[tuple[str, list[tuple[str, str]]]]:
+    """(heading, [(link text, url)]) for each ## section. Takes markdown links and bare URLs."""
+    out = []
+    for block in re.split(r"^## ", md, flags=re.M)[1:]:
+        heading, _, body = block.partition("\n")
+        links = re.findall(r"\[([^\]]+)\]\((https?://[^)\s]+)\)", body)
+        bare = re.sub(r"\[[^\]]+\]\(https?://[^)\s]+\)", "", body)
+        links += [(re.sub(r"^www\.", "", u.split("/")[2]), u) for u in re.findall(r"https?://[^\s)<>]+", bare)]
+        out.append((heading.strip(), list(dict.fromkeys(links))))
+    return out
+
+
+def episode_title(md: str, date: str, c: dict) -> str:
+    """The day's top story headings, e.g. 'Hormuz: six ships hit in one day; Houthis strike Riyadh | 13 Oct'."""
+    stories = [h for h, _ in brief_sections(md) if h.lower() not in NOT_STORIES]
+    when = dt.date.fromisoformat(date).strftime("%-d %b")
+    if not stories:
+        return f"{c['title']} - {when}"
+    head = stories[0]
+    if len(stories) > 1 and len(head) + len(stories[1]) <= 75:
+        head += "; " + stories[1]
+    return f"{head} | {when}"
+
+
+def lede(md: str) -> str:
+    """The brief's opening sentences, between the title and the first story."""
+    m = re.search(r"^# [^\n]*\n+(.*?)(?=^## |\Z)", md, re.M | re.S)
+    text = re.sub(r"\s*\[[^\]]+\](\([^)]*\))?", "", m.group(1)) if m else ""
+    return re.sub(r"[*_]", "", " ".join(text.split()))
+
+
+def notes_from_brief(md: str, date: str, c: dict) -> tuple[str, str]:
+    """Show notes: the brief's lede, the disclosure, the stories, a link to the written brief, and every source."""
+    sections = brief_sections(md)
+    stories = [h for h, _ in sections if h.lower() not in NOT_STORIES]
+    brief_url = f"{c['repo_url']}/blob/main/briefs/{date}-public.md" if c.get("repo_url") else ""
+    top = lede(md)
+
+    plain = [p for p in (top, c["disclosure"]) if p]
+    if stories:
+        plain.append("In this episode:\n" + "\n".join(f"- {h}" for h in stories))
+    if brief_url:
+        plain.append(f"Full written brief: {brief_url}")
+    src = "\n".join(f"- {t}: {u}" for _, links in sections for t, u in links)
+    text = "\n\n".join(plain)
+    if src:  # podcast apps cut descriptions at 4,000 characters
+        room = 3900 - len(text)
+        if len(src) > room:
+            src = src[:src.rfind("\n", 0, room - 60)] + "\n- More in the full written brief."
+        text += "\n\nSources:\n" + src
+
+    html = "".join(f"<p>{escape(p)}</p>" for p in (top, c["disclosure"]) if p)
+    if stories:
+        html += "<p><strong>In this episode</strong></p><ul>" + "".join(f"<li>{escape(h)}</li>" for h in stories) + "</ul>"
+    if brief_url:
+        html += f'<p><a href="{escape(brief_url)}">Read the full written brief</a></p>'
+    groups = [(h, links) for h, links in sections if links]
+    if groups:
+        html += "<p><strong>Sources</strong></p>"
+        for h, links in groups:
+            html += (f"<p>{escape(h)}</p><ul>"
+                     + "".join(f'<li><a href="{escape(u)}">{escape(t)}</a></li>' for t, u in links) + "</ul>")
+    return text, html
+
+
+def episode_meta(brief: Path, date: str, c: dict) -> dict:
+    md = brief.read_text()
+    notes, notes_html = notes_from_brief(md, date, c)
+    return {"title": episode_title(md, date, c), "notes": notes, "notes_html": notes_html}
+
+
+def refresh_notes(date: str, c: dict) -> None:
+    """Rebuild an existing episode's title and show notes from its brief. Audio unchanged."""
+    idx = load_index()
+    eps = [e for e in idx if e["date"] == date]
+    if not eps:
+        raise SystemExit(f"No episode dated '{date}'.")
+    for e in eps:
+        e.update(episode_meta(ROOT / "briefs" / f"{date}-public.md", date, c))
+    INDEX.write_text(json.dumps(idx, indent=1))
+    pipeline.log(f"notes refreshed for {date}: {eps[0]['title']}")
 
 
 def remove_episode(date: str) -> None:
@@ -199,8 +276,8 @@ def remove_episode(date: str) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["episode", "feed", "remove"])
-    ap.add_argument("brief", nargs="?", help="episode: the brief file. remove: the episode date (YYYY-MM-DD)")
+    ap.add_argument("cmd", choices=["episode", "feed", "remove", "notes"])
+    ap.add_argument("brief", nargs="?", help="episode: the brief file. remove, notes: the episode date (YYYY-MM-DD)")
     ap.add_argument("--script-only", action="store_true")
     ap.add_argument("--no-llm", action="store_true")
     ap.add_argument("--date", help="episode date (default: from brief filename, else today)")
@@ -209,6 +286,8 @@ def main() -> None:
 
     if a.cmd == "remove":
         remove_episode(a.brief or a.date or "")
+    if a.cmd == "notes":
+        refresh_notes(a.brief or a.date or "", c)
     if a.cmd == "episode":
         if not a.brief:
             raise SystemExit("episode needs a brief file")
@@ -232,11 +311,8 @@ def main() -> None:
         synthesize(script, EPISODES_DIR / fname)
         for e in old:
             (EPISODES_DIR / e["file"]).unlink(missing_ok=True)
-        notes, notes_html = notes_from_brief(a.brief.read_text(), c)
-        nice = dt.date.fromisoformat(date).strftime("%a %d %b %Y")
         idx = [e for e in load_index() if e["date"] != date]
-        idx.append({"date": date, "file": fname, "title": f"{c['title']} - {nice}",
-                    "notes": notes, "notes_html": notes_html})
+        idx.append({"date": date, "file": fname, **episode_meta(a.brief, date, c)})
         INDEX.write_text(json.dumps(idx, indent=1))
     pipeline.log(f"feed: {build_feed(c)}")
 
