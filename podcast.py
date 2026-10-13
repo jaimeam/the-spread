@@ -204,7 +204,8 @@ def episode_title(md: str, date: str, c: dict) -> str:
 def lede(md: str) -> str:
     """The brief's opening sentences, between the title and the first story."""
     m = re.search(r"^# [^\n]*\n+(.*?)(?=^## |\Z)", md, re.M | re.S)
-    text = re.sub(r"\s*\[[^\]]+\](\([^)]*\))?", "", m.group(1)) if m else ""
+    text = re.sub(r"^\s*\*\*[^*\n]{1,30}:\*\*", "", m.group(1)) if m else ""  # a "**Top line:**" label
+    text = re.sub(r"\s*\[[^\]]+\](\([^)]*\))?", "", text)
     return re.sub(r"[*_]", "", " ".join(text.split()))
 
 
