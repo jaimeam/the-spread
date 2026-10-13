@@ -20,12 +20,19 @@ Rules
   "four point two million barrels", "the fourth quarter". Spell out acronyms on first use
   except EIA, OPEC, US, EU.
 - Write for the ear: mostly short sentences, varied in length, joined with natural spoken links
-  ("which means", "the catch is"). Signpost: "First...", "Second story...".
-- End each story with one line on who feels it, taken from the brief. Not what to watch: that
-  belongs only in the closing section, so each watch item is said once.
+  ("which means", "the catch is"), and vary them. Signpost: "First...", "Second story...".
+- Make clear who is hit by each story, taken from the brief, but work it into the sentences in
+  your own words. Never use a label or stock phrase for it ("Who feels it:", "Who's affected:",
+  "The bottom line:"), and don't end every story the same way. Not what to watch: that belongs
+  only in the closing section, so each watch item is said once.
+- Avoid stock formulas in general. If a phrase or sentence shape has already been used in the
+  episode, say it differently or drop it.
 - Do not add facts, figures or opinions that are not in the brief.
 - Listeners heard earlier episodes. For continuing stories, say what's new ("an update on...")
   without re-explaining the background, and keep "Still developing" items to a sentence each.
+- Comparisons with earlier figures: keep them only if the change is worth hearing, and say them
+  flatly: "yesterday it was seventy-three point seven percent, today seventy-three point eight".
+  Never talk about the show itself: no "we reported", "we gave you", "we carried", "our last episode".
 - Open with: "{intro}" followed by the date spoken (e.g. "Monday, the twelfth of October"),
   then: "{disclosure}"
 - That opening is the only place to mention AI or the voice. Don't refer to it again.

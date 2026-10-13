@@ -25,7 +25,8 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 
 ## How it runs
 
-- GitHub Actions (`.github/workflows/daily.yml`), weekdays 05:00 UTC: public edition only.
+- GitHub Actions (`.github/workflows/daily.yml`), weekdays 04:41 UTC, with a 05:17 UTC backup that skips
+  if `briefs/DATE-public.md` already exists (GitHub drops or delays some scheduled runs). Public edition only.
   Monday looks back 78h, other days 30h. `dry_run` input = brief + script as an artifact, no audio, no publish.
 - The bot commits to `main` every run (`briefs/`, `scripts/`, `site/`, `state/public.db`). Run `git pull` before working.
 - CI state lives in `state/public.db` (`BRIEF_DB`). The local `brief.db` is separate and git-ignored.
@@ -42,7 +43,8 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 
 - Every LLM prompt lives in `prompts/` (one Markdown file per call), loaded by `pipeline.prompt()`.
 - Length follows the news: 2-7 minutes, never padded (`prompts/script_system.md`).
-- "What to watch" is said once, in the closing section. Stories end with who feels it, not watch items.
+- "What to watch" is said once, in the closing section. Each story makes clear who is hit, in its own words (no "Who feels it:" label or other repeated formulas), and holds no watch items.
+- Comparisons with earlier figures only when they matter, said flatly ("yesterday X, today Y"). Never "we reported" / "we gave you".
 - The voice is an ElevenLabs **clone of the owner's voice**. The spoken disclosure (`spoken_disclosure`)
   is said once, right after the date, and nowhere else in the audio. Show notes and the show description also disclose it.
 - No "Signals I'm not sure about" section, and no uncertain-signal asides. The brief ends at "Watch next".
