@@ -11,6 +11,7 @@ Usage
   python pipeline.py run --no-llm        # no API key: keyword tagging + plain digest
   python pipeline.py run --fixtures fixtures   # offline test with saved feeds
   python pipeline.py run --require-llm   # fail if a model key is missing (used in CI)
+  python pipeline.py redo --public --date 2026-10-13   # rewrite that brief from the same items, no fetch
 
 Choosing models: one setting per task, written as "provider:model".
   TAG_MODEL           tags each news item      default anthropic:claude-haiku-5-5
@@ -265,6 +266,9 @@ def db() -> sqlite3.Connection:
     # Short summaries of past briefs: the brief writer's memory of what it already said.
     con.execute("""CREATE TABLE IF NOT EXISTS ledger (
         brief_date TEXT, edition TEXT, brief_hash TEXT, summary TEXT, PRIMARY KEY (brief_date, edition))""")
+    # The data block and look-back each brief was written with, so a redo can use the same.
+    con.execute("""CREATE TABLE IF NOT EXISTS inputs (
+        brief_date TEXT, edition TEXT, data TEXT, hours INTEGER, PRIMARY KEY (brief_date, edition))""")
     return con
 
 
@@ -428,6 +432,17 @@ def recent_items(hours: int, public: bool, min_rel: int = 2) -> list[dict]:
            AND id NOT IN (SELECT item_id FROM used WHERE edition = ? AND brief_date < ?)"""
     rows = db().execute(q + (" AND public_ok=1" if public else ""),
                         (since, edition(public), dt.date.today().isoformat())).fetchall()
+    return _ranked(rows, min_rel)
+
+
+def used_items(date: str, public: bool) -> list[dict]:
+    """The items a brief was written from, for a redo: same news, no new fetch."""
+    q = """SELECT id,source,title,url,published,summary,tags FROM items
+           WHERE id IN (SELECT item_id FROM used WHERE edition = ? AND brief_date = ?)"""
+    return _ranked(db().execute(q, (edition(public), date)).fetchall(), 0)
+
+
+def _ranked(rows: list, min_rel: int) -> list[dict]:
     out = []
     for iid, source, title, url, pub, summary, tags in rows:
         t = json.loads(tags or "{}")
@@ -438,10 +453,27 @@ def recent_items(hours: int, public: bool, min_rel: int = 2) -> list[dict]:
     return sorted(out, key=lambda x: -x.get("relevance", 0))       # ...within relevance
 
 
-def write_brief(nodes: list[dict], hours: int, public: bool, use_llm: bool, context_days: int = 14) -> Path:
-    items = recent_items(hours, public)
-    data = eia_weekly() + eu_gas_storage()
-    today = dt.date.today().isoformat()
+def write_brief(nodes: list[dict], hours: int, public: bool, use_llm: bool, context_days: int = 14,
+                redo: str | None = None) -> Path:
+    """Today's brief from new items, or with `redo` (a date) that day's brief again from the items it used."""
+    today = redo or dt.date.today().isoformat()
+    if redo:
+        items = used_items(redo, public)
+        if not items:
+            raise SystemExit(f"No recorded items for the {edition(public)} brief of {redo}; nothing to redo from.")
+        row = db().execute("SELECT data, hours FROM inputs WHERE brief_date=? AND edition=?",
+                           (redo, edition(public))).fetchone()
+        if row:
+            data, hours = json.loads(row[0]), row[1]
+        elif redo == dt.date.today().isoformat():
+            data = eia_weekly() + eu_gas_storage()  # not saved for this brief; today's figures are the same
+        else:
+            data = []
+            log(f"no saved data block for {redo}; redoing without one")
+        log(f"redo {redo}: {len(items)} items, {len(data)} data lines, no new fetch")
+    else:
+        items = recent_items(hours, public)
+        data = eia_weekly() + eu_gas_storage()
     BRIEF_DIR.mkdir(exist_ok=True)
     path = BRIEF_DIR / f"{today}{'-public' if public else ''}.md"
 
@@ -461,7 +493,7 @@ def write_brief(nodes: list[dict], hours: int, public: bool, use_llm: bool, cont
     if not items:
         raise SystemExit(f"No relevant items in the last {hours}h; not writing a brief. Check the feed log above.")
     items = items[:120]
-    history = ledger_context(public, context_days)
+    history = ledger_context(public, context_days, before=today)
     map_txt = "\n".join(f"- {n['label']} ({n['id']}): " + " | ".join(n["chain"]) for n in nodes)
     items_txt = "\n".join(json.dumps({k: i.get(k) for k in
                                       ("title", "url", "source", "published", "summary", "nodes", "why", "relevance")})
@@ -478,6 +510,7 @@ def write_brief(nodes: list[dict], hours: int, public: bool, use_llm: bool, cont
     con.execute("DELETE FROM used WHERE edition=? AND brief_date=?", (edition(public), today))
     con.executemany("INSERT OR REPLACE INTO used VALUES (?,?,?)",
                     [(i["id"], edition(public), today) for i in items])
+    con.execute("INSERT OR REPLACE INTO inputs VALUES (?,?,?,?)", (today, edition(public), json.dumps(data), hours))
     con.commit()
     ledger_summary(today, public, brief)  # so tomorrow's run knows what today's said
     return path
@@ -507,13 +540,13 @@ def ledger_summary(date: str, public: bool, brief: str) -> str:
     return summary
 
 
-def ledger_context(public: bool, days: int) -> str:
-    """Ledger entries for this edition's briefs from the last `days` days, before today."""
-    today = dt.date.today()
-    since = (today - dt.timedelta(days=days)).isoformat()
+def ledger_context(public: bool, days: int, before: str | None = None) -> str:
+    """Ledger entries for this edition's briefs from the `days` days before `before` (default today)."""
+    end = dt.date.fromisoformat(before) if before else dt.date.today()
+    since = (end - dt.timedelta(days=days)).isoformat()
     out = []
     for date, f in sorted(brief_files(public).items()):
-        if since <= date < today.isoformat():
+        if since <= date < end.isoformat():
             try:
                 out.append(f"### {date}\n{ledger_summary(date, public, f.read_text())}")
             except Exception as e:  # noqa: BLE001  missing memory must not block today's brief
@@ -525,7 +558,7 @@ def ledger_context(public: bool, days: int) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("cmd", choices=["run", "ingest", "tag", "brief"])
+    ap.add_argument("cmd", choices=["run", "ingest", "tag", "brief", "redo"])
     ap.add_argument("--public", action="store_true", help="only public_ok sources")
     ap.add_argument("--no-llm", action="store_true", help="keyword tagging, plain digest")
     ap.add_argument("--require-llm", action="store_true",
@@ -534,6 +567,7 @@ def main() -> None:
     ap.add_argument("--context-days", type=int, default=14,
                     help="how many days of earlier briefs the writer is reminded of")
     ap.add_argument("--fixtures", type=Path, help="read saved feeds from this folder instead of the web")
+    ap.add_argument("--date", help="redo: the brief to rewrite (YYYY-MM-DD, default today)")
     a = ap.parse_args()
 
     use_llm = not a.no_llm
@@ -557,6 +591,9 @@ def main() -> None:
         log(f"tagged {tag(nodes, use_llm)} items")
     if a.cmd in ("run", "brief"):
         log(f"brief written to {write_brief(nodes, a.hours, a.public, use_llm, a.context_days)}")
+    if a.cmd == "redo":
+        date = a.date or dt.date.today().isoformat()
+        log(f"brief rewritten: {write_brief(nodes, a.hours, a.public, use_llm, a.context_days, redo=date)}")
 
 
 if __name__ == "__main__":

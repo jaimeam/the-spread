@@ -30,8 +30,10 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
   Monday looks back 78h, other days 30h. `dry_run` input = brief + script as an artifact, no audio, no publish.
 - The bot commits to `main` every run (`briefs/`, `scripts/`, `site/`, `state/public.db`). Run `git pull` before working.
 - CI state lives in `state/public.db` (`BRIEF_DB`). The local `brief.db` is separate and git-ignored.
-- Removing or redoing episodes: `manage.yml` (Actions, manual) runs `podcast.py remove DATE` or re-makes
-  script + audio from `briefs/DATE-public.md`, commits, then calls `publish.yml`. `publish.yml` also deploys
+- Removing or redoing episodes: `manage.yml` (Actions, manual) runs `podcast.py remove DATE`, or `redo`
+  (`pipeline.py redo --date DATE` rewrites the brief from the items in the `used` table, no fetch, then
+  script + audio), or `redo-script` (script + audio from the existing brief). It commits, then calls `publish.yml`.
+  The data block and look-back of each brief are saved in the `inputs` table so a redo uses the same. `publish.yml` also deploys
   on any push touching `site/`. A redone episode gets a new MP3 name (`DATE-<unix time>.mp3`) and keeps its GUID.
   A `redo` spends credits and publishes, so it needs approval like any run. `remove` publishes too, so ask before running it.
 - Memory: the `used` table stops an item appearing in two briefs. The `ledger` table holds a short
