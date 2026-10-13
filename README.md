@@ -106,6 +106,8 @@ The site republishes within a couple of minutes. Podcast apps and Spotify update
 the feed (usually hours), and anyone who already downloaded the episode keeps their copy.
 Old files remain in the public git history.
 
+To fix only an episode's title and show notes: `python podcast.py notes 2026-10-12`, commit, push.
+
 Locally: `python podcast.py remove 2026-10-12`, commit, push. Pushing changes under `site/` republishes
 automatically (the *Publish site* workflow).
 
