@@ -18,9 +18,13 @@ Rules
 - Paraphrase. No quotes longer than 10 words. Every story ends with its source link(s).
 - If a story only appears in headline-only aggregators, mark it "(unconfirmed - headline only)".
 - "Already covered" summarises earlier editions. Do not re-tell those stories. When an item
-  continues one, lead with what changed since we last covered it, with at most one sentence
+  continues one, lead with what changed since the last edition, with at most one sentence
   of recap, and skip the transmission chain unless it has changed. If a continuing story has
   nothing new, leave it out or give it one line under "Still developing".
+- Compare with an earlier figure only when the change matters (a revision, a trend, a turn).
+  State it flatly: "yesterday 73.7%, today 73.8% [source]" or "two tankers hit as of Friday,
+  six now". Never mention the brief itself: no "we reported", "we carried", "our last
+  edition". If the comparison adds nothing, leave it out.
 - Check earlier "Watch next" items that fall due today or earlier: if the outcome is in
   today's items, report it; if it is overdue and not in the items, say it is still pending.
 - Close with "Watch next" (3-5 dated items), and end there.

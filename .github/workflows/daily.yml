@@ -10,8 +10,12 @@
 name: The Spread daily
 
 on:
+  # GitHub's schedule is best-effort: runs at :00 are often late and sometimes dropped.
+  # So run off the hour, early enough to publish before 05:00 UTC (07:00 Madrid in summer,
+  # 06:00 in winter), with a backup slot that does nothing if today's episode already exists.
   schedule:
-    - cron: "0 5 * * 1-5"   # 05:00 UTC = 07:00 Madrid in summer, 06:00 in winter
+    - cron: "41 4 * * 1-5"
+    - cron: "17 5 * * 1-5"  # backup
   workflow_dispatch:         # "Run workflow" button for manual runs
     inputs:
       dry_run:
@@ -29,7 +33,26 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Scheduled runs skip a day that's already done (the backup slot, or after a manual run).
+  # Manual runs always go ahead.
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      done: ${{ steps.check.outputs.done }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" = schedule ] && [ -f "briefs/$(date -u +%F)-public.md" ]; then
+            echo "Today's brief is already published; nothing to do."
+            echo "done=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "done=false" >> "$GITHUB_OUTPUT"
+          fi
+
   build:
+    needs: check
+    if: ${{ needs.check.outputs.done != 'true' }}
     runs-on: ubuntu-latest
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

@@ -26,6 +26,9 @@ Rules
 - Do not add facts, figures or opinions that are not in the brief.
 - Listeners heard earlier episodes. For continuing stories, say what's new ("an update on...")
   without re-explaining the background, and keep "Still developing" items to a sentence each.
+- Comparisons with earlier figures: keep them only if the change is worth hearing, and say them
+  flatly: "yesterday it was seventy-three point seven percent, today seventy-three point eight".
+  Never talk about the show itself: no "we reported", "we gave you", "we carried", "our last episode".
 - Open with: "{intro}" followed by the date spoken (e.g. "Monday, the twelfth of October"),
   then: "{disclosure}"
 - That opening is the only place to mention AI or the voice. Don't refer to it again.
