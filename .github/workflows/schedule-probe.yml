@@ -1,0 +1,65 @@
+# Temporary probe: measures how late GitHub's scheduler delivers cron events on this repo.
+# Free (public repo, no checkout, no secrets, no credits). Delete once we have a few days of data.
+# Each cron line is unique within a day, so the run title (the cron that fired) gives the
+# nominal time, and the run's created_at gives the actual time.
+
+name: Schedule probe
+run-name: "probe ${{ github.event.schedule || 'manual' }}"
+
+on:
+  schedule:
+    - cron: "23 0 * * *"
+    - cron: "23 1 * * *"
+    - cron: "23 2 * * *"
+    - cron: "23 3 * * *"
+    - cron: "23 4 * * *"
+    - cron: "23 5 * * *"
+    - cron: "23 6 * * *"
+    - cron: "23 7 * * *"
+    - cron: "23 8 * * *"
+    - cron: "23 9 * * *"
+    - cron: "23 10 * * *"
+    - cron: "23 11 * * *"
+    - cron: "23 12 * * *"
+    - cron: "23 13 * * *"
+    - cron: "23 14 * * *"
+    - cron: "23 15 * * *"
+    - cron: "23 16 * * *"
+    - cron: "23 17 * * *"
+    - cron: "23 18 * * *"
+    - cron: "23 19 * * *"
+    - cron: "23 20 * * *"
+    - cron: "23 21 * * *"
+    - cron: "23 22 * * *"
+    - cron: "23 23 * * *"
+    - cron: "0 3 * * *"
+    - cron: "0 4 * * *"
+    - cron: "0 5 * * *"
+    - cron: "41 4 * * *"   # same slot as daily.yml
+    - cron: "17 5 * * *"   # same slot as daily.yml (backup)
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Report lateness
+        env:
+          CRON: ${{ github.event.schedule }}
+        run: |
+          now=$(date -u +%s)
+          echo "cron:      ${CRON:-manual}"
+          echo "started:   $(date -u '+%F %T') UTC"
+          [ -z "$CRON" ] && exit 0
+          read -r m h _ <<< "$CRON"
+          nominal=$(date -u -d "$(date -u +%F) $h:$m" +%s)
+          [ "$nominal" -gt "$now" ] && nominal=$((nominal - 86400))
+          late=$(( (now - nominal) / 60 ))
+          echo "nominal:   $(date -u -d "@$nominal" '+%F %T') UTC"
+          echo "late by:   ${late} min"
+          echo "| cron | nominal (UTC) | job started (UTC) | late |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| \`$CRON\` | $(date -u -d "@$nominal" '+%F %H:%M') | $(date -u '+%F %H:%M') | ${late} min |" >> "$GITHUB_STEP_SUMMARY"
