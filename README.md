@@ -93,6 +93,23 @@ Apple send ownership verification there, and it is visible in the feed).
 
 Until step 6 the feed isn't listed anywhere, but anyone with the URL can find it.
 
+### Starting it on time from your own machine
+
+GitHub's scheduler is best-effort, and in October 2026 it delivered the 04:41 and 05:17 runs
+about 5 hours late. So a machine that is always on (a mini PC, a home server) starts the
+workflow at 04:41 UTC on weekdays instead, and the GitHub schedule stays as a late fallback.
+Both skip a day whose episode already exists.
+
+1. GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token.
+   Repository access: only `the-spread`. Permissions: **Actions: Read and write**. Note the expiry date.
+2. On the machine (any systemd Linux): `git clone https://github.com/jaimeam/the-spread`,
+   then `cd the-spread/trigger && sudo ./install.sh` and paste the token. It checks the token
+   (without starting anything) and enables the timer.
+3. Logs: `journalctl -u the-spread-trigger`. Next run: `systemctl list-timers the-spread-trigger.timer`.
+   New token: `sudo ./install.sh --new-token`.
+
+The timer wakes the machine from suspend, and runs at boot if the machine was off at 04:41.
+
 ### Removing or redoing an episode
 
 Actions → **Manage episodes** → Run workflow, then pick:
@@ -125,6 +142,7 @@ automatically (the *Publish site* workflow).
 | `site/` | What GitHub Pages serves: `cover.png`, `feed.xml`, `episodes/` |
 | `.github/workflows/daily.yml` | The weekday schedule |
 | `.github/workflows/manage.yml`, `publish.yml` | Remove/redo an episode; republish the site |
+| `trigger/` | systemd timer that starts the daily workflow on time from your own machine |
 | `brief.db` | Every item seen, with tags (local, git-ignored). CI keeps its public-only copy in `state/public.db` |
 | `briefs/` | Output. Only `*-public.md` is committed; private briefs stay local |
 

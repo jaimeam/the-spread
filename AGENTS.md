@@ -26,7 +26,9 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 ## How it runs
 
 - GitHub Actions (`.github/workflows/daily.yml`), weekdays 04:41 UTC, with a 05:17 UTC backup that skips
-  if `briefs/DATE-public.md` already exists (GitHub drops or delays some scheduled runs). Public edition only.
+  if `briefs/DATE-public.md` already exists (GitHub drops or delays some scheduled runs, by ~5h in Oct 2026).
+  The on-time start comes from the owner's mini PC: a systemd timer (`trigger/`) dispatches the workflow at
+  04:41 UTC with `skip_if_done=true`; the GitHub schedule is the fallback. Public edition only.
   Monday looks back 78h, other days 30h. `dry_run` input = brief + script as an artifact, no audio, no publish.
 - The bot commits to `main` every run (`briefs/`, `scripts/`, `site/`, `state/public.db`). Run `git pull` before working.
 - CI state lives in `state/public.db` (`BRIEF_DB`). The local `brief.db` is separate and git-ignored.
