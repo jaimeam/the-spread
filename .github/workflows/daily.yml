@@ -22,6 +22,10 @@ on:
         description: "Dry run: write the brief and script only (no audio, nothing published). Download them under the run's Artifacts."
         type: boolean
         default: false
+      skip_if_done:
+        description: "Do nothing if today's episode already exists (set by an external scheduler)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -33,17 +37,22 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Scheduled runs skip a day that's already done (the backup slot, or after a manual run).
-  # Manual runs always go ahead.
+  # Scheduled runs (and dispatches with skip_if_done) skip a day that's already done:
+  # the backup slot, a late scheduled run, or after a manual run. Other manual runs go ahead.
+  # Checkout uses the branch tip, not the commit the event was created on: GitHub can deliver
+  # both slots hours late and together, and the second must see the first one's brief.
   check:
     runs-on: ubuntu-latest
     outputs:
       done: ${{ steps.check.outputs.done }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
       - id: check
         run: |
-          if [ "${{ github.event_name }}" = schedule ] && [ -f "briefs/$(date -u +%F)-public.md" ]; then
+          if { [ "${{ github.event_name }}" = schedule ] || [ "${{ inputs.skip_if_done }}" = true ]; } \
+             && [ -f "briefs/$(date -u +%F)-public.md" ]; then
             echo "Today's brief is already published; nothing to do."
             echo "done=true" >> "$GITHUB_OUTPUT"
           else
@@ -68,6 +77,8 @@ jobs:
       PODCAST_BASE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}   # branch tip: latest state/public.db, and the push won't be rejected
 
       - run: mkdir -p state
 
