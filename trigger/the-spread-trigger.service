@@ -1,0 +1,10 @@
+[Unit]
+Description=Start The Spread daily workflow on GitHub
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+DynamicUser=yes
+LoadCredential=github-token:/etc/the-spread/github-token
+ExecStart=/usr/local/bin/the-spread-dispatch

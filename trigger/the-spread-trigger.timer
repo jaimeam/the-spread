@@ -1,0 +1,12 @@
+[Unit]
+Description=Weekday 04:41 UTC start of The Spread daily workflow
+
+[Timer]
+OnCalendar=Mon..Fri *-*-* 04:41:00 UTC
+AccuracySec=1s
+# Wake the machine from suspend for it, and run at boot if the machine was off at 04:41.
+WakeSystem=true
+Persistent=true
+
+[Install]
+WantedBy=timers.target
