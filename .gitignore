@@ -9,3 +9,6 @@ brief.db
 briefs/*.md
 !briefs/*-public.md
 !briefs/*-sample.md
+
+# GitHub token for trigger/install.sh. Never commit.
+token.txt

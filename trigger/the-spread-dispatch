@@ -25,6 +25,10 @@ if [ "${1:-}" = --check ]; then
   exit 1
 fi
 
+# The timer is Persistent: a Friday run missed while the machine was off fires at the next boot,
+# maybe on a weekend, and skip_if_done would find no brief for that day and make an episode.
+if [ "$(date -u +%u)" -gt 5 ]; then echo "weekend (UTC): nothing to do"; exit 0; fi
+
 # Retry network failures (e.g. right after waking from suspend) and GitHub 5xx/429.
 # Stop at once on success (204) or any other 4xx: a bad or expired token won't fix itself.
 for attempt in $(seq 1 20); do
