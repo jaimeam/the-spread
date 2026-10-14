@@ -3,12 +3,9 @@
 # so it does nothing if today's episode already exists). Run by the-spread-trigger.service.
 #   the-spread-dispatch          start the workflow
 #   the-spread-dispatch --check  only check the token may start the workflow (starts nothing)
-#   the-spread-dispatch --test   start trigger-test.yml instead, which only prints a line (test.sh)
 set -uo pipefail
 
-workflow=daily.yml
-[ "${1:-}" = --test ] && workflow=trigger-test.yml
-url=https://api.github.com/repos/jaimeam/the-spread/actions/workflows/$workflow
+url=https://api.github.com/repos/jaimeam/the-spread/actions/workflows/daily.yml
 token_file=${CREDENTIALS_DIRECTORY:-/etc/the-spread}/github-token
 token=$(<"$token_file") || { echo "cannot read $token_file"; exit 1; }
 auth=(-H "Authorization: Bearer $token" -H "Accept: application/vnd.github+json"
@@ -30,7 +27,7 @@ fi
 
 # The timer is Persistent: a Friday run missed while the machine was off fires at the next boot,
 # maybe on a weekend, and skip_if_done would find no brief for that day and make an episode.
-if [ "$workflow" = daily.yml ] && [ "$(date -u +%u)" -gt 5 ]; then echo "weekend (UTC): nothing to do"; exit 0; fi
+if [ "$(date -u +%u)" -gt 5 ]; then echo "weekend (UTC): nothing to do"; exit 0; fi
 
 # Retry network failures (e.g. right after waking from suspend) and GitHub 5xx/429.
 # Stop at once on success (204) or any other 4xx: a bad or expired token won't fix itself.
@@ -38,7 +35,7 @@ for attempt in $(seq 1 20); do
   code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 30 -X POST "${auth[@]}" \
     "$url/dispatches" -d '{"ref":"main","inputs":{"skip_if_done":"true"}}') || code=000
   case $code in
-    204) echo "$workflow started (attempt $attempt)"; exit 0 ;;
+    204) echo "workflow started (attempt $attempt)"; exit 0 ;;
     000|429|5??) echo "attempt $attempt: HTTP $code, retrying in 30s"; sleep 30 ;;
     *) echo "HTTP $code: not retrying (check the token: Actions read and write on the-spread)"; exit 1 ;;
   esac
