@@ -19,6 +19,8 @@ Running order (the same every day, so listeners know where things are)
 5. Quick hits: the brief's "Also noted" and "Still developing" items, a sentence or two each,
    introduced once ("A few more things.").
 6. Close with the "watch next" items, introduced once ("What to watch next"), then: "{outro}"
+   If the brief has no "Watch next", go straight from the last section to the outro. Say a
+   "Further out" line in one short sentence after the watch items.
 
 Rules
 - Plain text only. No markdown, bullets, links, URLs or bracketed source tags.
