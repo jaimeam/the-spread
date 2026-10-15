@@ -1,65 +1,45 @@
 This is The Spread, your energy markets briefing for Thursday, the fifteenth of October. This episode is written with AI, and read by an AI clone of my voice.
 
-Two more ships have gone down near the Strait of Hormuz, and Brent is back above one hundred and six dollars a barrel. Saudi Arabia has now confirmed a fire at Aramco's headquarters, the Houthis are promising more strikes on oil sites, and the US diesel arbitrage to Europe has reopened.
+Two more ships have sunk near the Strait of Hormuz, and the attacks keep eating into the partial recovery in Gulf loadings. At the same time, Saudi Arabia now acknowledges a fire at Aramco's headquarters, and the Houthis say more strikes on Saudi oil sites are coming.
 
-On the markets. Brent is trading above one hundred and six dollars a barrel, according to OilPrice dot com. The American Petroleum Institute estimates US crude stocks fell eleven point one two million barrels in the week to the ninth of October. In Europe, gas storage stood at seventy-four point zero percent on the thirteenth, according to Gas Infrastructure Europe.
+On the markets. Brent is back above one hundred and six dollars a barrel, according to OilPrice dot com. The American Petroleum Institute estimates US crude stocks fell eleven point one two million barrels in the week to the ninth of October. The EIA's latest figures, for the week before, put commercial crude at four hundred and twenty-four point one three four million barrels, down about three point two million, with distillates at one hundred and five point one three eight million. And EU gas storage was seventy-four point zero percent full on the thirteenth of October, according to Gas Infrastructure Europe.
 
-Starting in the Gulf. A Singapore-flagged containership sank after a projectile hit it in the strait, and a dry bulk carrier also went down, weeks after an earlier deadly strike, gCaptain reported. One tally cited by OilPrice dot com counts twelve vessels attacked between the fifth and the eleventh of October.
+The sinkings first. A Singapore-flagged container ship went down after being struck by a projectile in the strait, and a dry bulk carrier hit in an earlier strike has also sunk, gCaptain reported. One tally counts twelve vessels attacked between the fifth and the eleventh of October, six of them on Sunday the eleventh.
 
-The attacks have carried on since Sunday's six-ship day. A tanker and a container ship were hit on Tuesday by projectiles described as unknown. OilPrice dot com attributes the campaign to Iran, but nobody has said who fired on Tuesday. Separately, US Central Command says it destroyed an Iranian-affiliated dhow in the Gulf of Oman on the sixth of October, saying it was helping target US warships.
+This isn't just a revised count. A tanker and a container ship were struck on Tuesday the thirteenth, according to OilPrice dot com, so the attacks are still happening on new dates. Earlier, on the sixth, US Central Command said it destroyed an Iranian-linked dhow in the Gulf of Oman that it accused of helping to target American warships.
 
-All this is undoing a recent recovery in Gulf oil shipments, and traders have stopped responding to peace talk from Washington. Rigzone reports that rising shipping costs are part of what's lifting crude.
+OilPrice dot com argues that White House talk of peace no longer moves prices the way it did earlier in the war. The supply gap behind that is big. In a note dated the sixth of October, Kpler put Middle East crude losses at more than two billion barrels, with about five million barrels a day still offline.
 
-The supply gap was already wide. As of Kpler's note on the sixth of October, about five million barrels a day of Middle East crude was still offline, and more than two billion barrels had been lost since the war began. Saudi loadings reached nine point one million barrels a day in late September, a post-COVID high. And according to the International Energy Agency, UAE output hit a record five point three million barrels a day in September as Hormuz flows resumed. All of that predates the latest escalation.
+Saudi Arabia has been the main offset. Its loadings reached a post-COVID high of nine point one million barrels a day in late September, as East-West pipeline flows recovered and underground storage began to unwind. Kpler expects Saudi supply to average about nine million a day this month. The International Energy Agency says UAE output rose by four hundred thousand barrels a day in September, to a record five point three million.
 
-Japan is preparing to pay for the long way round. Its cabinet approved three bills on Tuesday that subsidise oil imported from outside Hormuz, support tanker insurance and finance alternative transport routes, Splash twenty-four seven reported. Subsidised Japanese buying could pull more Atlantic Basin crude east.
+Importers are paying to avoid the strait. On the thirteenth, Japan's cabinet approved three bills to subsidise the extra cost of oil from outside Hormuz, back tanker insurance and fund alternative transport, Splash twenty-four seven reported. What the reports don't yet show is how far October's attacks have cut loadings from September's highs.
 
-Staying in Saudi Arabia. Authorities have now reported a limited fire at Aramco's Dhahran office complex after Tuesday night's missile attack. Sources told Reuters the damage was extensive. A source familiar with the matter told Rigzone that oil production was not affected.
+That Saudi offset is now under direct threat. Saudi authorities report a limited fire at Aramco's Dhahran office complex from Tuesday night's missile attack, according to OilPrice dot com. Sources told Reuters the damage was extensive, while a source told Rigzone that oil production was not affected.
 
-The Houthis also claim to have hit an Aramco refinery in Riyadh and King Khalid airport. Saudi Arabia has not confirmed either. The group says more strikes on Saudi airports and oil facilities are coming in the next few days, and has told workers to evacuate them.
+The Houthis also claim they hit an Aramco refinery in Riyadh and King Khalid airport. Neither claim is confirmed. They say attacks on Saudi airports and oil facilities will resume in the coming days, and have told workers to evacuate. If those threats reach export sites, they would hit the very barrels currently making up for losses inside the Gulf.
 
-With no barrels lost so far, this is adding risk premium rather than taking supply off the market. Strikes on export infrastructure would change that, and would endanger the East-West pipeline flows that Kpler says have recovered.
+Turning to diesel, where cheaper freight has reopened the US-to-Europe trade. In the week to the thirteenth, medium-range tanker rates fell from Worldscale three seventy-five to three ten, while Northwest European cash differentials firmed, according to Kpler.
 
-Over to diesel. In a single week, the November arbitrage from the US Gulf Coast to Northwest Europe swung from about minus eighteen dollars a tonne to plus six dollars seventy-five, according to Kpler. European cash differentials firmed, and medium range tanker rates fell from three hundred and seventy-five to three hundred and ten on the Worldscale index.
+The upshot is that November arbitrage from the US Gulf Coast to Northwest Europe swung from about minus eighteen dollars a tonne to plus six dollars seventy-five. That pulls Gulf Coast barrels across the Atlantic. The route from India to the Mediterranean stays shut because long-range tanker rates are rising, so Europe is leaning on the US rather than on supply from East of Suez.
 
-Meanwhile, rising rates on the larger long range tankers keep the route from India to the Mediterranean shut. So Europe's prompt diesel demand is landing on US Gulf refiners, not Indian ones.
+That's awkward for American drivers and truckers, with US diesel still above six dollars, OilPrice dot com reported. Vice President Vance said the administration used the Defense Production Act to expand Delek's refinery in Tyler, Texas. No capacity figure was given.
 
-At home, Vice President Vance said on Tuesday that the administration has used the Defense Production Act, a Korean War-era law, to expand Delek's refinery in Tyler, Texas. US diesel prices are above six dollars, OilPrice dot com reported. No capacity figure was given.
+Over in gas, the liquefied natural gas squeeze from the Gulf is now destroying demand, not just lifting prices. Wood Mackenzie says India's gas demand is down one point five million tonnes so far this year as spot prices climbed. Before the war, it expected South Asian demand to grow by about seven percent.
 
-On inventories, the American Petroleum Institute's eleven million barrel draw follows two point zero nine million the week before. The EIA's own figures for that week aren't out yet. Its latest data, for the week to the second of October, showed a crude draw of three point one eight six million barrels, with distillate stocks at one hundred and five point one three eight million barrels.
+Qatar is trying to restart flows using older tankers and new tactics, gCaptain reported. Its shipments had all but stopped by late August, after a projectile hit one of its tankers outside the strait.
 
-Turning to gas. Europe's storage build is slowing. Over the last three readings, daily gains narrowed from zero point one four to zero point one zero, then to zero point zero eight percentage points, according to Gas Infrastructure Europe.
+And a claim to treat with care. President Trump says Taiwan will buy thirty percent of Alaska LNG's output for twenty years. Taipei says no binding commitments have been finalised.
 
-Qatar's shipments had all but stopped by late August, after a projectile hit one of its tankers outside the strait. Doha is now trying older tankers and new tactics, gCaptain reported.
+To Russia. Alexander Novak called the US diesel agreement a positive signal for the Russian economy, linking it to higher refining and production, OilPrice dot com reported. It's Moscow's first on-record endorsement of the deal.
 
-In South Asia, high spot prices are cutting demand. India's gas demand is down one and a half million tonnes so far this year, according to Wood Mackenzie. Before the war, Wood Mackenzie had expected South Asian LNG demand to grow by two point seven million tonnes, or seven percent.
+Separately, Russia says it carried out a massive overnight strike on Ukrainian power plants. That sits uneasily with the energy truce, which so far only President Trump has announced.
 
-And President Trump says Taiwan will buy thirty percent of the planned Alaska LNG project's output for twenty years, a deal he puts at seventy to eighty billion dollars. He also cited a four point four billion dollar equity stake. Taipei says no binding commitments have been finalised.
+A few more things. On Hurricane Isaias, US offshore regulators said platform and rig evacuations were continuing as of the fourteenth. Evacuation counts, shut-in volumes and landfall aren't in today's reports.
 
-Over in Russia. Deputy Prime Minister Alexander Novak called the US diesel agreement a positive signal for the economy, and linked it to higher Russian refining and output. Finance Minister Anton Siluanov said on Tuesday that Russia levies no export duty on diesel, according to OilPrice dot com.
+The Office of Foreign Assets Control removed a Venezuela-related designation on the fourteenth, without naming the entity. Aramco's new refining venture in China has received its first crude cargo. And September's US consumer price index, due on the fourteenth, has yet to show up in the reports we've seen today.
 
-Separately, Moscow says it carried out a massive overnight strike on Ukrainian power plants, Rigzone reported. That sits awkwardly with the energy truce Trump announced, which neither Moscow nor Kyiv has confirmed.
+What to watch next. Today, the EIA weekly for the week to the ninth of October, which will test that American Petroleum Institute draw. Today and tomorrow, regulator updates on Isaias, with evacuation counts and shut-in volumes.
 
-A few more things.
-
-On Hurricane Isaias, the Bureau of Safety and Environmental Enforcement's update on the fourteenth confirms platform and rig evacuations in the Gulf, based on operator reports. Evacuation counts, shut-in volumes and landfall aren't in the reports so far.
-
-September's US consumer price index, due on the fourteenth, hasn't appeared in today's reports.
-
-Aramco's new refining venture in China has received its first crude cargo, Rigzone reported.
-
-And the US Treasury's Office of Foreign Assets Control removed a Venezuela-related designation on the fourteenth. No details were given.
-
-What to watch next.
-
-The EIA's weekly report for the week to the ninth of October, which will show whether that eleven million barrel draw holds up.
-
-The nineteenth of October, the deadline an extortion group calling itself n-zero-n has set for ransoms from thirty-eight shipping, port and logistics firms.
-
-The first of November, when TotalEnergies' further cuts to French diesel and heating oil prices take effect, along with the state reserve release.
-
-The eleventh and twelfth of December, for the first cargo of Guyana's Uaru crude.
-
-And the first of January, when the EU ban on long-term Russian LNG imports takes effect.
+From the sixteenth to the twenty-first, the daily EU storage readings. And on the nineteenth, a ransom deadline set by a group calling itself N-zero-N, which claims to hold data from thirty-eight shipping, port and logistics firms.
 
 That's the brief. Sources for everything you heard are in the show notes.
