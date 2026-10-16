@@ -25,6 +25,7 @@ Standard library only.
 from __future__ import annotations
 
 import argparse
+import base64
 import datetime as dt
 import email.utils
 import json
@@ -47,6 +48,10 @@ SCRIPTS = ROOT / "scripts"
 MODEL = os.environ.get("ELEVENLABS_MODEL") or "eleven_v4"
 CHUNK = 9000  # eleven_v4 takes 10,000 chars per request, so a normal episode is one call
 BITRATE = 128_000  # mp3_44100_128
+# ElevenLabs drops the last ~0.7 s of speech from a request (every episode lost "show notes." from the
+# outro). The last request gets this throwaway sentence to lose instead, and we cut the audio back to
+# the end of the real text using the character timestamps.
+TAIL = "Thanks for listening."
 
 
 def cfg() -> dict:
@@ -95,7 +100,8 @@ def chunks(text: str, size: int = CHUNK) -> list[str]:
     return out
 
 
-def tts(text: str, prev: str = "", nxt: str = "") -> bytes:
+def tts(text: str, prev: str = "", nxt: str = "") -> tuple[bytes, dict]:
+    """Audio plus its character alignment (start/end seconds per character of `text`)."""
     voice = os.environ["ELEVENLABS_VOICE_ID"]
     body = {"text": text, "model_id": MODEL}
     if prev:
@@ -103,20 +109,76 @@ def tts(text: str, prev: str = "", nxt: str = "") -> bytes:
     if nxt:
         body["next_text"] = nxt[:1000]
     req = urllib.request.Request(
-        f"https://api.elevenlabs.io/v1/text-to-speech/{voice}?output_format=mp3_44100_128",
+        f"https://api.elevenlabs.io/v1/text-to-speech/{voice}/with-timestamps?output_format=mp3_44100_128",
         data=json.dumps(body).encode(),
-        headers={"xi-api-key": os.environ["ELEVENLABS_API_KEY"], "Content-Type": "application/json",
-                 "Accept": "audio/mpeg"})
+        headers={"xi-api-key": os.environ["ELEVENLABS_API_KEY"], "Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=300) as r:
-        return r.read()
+        res = json.load(r)
+    return base64.b64decode(res["audio_base64"]), res.get("alignment") or {}
+
+
+def mp3_frames(audio: bytes):
+    """(offset, length) of each MPEG-1 Layer III frame, after any ID3v2 tag."""
+    i = 0
+    if audio[:3] == b"ID3":
+        i = 10 + int.from_bytes(bytes(b & 0x7F for b in audio[6:10]), "big")
+    while i + 4 <= len(audio):
+        h = audio[i:i + 4]
+        if h[0] != 0xFF or h[1] & 0xFE != 0xFA:  # sync + MPEG-1 Layer III
+            break
+        kbps = (0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 0)[h[2] >> 4]
+        rate = (44100, 48000, 32000, 0)[(h[2] >> 2) & 3]
+        if not kbps or not rate:
+            break
+        n = 144_000 * kbps // rate + ((h[2] >> 1) & 1)
+        yield i, n
+        i += n
+
+
+def mp3_cut(audio: bytes, secs: float) -> bytes:
+    """Keep the audio up to `secs`, at frame boundaries. Fixes the frame/byte counts in an Info/Xing header."""
+    frames = list(mp3_frames(audio))
+    if not frames:
+        return audio
+    start, first = frames[0]
+    info = max(audio.find(t, start, start + first) for t in (b"Info", b"Xing"))
+    sound = frames[1:] if info > 0 else frames  # the Info frame itself is silent
+    keep = int(secs * 44100 / 1152) + 1  # mp3_44100_128: 1152 samples per frame
+    if keep >= len(sound):
+        return audio
+    end = sum(sound[keep - 1])
+    out = bytearray(audio[:end])
+    if info > 0:
+        flags, p = int.from_bytes(out[info + 4:info + 8], "big"), info + 8
+        if flags & 1:
+            out[p:p + 4] = keep.to_bytes(4, "big")
+            p += 4
+        if flags & 2:
+            out[p:p + 4] = (end - start).to_bytes(4, "big")
+    return bytes(out)
+
+
+def trim_tail(audio: bytes, al: dict, text: str, real: int) -> bytes:
+    """Cut `audio` (spoken from `text`) in the pause between text[:real] and the throwaway tail."""
+    starts, ends = al.get("character_start_times_seconds"), al.get("character_end_times_seconds")
+    if not starts or len(starts) != len(text) or len(ends) != len(text):
+        pipeline.log("WARNING: no usable alignment; keeping the throwaway tail in the audio")
+        return audio
+    spoken_end, tail_start = ends[real - 1], starts[len(text) - len(TAIL)]
+    cut = max((spoken_end + tail_start) / 2, spoken_end + 0.15)
+    pipeline.log(f"TTS: real text ends {spoken_end:.2f}s, tail starts {tail_start:.2f}s, cutting at {cut:.2f}s")
+    return mp3_cut(audio, cut)
 
 
 def synthesize(script: str, out: Path) -> None:
     parts = chunks(script)
     audio = b""
     for i, part in enumerate(parts):
+        last = i + 1 == len(parts)
+        text = f"{part}\n\n{TAIL}" if last else part
         pipeline.log(f"TTS chunk {i + 1}/{len(parts)} ({len(part)} chars)")
-        audio += tts(part, parts[i - 1] if i else "", parts[i + 1] if i + 1 < len(parts) else "")
+        clip, al = tts(text, parts[i - 1] if i else "", "" if last else parts[i + 1])
+        audio += trim_tail(clip, al, text, len(part)) if last else clip
     out.write_bytes(audio)  # MP3 frames concatenate cleanly at the same bitrate
 
 

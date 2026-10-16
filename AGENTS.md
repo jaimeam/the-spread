@@ -68,6 +68,9 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 - Some sites block GitHub's servers but work locally: OIES (403), GDELT (429). They're marked
   `local_only = true` in `sources.toml` and skipped when `GITHUB_ACTIONS` is set. Check a new feed both
   locally and in CI logs before relying on it. Most corporate and agency sites (OPEC, IEA, BP, Shell, FERC) block scripts.
+- ElevenLabs drops the last ~0.7 s of speech in a request (every episode up to 2026-10-16 lost "show notes.").
+  `synthesize` adds a throwaway `TAIL` sentence to the last request and cuts it off using the `/with-timestamps`
+  character alignment. If alignment is missing, the log warns and the tail stays in the audio.
 - An episode is a full ElevenLabs request (~6-7k characters on a normal day). Credits are the binding cost;
   Claude is about $0.15-0.30 per run.
 
