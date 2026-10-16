@@ -11,6 +11,9 @@ Usage
   python podcast.py remove 2026-10-12                     # drop an episode from the feed, delete its MP3
   python podcast.py notes 2026-10-12                      # rebuild an episode's title + show notes (no audio)
 
+Each episode's MP3 gets a transcript beside it: DATE.txt (the script) and DATE.vtt (timed captions from
+ElevenLabs' character timings). The feed links both with <podcast:transcript>.
+
 Environment
   SCRIPT_MODEL           model for the script rewrite, "provider:model" (default: BRIEF_MODEL).
                          Needs that provider's key, unless you pass --no-llm (plain markdown cleanup;
@@ -25,6 +28,7 @@ Standard library only.
 from __future__ import annotations
 
 import argparse
+import base64
 import datetime as dt
 import email.utils
 import math
@@ -96,7 +100,8 @@ def chunks(text: str, size: int = CHUNK) -> list[str]:
     return out
 
 
-def tts(text: str, prev: str = "", nxt: str = "") -> bytes:
+def tts(text: str, prev: str = "", nxt: str = "") -> tuple[bytes, dict | None]:
+    """Audio for one chunk, plus ElevenLabs' per-character timings (None if they're missing)."""
     voice = os.environ["ELEVENLABS_VOICE_ID"]
     body = {"text": text, "model_id": MODEL}
     if prev:
@@ -104,28 +109,93 @@ def tts(text: str, prev: str = "", nxt: str = "") -> bytes:
     if nxt:
         body["next_text"] = nxt[:1000]
     req = urllib.request.Request(
-        f"https://api.elevenlabs.io/v1/text-to-speech/{voice}?output_format=mp3_44100_128",
+        f"https://api.elevenlabs.io/v1/text-to-speech/{voice}/with-timestamps?output_format=mp3_44100_128",
         data=json.dumps(body).encode(),
         headers={"xi-api-key": os.environ["ELEVENLABS_API_KEY"], "Content-Type": "application/json",
-                 "Accept": "audio/mpeg"})
+                 "Accept": "application/json"})
     with urllib.request.urlopen(req, timeout=300) as r:
-        return r.read()
+        data = json.load(r)
+    return base64.b64decode(data["audio_base64"]), data.get("alignment")
 
 
 def synthesize(script: str, out: Path) -> None:
+    """Write the MP3, the script as DATE.txt and, when the timings are usable, captions as DATE.vtt."""
     parts = chunks(script)
-    audio = b""
+    audio, timed = b"", []
     for i, part in enumerate(parts):
         pipeline.log(f"TTS chunk {i + 1}/{len(parts)} ({len(part)} chars)")
-        audio += tts(part, parts[i - 1] if i else "", parts[i + 1] if i + 1 < len(parts) else "")
+        clip, align = tts(part, parts[i - 1] if i else "", parts[i + 1] if i + 1 < len(parts) else "")
+        offset = mp3_seconds(audio)  # each chunk's timings start at zero
+        try:
+            timed += [(ch, offset + a, offset + b) for ch, a, b in zip(
+                align["characters"], align["character_start_times_seconds"], align["character_end_times_seconds"])]
+            timed.append(("\n", 0, 0))  # chunks split at paragraphs
+        except (TypeError, KeyError):
+            timed = None  # partial captions would drift, so none at all
+        audio += clip
     out.write_bytes(audio)  # MP3 frames concatenate cleanly at the same bitrate
+    out.with_suffix(".txt").write_text(script.strip() + "\n")
+    # Captions are a bonus: if the timings are missing or odd, the episode still goes out without them.
+    try:
+        out.with_suffix(".vtt").write_text(captions(timed))
+    except Exception as e:  # noqa: BLE001
+        out.with_suffix(".vtt").unlink(missing_ok=True)
+        pipeline.log(f"no captions this episode: {e!r}")
+
+
+def stamp(secs: float) -> str:
+    ms = round(secs * 1000)
+    return f"{ms // 3_600_000:02d}:{ms // 60_000 % 60:02d}:{ms // 1000 % 60:02d}.{ms % 1000:03d}"
+
+
+def captions(timed: list[tuple[str, float, float]] | None, width: int = 42) -> str:
+    """WebVTT from per-character timings: cues of up to two lines, split at sentences and pauses."""
+    if not timed:
+        raise ValueError("no timings")
+    words, cur, breaks = [], None, set()  # word: [text, start, end]
+    for ch, a, b in timed:
+        if ch.isspace():
+            if ch == "\n" and words:
+                breaks.add(len(words) - 1)
+            cur = None
+        elif cur is None:
+            cur = [ch, a, b]
+            words.append(cur)
+        else:
+            cur[0] += ch
+            cur[2] = b
+    cues, line = [], []
+    for i, w in enumerate(words):
+        line.append(w)
+        n = len(" ".join(x[0] for x in line))
+        end = w[0][-1]
+        if (i in breaks or i == len(words) - 1 or n >= 2 * width - 16
+                or (end in ".?!" and n >= 25) or (end in ",;:" and n >= width)
+                or w[2] - line[0][1] >= 6):
+            cues.append(line)
+            line = []
+    out = ["WEBVTT", ""]
+    for n, cue in enumerate(cues, 1):
+        ws = [x[0] for x in cue]
+        lines = [" ".join(ws)]
+        if len(lines[0]) > width:  # two lines, split where they come out most even
+            k = min(range(1, len(ws)), key=lambda k: max(len(" ".join(ws[:k])), len(" ".join(ws[k:]))))
+            lines = [" ".join(ws[:k]), " ".join(ws[k:])]
+        start = cue[0][1]
+        stop = max(cue[-1][2], start + 0.5)
+        if n < len(cues):  # never overlap the next cue
+            stop = min(stop, cues[n][0][1])
+        out += [str(n), f"{stamp(start)} --> {stamp(stop)}", *lines, ""]
+    return "\n".join(out)
 
 
 # --------------------------------------------------------------------------- feed
 
-def mp3_seconds(path: Path) -> float:
+def mp3_seconds(mp3: Path | bytes) -> float:
     """Playing time, counted from the MPEG frame headers (the file size over-counts the ID3 tag)."""
-    audio = path.read_bytes()
+    audio = mp3 if isinstance(mp3, bytes) else mp3.read_bytes()
+    if not audio:
+        return 0.0
     i = 10 + int.from_bytes(bytes(b & 0x7F for b in audio[6:10]), "big") if audio[:3] == b"ID3" else 0
     secs = 0.0
     while i + 4 <= len(audio) and audio[i] == 0xFF and audio[i + 1] & 0xFE == 0xFA:  # MPEG-1 Layer III
@@ -154,6 +224,9 @@ def build_feed(c: dict) -> Path:
         secs = math.ceil(mp3_seconds(mp3))
         pub = email.utils.format_datetime(
             dt.datetime.fromisoformat(ep["date"]).replace(hour=6, tzinfo=dt.timezone.utc))
+        transcripts = "".join(
+            f'\n      <podcast:transcript url="{base}/episodes/{mp3.stem}{ext}" type="{kind}" language="{c["language"]}"/>'
+            for ext, kind in ((".vtt", "text/vtt"), (".txt", "text/plain")) if mp3.with_suffix(ext).exists())
         items.append(f"""    <item>
       <title>{escape(ep['title'])}</title>
       <description>{escape(ep['notes'])}</description>
@@ -163,12 +236,13 @@ def build_feed(c: dict) -> Path:
       <pubDate>{pub}</pubDate>
       <itunes:duration>{secs // 60}:{secs % 60:02d}</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
-      <itunes:episodeType>full</itunes:episodeType>
+      <itunes:episodeType>full</itunes:episodeType>{transcripts}
     </item>""")
     sub = f'<itunes:category text="{escape(c["subcategory"])}"/>' if c.get("subcategory") else ""
     feed = f"""<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
-     xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
+     xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <title>{escape(c['title'])}</title>
     <link>{base}/</link>
@@ -278,6 +352,13 @@ def refresh_notes(date: str, c: dict) -> None:
     pipeline.log(f"notes refreshed for {date}: {eps[0]['title']}")
 
 
+def drop_files(mp3_name: str) -> None:
+    """Delete an episode's MP3 and its transcripts."""
+    mp3 = EPISODES_DIR / mp3_name
+    for f in (mp3, mp3.with_suffix(".txt"), mp3.with_suffix(".vtt")):
+        f.unlink(missing_ok=True)
+
+
 def remove_episode(date: str) -> None:
     """Take an episode out of the feed and delete its MP3. Its brief and script stay as records."""
     idx = load_index()
@@ -285,7 +366,7 @@ def remove_episode(date: str) -> None:
     if not gone:
         raise SystemExit(f"No episode dated '{date}'. Episodes: {', '.join(e['date'] for e in idx) or 'none'}")
     for e in gone:
-        (EPISODES_DIR / e["file"]).unlink(missing_ok=True)
+        drop_files(e["file"])
     INDEX.write_text(json.dumps([e for e in idx if e["date"] != date], indent=1))
     pipeline.log(f"removed episode {date}")
 
@@ -328,7 +409,7 @@ def main() -> None:
         fname = f"{date}-{int(time.time())}.mp3" if old else f"{date}.mp3"
         synthesize(script, EPISODES_DIR / fname)
         for e in old:
-            (EPISODES_DIR / e["file"]).unlink(missing_ok=True)
+            drop_files(e["file"])
         idx = [e for e in load_index() if e["date"] != date]
         idx.append({"date": date, "file": fname, **episode_meta(a.brief, date, c)})
         INDEX.write_text(json.dumps(idx, indent=1))

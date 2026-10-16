@@ -72,6 +72,10 @@ Apple send ownership verification there, and it is visible in the feed).
 
 - **Feed (the source of truth):** https://jaimeam.github.io/the-spread/feed.xml, served by GitHub
   Pages from `site/`. Episodes (MP3) and `cover.png` live there too. Never change this URL.
+- **Transcripts:** each MP3 has `DATE.txt` (the script) and `DATE.vtt` (timed captions, from
+  ElevenLabs' character timings) beside it, linked in the feed with `<podcast:transcript>`.
+  Apple Podcasts shows them if you pick your own transcripts in Podcasts Connect; Spotify ignores them.
+  Episodes before 2026-10-19 have the text only.
 - **Spotify:** the same feed, submitted through Spotify for Creators. New episodes appear
   there automatically after each run.
 - **Other apps:** any podcast app that accepts a feed URL (Pocket Casts, Overcast, Apple Podcasts).
@@ -114,7 +118,7 @@ The timer wakes the machine from suspend, and runs at boot if the machine was of
 
 Actions → **Manage episodes** → Run workflow, then pick:
 
-- **remove**: takes the episode out of the feed and deletes its MP3 (no credits). The brief and
+- **remove**: takes the episode out of the feed and deletes its MP3 and transcripts (no credits). The brief and
   script stay in the repo, so the brief-writer still remembers that day.
 - **redo**: rewrites that day's brief from the same news items it used (nothing is fetched again),
   then writes a new script and re-records the audio, e.g. after you change the prompts.
