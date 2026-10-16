@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
-     xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
+     xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom"
+     xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
     <title>The Spread</title>
     <link>https://jaimeam.github.io/the-spread/</link>
@@ -62,6 +63,7 @@ Sources:
       <itunes:duration>6:10</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
       <itunes:episodeType>full</itunes:episodeType>
+      <podcast:transcript url="https://jaimeam.github.io/the-spread/episodes/2026-10-16.txt" type="text/plain" language="en"/>
     </item>
     <item>
       <title>Hormuz: container ship and bulker sink | 15 Oct</title>
@@ -108,6 +110,7 @@ Sources:
       <itunes:duration>6:30</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
       <itunes:episodeType>full</itunes:episodeType>
+      <podcast:transcript url="https://jaimeam.github.io/the-spread/episodes/2026-10-15-1792051193.txt" type="text/plain" language="en"/>
     </item>
     <item>
       <title>Houthi strike hits Aramco's Dhahran headquarters | 14 Oct</title>
@@ -156,6 +159,7 @@ Sources:
       <itunes:duration>6:18</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
       <itunes:episodeType>full</itunes:episodeType>
+      <podcast:transcript url="https://jaimeam.github.io/the-spread/episodes/2026-10-14.txt" type="text/plain" language="en"/>
     </item>
     <item>
       <title>Hormuz: 11 October count revised to six ships hit | 13 Oct</title>
@@ -189,6 +193,7 @@ Sources:
       <itunes:duration>4:41</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
       <itunes:episodeType>full</itunes:episodeType>
+      <podcast:transcript url="https://jaimeam.github.io/the-spread/episodes/2026-10-13-1791897580.txt" type="text/plain" language="en"/>
     </item>
     <item>
       <title>Gulf: attacks spread beyond the Strait | 12 Oct</title>
@@ -236,6 +241,7 @@ Sources:
       <itunes:duration>6:33</itunes:duration>
       <itunes:explicit>false</itunes:explicit>
       <itunes:episodeType>full</itunes:episodeType>
+      <podcast:transcript url="https://jaimeam.github.io/the-spread/episodes/2026-10-12-1791834666.txt" type="text/plain" language="en"/>
     </item>
   </channel>
 </rss>
