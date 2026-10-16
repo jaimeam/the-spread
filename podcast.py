@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import email.utils
+import math
 import json
 import os
 import re
@@ -122,6 +123,21 @@ def synthesize(script: str, out: Path) -> None:
 
 # --------------------------------------------------------------------------- feed
 
+def mp3_seconds(path: Path) -> float:
+    """Playing time, counted from the MPEG frame headers (the file size over-counts the ID3 tag)."""
+    audio = path.read_bytes()
+    i = 10 + int.from_bytes(bytes(b & 0x7F for b in audio[6:10]), "big") if audio[:3] == b"ID3" else 0
+    secs = 0.0
+    while i + 4 <= len(audio) and audio[i] == 0xFF and audio[i + 1] & 0xFE == 0xFA:  # MPEG-1 Layer III
+        kbps = (0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 0)[audio[i + 2] >> 4]
+        rate = (44100, 48000, 32000, 0)[(audio[i + 2] >> 2) & 3]
+        if not kbps or not rate:
+            break
+        secs += 1152 / rate
+        i += 144_000 * kbps // rate + ((audio[i + 2] >> 1) & 1)
+    return secs or len(audio) * 8 / BITRATE
+
+
 def load_index() -> list[dict]:
     return json.loads(INDEX.read_text()) if INDEX.exists() else []
 
@@ -134,7 +150,8 @@ def build_feed(c: dict) -> Path:
     for ep in sorted(load_index(), key=lambda e: e["date"], reverse=True):
         mp3 = EPISODES_DIR / ep["file"]
         size = mp3.stat().st_size
-        secs = int(size * 8 / BITRATE)
+        # Round up: some players stop at the stated duration, and rounding down cut the last words.
+        secs = math.ceil(mp3_seconds(mp3))
         pub = email.utils.format_datetime(
             dt.datetime.fromisoformat(ep["date"]).replace(hour=6, tzinfo=dt.timezone.utc))
         items.append(f"""    <item>
