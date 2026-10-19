@@ -212,6 +212,14 @@ def load_index() -> list[dict]:
     return json.loads(INDEX.read_text()) if INDEX.exists() else []
 
 
+def audio_url(c: dict, ep: dict) -> str:
+    url = f"{c['base_url']}/episodes/{ep['file']}"
+    # OP3 logs the download and redirects to the real file. Only from op3_from on, so old links stay put.
+    if c.get("op3_from") and ep["date"] >= c["op3_from"]:
+        url = "https://op3.dev/e/" + url.removeprefix("https://")
+    return url
+
+
 def build_feed(c: dict) -> Path:
     if not c["base_url"]:
         raise SystemExit("Set PODCAST_BASE_URL (or base_url in podcast.toml) before building the feed.")
@@ -231,7 +239,7 @@ def build_feed(c: dict) -> Path:
       <title>{escape(ep['title'])}</title>
       <description>{escape(ep['notes'])}</description>
       <content:encoded><![CDATA[{ep['notes_html']}]]></content:encoded>
-      <enclosure url="{base}/episodes/{ep['file']}" length="{size}" type="audio/mpeg"/>
+      <enclosure url="{audio_url(c, ep)}" length="{size}" type="audio/mpeg"/>
       <guid isPermaLink="false">{escape(c['slug'])}-{ep['date']}</guid>
       <pubDate>{pub}</pubDate>
       <itunes:duration>{secs // 60}:{secs % 60:02d}</itunes:duration>
@@ -256,7 +264,7 @@ def build_feed(c: dict) -> Path:
     <itunes:category text="{escape(c['category'])}">{sub}</itunes:category>
     <itunes:explicit>false</itunes:explicit>
     <itunes:type>episodic</itunes:type>
-{chr(10).join(items)}
+{f"    <podcast:guid>{c['guid']}</podcast:guid>{chr(10)}" if c.get("guid") else ""}{chr(10).join(items)}
   </channel>
 </rss>
 """

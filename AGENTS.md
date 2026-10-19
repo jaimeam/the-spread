@@ -20,6 +20,9 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 - **Don't break the feed for followers.** Never change the feed URL (`https://jaimeam.github.io/the-spread/feed.xml`),
   so don't rename the repo or account. Never change `slug` in `podcast.toml`: episode GUIDs are `<slug>-<date>`,
   and changing it re-lists every episode as new.
+  Never change `guid` in `podcast.toml` either (the show's Podcast Index ID, used by OP3 stats).
+- Download stats: MP3 links for episodes dated from `op3_from` on go through `op3.dev` (public stats, then a
+  redirect to GitHub Pages). Don't move older episodes onto OP3: changing their link can make Spotify re-fetch them.
 - Licensing guard: only `public_ok = true` sources reach the public edition (the one CI publishes).
   Google News stays `public_ok = false` unless the owner decides otherwise.
 

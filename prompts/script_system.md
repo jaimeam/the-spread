@@ -44,9 +44,16 @@ Rules
   "four point two million barrels", "the fourth quarter". Spell out acronyms on first use
   except EIA, OPEC, US, EU. Say outlet names the usual way ("Splash twenty-four seven",
   "OilPrice dot com").
-- Round for the ear. Prices, spreads and storage levels keep their exact figure; everything else
-  is rounded ("nearly eighty-five thousand dollars a day", not "eighty-four thousand, nine
-  hundred and fifty-one"). At most two numbers in a sentence.
+- Round for the ear. Prices and spreads go to the nearest ten cents ("one hundred and two
+  dollars sixty", not "one hundred and two dollars fifty-nine"); percentages and storage levels
+  to one decimal. Everything else is rounded ("nearly eighty-five thousand dollars a day", not
+  "eighty-four thousand, nine hundred and fifty-one").
+- At most two numbers in a sentence, and dates, contract months and years count as numbers.
+  Give a list of prices one sentence at a time, or as one price and the gap to it ("January
+  traded about ten dollars under prompt, and June another ten under that").
+- Name futures contracts by month: "the January contract", "June Brent". Add the year only when
+  the month alone is ambiguous, and then as "January next year", never "January twenty
+  twenty-seven Brent".
 - Write for the ear: mostly short sentences, varied in length, joined with natural spoken links
   ("which means", "the catch is"), and vary them.
 - Make clear who is hit by each story, taken from the brief, but work it into the sentences in

@@ -1,8 +1,10 @@
 [podcast]
 # Working title; change any of this before you submit to Spotify.
-title = "The Spread"
+title = "The Spread: Daily Oil & Gas Briefing"
 slug = "the-spread"
-description = "A short daily briefing on oil and gas, refining, petrochemicals and midstream: what moved today, and why it matters. Built from free and official sources, written with AI, and read by an AI clone of Jaime's voice."
+# Podcast Index show ID: UUIDv5 of the feed URL without "https://". Never change it.
+guid = "e0804b8a-fcbb-5fd2-b9bf-53881813334f"
+description = "A short daily briefing on oil and gas, refining, petrochemicals and midstream: Brent and WTI, LNG and European gas, refining margins, OPEC and shipping. What moved today, and why it matters. Every number is sourced, and claims are kept apart from facts. Built from free and official sources, written with AI, and read by an AI clone of Jaime's voice."
 author = "Jaime Adroher"
 # Spotify and Apple use this to verify you own the show. It is visible in the public feed.
 email = "jaime.adroher@gmail.com"
@@ -12,6 +14,9 @@ subcategory = "Business News"
 cover = "cover.png"            # in site/, square, 1400-3000 px
 base_url = "https://jaimeam.github.io/the-spread"  # PODCAST_BASE_URL overrides this
 repo_url = "https://github.com/jaimeam/the-spread"  # show notes link to the written brief here
+# Download stats (op3.dev): episodes dated on or after this get the OP3 prefix on their MP3 link.
+# Older episodes keep their link so Spotify doesn't re-fetch them. Remove the line to turn it off.
+op3_from = "2026-10-20"
 
 # Voiced with an ElevenLabs clone of Jaime's voice. If you switch to a stock voice, change these lines and description.
 disclosure = "This episode is written with AI from public sources and read by an AI clone of Jaime's voice, not recorded by Jaime. Show notes link to every source."
