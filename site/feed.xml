@@ -3,10 +3,10 @@
      xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom"
      xmlns:podcast="https://podcastindex.org/namespace/1.0">
   <channel>
-    <title>The Spread</title>
+    <title>The Spread: Daily Oil &amp; Gas Briefing</title>
     <link>https://jaimeam.github.io/the-spread/</link>
     <atom:link href="https://jaimeam.github.io/the-spread/feed.xml" rel="self" type="application/rss+xml"/>
-    <description>A short daily briefing on oil and gas, refining, petrochemicals and midstream: what moved today, and why it matters. Built from free and official sources, written with AI, and read by an AI clone of Jaime's voice.</description>
+    <description>A short daily briefing on oil and gas, refining, petrochemicals and midstream: Brent and WTI, LNG and European gas, refining margins, OPEC and shipping. What moved today, and why it matters. Every number is sourced, and claims are kept apart from facts. Built from free and official sources, written with AI, and read by an AI clone of Jaime's voice.</description>
     <language>en</language>
     <copyright>Jaime Adroher</copyright>
     <itunes:author>Jaime Adroher</itunes:author>
@@ -15,6 +15,53 @@
     <itunes:category text="News"><itunes:category text="Business News"/></itunes:category>
     <itunes:explicit>false</itunes:explicit>
     <itunes:type>episodic</itunes:type>
+    <podcast:guid>e0804b8a-fcbb-5fd2-b9bf-53881813334f</podcast:guid>
+    <item>
+      <title>Iran's terminals idle as Iraq nears pre-war exports | 20 Oct</title>
+      <description>Iran's main oil terminals have stood empty for weeks under a US naval blockade, while Iraq says its exports are back near pre-war levels. Washington also says it will let sanctioned dark-fleet tankers be sold back into legitimate trade as tanker earnings hit records.
+
+This episode is written with AI from public sources and read by an AI clone of Jaime's voice, not recorded by Jaime. Show notes link to every source.
+
+In this episode:
+- Iran's terminals idle as Iraq nears pre-war exports
+- US to let dark-fleet tankers shed sanctions
+- Brent stalls just under $110
+- Russia: Graham sanctions waived, diesel deal defended
+- Qatari LNG takes the Red Sea to Europe
+- Hormuz knock-ons: sulfur and importers
+
+Full written brief: https://github.com/jaimeam/the-spread/blob/main/briefs/2026-10-20-public.md
+
+Sources:
+- gCaptain: https://gcaptain.com/irans-main-oil-terminals-remain-empty-as-us-blockade-bites/
+- OilPrice.com: https://oilprice.com/Latest-Energy-News/World-News/Iraqs-October-Oil-Exports-Top-34-Million-Bpd-Nearing-Pre-War-Levels.html
+- gCaptain: https://gcaptain.com/u-s-to-allow-dark-fleet-tankers-to-shed-sanctions-wright-says/
+- Splash247: https://splash247.com/tanker-earnings-defy-all-historical-comparisons/
+- Kpler: https://www.kpler.com/blog/increased-strait-of-hormuz-attacks-hamper-growing-lpg-shuttle-trade
+- OilPrice.com: https://oilprice.com/Energy/Gas-Prices/Wright-Says-Gas-Prices-Peaked-As-Brent-Holds-Above-108.html
+- Rigzone: https://www.rigzone.com/news/wire/oil_prices_hover_near_fivemonth_high-19-oct-2026-184878-article/?rss=true
+- OilPrice.com: https://oilprice.com/Energy/Crude-Oil/Why-Canadian-Oil-Is-Lagging-Even-As-Global-Crude-Soars.html
+- Rigzone: https://www.rigzone.com/news/eia_sees_smaller_oil_crunch_in_2026-19-oct-2026-184874-article/?rss=true
+- OilPrice.com: https://oilprice.com/Geopolitics/Europe/Trump-Defends-Russia-Sanctions-Waiver-as-Rift-With-Ukraine-Deepens.html
+- Rigzone: https://www.rigzone.com/news/wire/trump_says_diesel_deal_aims_to_keep_russia_talks_going-19-oct-2026-184873-article/?rss=true
+- OilPrice.com: https://oilprice.com/Energy/Crude-Oil/Whats-Trumps-Thinking-Behind-The-Diesel-Deal-With-Russia.html
+- gCaptain: https://gcaptain.com/russian-oil-exports-by-arctic-route-jump-amid-world-freight-crisis/
+- gCaptain: https://gcaptain.com/qatar-lng-cargo-makes-rare-red-sea-journey-to-get-gas-to-europe/
+- OilPrice.com: https://oilprice.com/Energy/Energy-General/The-Sulfur-Crisis-Threatening-the-Worlds-Food-Supply.html
+- OilPrice.com: https://oilprice.com/Latest-Energy-News/World-News/Pakistans-Growth-Slows-as-Hormuz-Crisis-Hits-Industry.html
+- OilPrice.com: https://oilprice.com/Latest-Energy-News/World-News/Canadas-Inflation-Rises-to-31-as-Fuel-Oil-Prices-Jump-58.html
+- World Oil: https://www.worldoil.com/news/2026/10/19/aker-bp-s-skarv-satellites-officially-start-up-adding-120-mmboe-in-norwegian-sea/
+- Rigzone: https://www.rigzone.com/news/north_america_breaks_rig_count_addition_streak_bh_shows-19-oct-2026-184876-article/?rss=true</description>
+      <content:encoded><![CDATA[<p>Iran's main oil terminals have stood empty for weeks under a US naval blockade, while Iraq says its exports are back near pre-war levels. Washington also says it will let sanctioned dark-fleet tankers be sold back into legitimate trade as tanker earnings hit records.</p><p>This episode is written with AI from public sources and read by an AI clone of Jaime's voice, not recorded by Jaime. Show notes link to every source.</p><p><strong>In this episode</strong></p><ul><li>Iran's terminals idle as Iraq nears pre-war exports</li><li>US to let dark-fleet tankers shed sanctions</li><li>Brent stalls just under $110</li><li>Russia: Graham sanctions waived, diesel deal defended</li><li>Qatari LNG takes the Red Sea to Europe</li><li>Hormuz knock-ons: sulfur and importers</li></ul><p><a href="https://github.com/jaimeam/the-spread/blob/main/briefs/2026-10-20-public.md">Read the full written brief</a></p><p><strong>Sources</strong></p><p>Iran's terminals idle as Iraq nears pre-war exports</p><ul><li><a href="https://gcaptain.com/irans-main-oil-terminals-remain-empty-as-us-blockade-bites/">gCaptain</a></li><li><a href="https://oilprice.com/Latest-Energy-News/World-News/Iraqs-October-Oil-Exports-Top-34-Million-Bpd-Nearing-Pre-War-Levels.html">OilPrice.com</a></li></ul><p>US to let dark-fleet tankers shed sanctions</p><ul><li><a href="https://gcaptain.com/u-s-to-allow-dark-fleet-tankers-to-shed-sanctions-wright-says/">gCaptain</a></li><li><a href="https://splash247.com/tanker-earnings-defy-all-historical-comparisons/">Splash247</a></li><li><a href="https://www.kpler.com/blog/increased-strait-of-hormuz-attacks-hamper-growing-lpg-shuttle-trade">Kpler</a></li></ul><p>Brent stalls just under $110</p><ul><li><a href="https://oilprice.com/Energy/Gas-Prices/Wright-Says-Gas-Prices-Peaked-As-Brent-Holds-Above-108.html">OilPrice.com</a></li><li><a href="https://www.rigzone.com/news/wire/oil_prices_hover_near_fivemonth_high-19-oct-2026-184878-article/?rss=true">Rigzone</a></li><li><a href="https://oilprice.com/Energy/Crude-Oil/Why-Canadian-Oil-Is-Lagging-Even-As-Global-Crude-Soars.html">OilPrice.com</a></li><li><a href="https://www.rigzone.com/news/eia_sees_smaller_oil_crunch_in_2026-19-oct-2026-184874-article/?rss=true">Rigzone</a></li></ul><p>Russia: Graham sanctions waived, diesel deal defended</p><ul><li><a href="https://oilprice.com/Geopolitics/Europe/Trump-Defends-Russia-Sanctions-Waiver-as-Rift-With-Ukraine-Deepens.html">OilPrice.com</a></li><li><a href="https://www.rigzone.com/news/wire/trump_says_diesel_deal_aims_to_keep_russia_talks_going-19-oct-2026-184873-article/?rss=true">Rigzone</a></li><li><a href="https://oilprice.com/Energy/Crude-Oil/Whats-Trumps-Thinking-Behind-The-Diesel-Deal-With-Russia.html">OilPrice.com</a></li><li><a href="https://gcaptain.com/russian-oil-exports-by-arctic-route-jump-amid-world-freight-crisis/">gCaptain</a></li></ul><p>Qatari LNG takes the Red Sea to Europe</p><ul><li><a href="https://gcaptain.com/qatar-lng-cargo-makes-rare-red-sea-journey-to-get-gas-to-europe/">gCaptain</a></li></ul><p>Hormuz knock-ons: sulfur and importers</p><ul><li><a href="https://oilprice.com/Energy/Energy-General/The-Sulfur-Crisis-Threatening-the-Worlds-Food-Supply.html">OilPrice.com</a></li><li><a href="https://oilprice.com/Latest-Energy-News/World-News/Pakistans-Growth-Slows-as-Hormuz-Crisis-Hits-Industry.html">OilPrice.com</a></li><li><a href="https://oilprice.com/Latest-Energy-News/World-News/Canadas-Inflation-Rises-to-31-as-Fuel-Oil-Prices-Jump-58.html">OilPrice.com</a></li></ul><p>Still developing</p><ul><li><a href="https://www.worldoil.com/news/2026/10/19/aker-bp-s-skarv-satellites-officially-start-up-adding-120-mmboe-in-norwegian-sea/">World Oil</a></li><li><a href="https://www.rigzone.com/news/north_america_breaks_rig_count_addition_streak_bh_shows-19-oct-2026-184876-article/?rss=true">Rigzone</a></li></ul>]]></content:encoded>
+      <enclosure url="https://op3.dev/e/jaimeam.github.io/the-spread/episodes/2026-10-20.mp3" length="5195275" type="audio/mpeg"/>
+      <guid isPermaLink="false">the-spread-2026-10-20</guid>
+      <pubDate>Tue, 20 Oct 2026 06:00:00 +0000</pubDate>
+      <itunes:duration>5:25</itunes:duration>
+      <itunes:explicit>false</itunes:explicit>
+      <itunes:episodeType>full</itunes:episodeType>
+      <podcast:transcript url="https://jaimeam.github.io/the-spread/episodes/2026-10-20.vtt" type="text/vtt" language="en"/>
+      <podcast:transcript url="https://jaimeam.github.io/the-spread/episodes/2026-10-20.txt" type="text/plain" language="en"/>
+    </item>
     <item>
       <title>Brent reaches $110 on Houthi and Russia-Ukraine strikes | 19 Oct</title>
       <description>Brent touched $110 for the first time since May as Houthi strikes on Saudi Arabia and Russia-Ukraine energy attacks added risk premium. Over the weekend, Iran said two tankers hit mines in Hormuz and repeated its offer to reopen the strait.
