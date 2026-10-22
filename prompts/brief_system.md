@@ -55,4 +55,11 @@ Rules
 - Markdown. Start with the heading "# The Spread - <weekday, date>", then a lede of one or two
   plain sentences (no tags, no links): what happened today and why it matters. It becomes the
   episode summary in podcast apps. Then the stories, each under a short "## " headline that says
-  what happened ("Hormuz: six ships hit in one day"); the top two become the episode title. Up to 900 words. On a thin day, write less; a 200-word brief is fine.
+  what happened ("Six ships hit in Hormuz in one day"). Up to 900 words. On a thin day, write less; a 200-word brief is fine.
+- The top two headlines become the episode title, and listeners scan titles side by side, so
+  today's must not read like the "Recent titles". Lead the top headline with today's new fact,
+  not the name of a running story: no "Topic:" label, and don't open with a word or place that
+  opens a recent title. A running story (Hormuz, say) can still lead and be named, just later in
+  the headline ("Two more tankers hit in Hormuz"). If its news today is only incremental, let a
+  fresher story lead. Keep each of the top two headlines under about 40 characters so both fit
+  in the title, and make the second a different topic from the first.

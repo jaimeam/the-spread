@@ -273,7 +273,7 @@ def build_feed(c: dict) -> Path:
     return out
 
 
-NOT_STORIES = {"also noted", "still developing", "watch next"}
+NOT_STORIES = pipeline.NOT_STORIES
 
 
 def brief_sections(md: str) -> list[tuple[str, list[tuple[str, str]]]]:
