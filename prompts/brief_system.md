@@ -61,5 +61,5 @@ Rules
   not the name of a running story: no "Topic:" label, and don't open with a word or place that
   opens a recent title. A running story (Hormuz, say) can still lead and be named, just later in
   the headline ("Two more tankers hit in Hormuz"). If its news today is only incremental, let a
-  fresher story lead. Keep each of the top two headlines under about 40 characters so both fit
-  in the title, and make the second a different topic from the first.
+  fresher story lead. Keep each of the top two headlines to about 28 characters (apps cut
+  long titles off in lists), and make the second a different topic from the first.
