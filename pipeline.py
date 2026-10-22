@@ -501,7 +501,8 @@ def write_brief(nodes: list[dict], hours: int, public: bool, use_llm: bool, cont
     user = prompt("brief_user", date=today,
                   edition="PUBLIC (free/primary sources only)" if public else "PRIVATE",
                   exposure_map=map_txt, context_days=context_days,
-                  history=history or "(no earlier editions)", data="\n".join(data) or "(none today)",
+                  history=history or "(no earlier editions)",
+                  titles=recent_titles(public, today) or "(none)", data="\n".join(data) or "(none today)",
                   hours=hours, count=len(items), items=items_txt)
     brief = llm(user, BRIEF_MODEL, 16000, prompt("brief_system"), effort="medium")
     path.write_text(brief)
@@ -524,6 +525,20 @@ def brief_files(public: bool) -> dict[str, Path]:
     """date -> brief file for this edition (ignores samples and other suffixes)."""
     pat = re.compile(r"(\d{4}-\d{2}-\d{2})" + ("-public" if public else "") + r"\.md")
     return {m.group(1): f for f in BRIEF_DIR.glob("*.md") if (m := pat.fullmatch(f.name))}
+
+
+NOT_STORIES = {"also noted", "still developing", "watch next"}
+
+
+def recent_titles(public: bool, before: str, n: int = 7) -> str:
+    """The top two story headings of the last `n` briefs before `before`: what the episode titles showed."""
+    out = []
+    for date, f in sorted(brief_files(public).items()):
+        if date < before:
+            heads = [h.strip() for h in re.findall(r"^## (.+)$", f.read_text(), flags=re.M)
+                     if h.strip().lower() not in NOT_STORIES]
+            out.append(f"- {date}: " + " / ".join(heads[:2]))
+    return "\n".join(out[-n:])
 
 
 def ledger_summary(date: str, public: bool, brief: str) -> str:

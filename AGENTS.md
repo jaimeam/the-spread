@@ -57,7 +57,8 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 - Fixed running order: intro, date and disclosure → headline → "On the markets" → stories → quick hits →
   "What to watch next" → outro. Stories are linked by topic, not numbered.
 - A revised count for the same event is a revision, not a trend. Anything older than a day is dated.
-- Episode title = the brief's top one or two `##` headlines + date. Show notes = the brief's lede, the
+- Episode title = the brief's top one or two `##` headlines + date. Titles must not look alike day to day: the brief writer
+  sees the last 7 editions' top headlines and leads with the new fact, not a running-story label like "Hormuz:". Show notes = the brief's lede, the
   disclosure, the story list, a link to the written brief on GitHub, and every source.
   `podcast.py notes DATE` rebuilds them for an existing episode (no audio; publishes when pushed).
 - No "Signals I'm not sure about" section, and no uncertain-signal asides. The brief ends at "Watch next".
