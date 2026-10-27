@@ -1,0 +1,44 @@
+# Polls every public source between briefs, so stories that scroll off short feeds (OilPrice
+# keeps only 15 items) are already in state/public.db when the daily brief runs.
+# Fetch only: no API keys, no LLM, nothing published. Tagging happens in the daily run.
+
+name: Ingest feeds
+
+on:
+  # Off the hour, and clear of the daily run (04:41, backup 05:17). Weekends too: Monday's brief looks back 78h.
+  schedule:
+    - cron: "23 0,8,12,16,20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: the-spread   # same as the daily run, so the two never push at once
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    env:
+      BRIEF_DB: state/public.db
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - run: mkdir -p state
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python pipeline.py ingest --public
+
+      - name: Save to the repo
+        run: |
+          git config user.name "the-spread-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add state
+          git commit -m "Ingest $(date -u +%FT%H:%MZ)" || { echo "nothing new"; exit 0; }
+          git push
