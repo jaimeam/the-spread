@@ -13,12 +13,31 @@ on:
 permissions:
   contents: write
 
+# Its own group: GitHub cancels a waiting run when another joins the same group, so sharing
+# the daily run's group could let a late ingest cancel a waiting episode run.
 concurrency:
-  group: the-spread   # same as the daily run, so the two never push at once
+  group: the-spread-ingest
   cancel-in-progress: false
 
 jobs:
+  # GitHub can start scheduled runs hours late. Stay out of the daily run's window
+  # (04:41, backup 05:17) so an ingest never pushes while an episode is being made.
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.check.outputs.skip }}
+    steps:
+      - id: check
+        run: |
+          case "$(date -u +%H)" in
+            04|05) echo "Inside the daily run's window (04:00-06:00 UTC); skipping."
+                   echo "skip=true" >> "$GITHUB_OUTPUT" ;;
+            *)     echo "skip=false" >> "$GITHUB_OUTPUT" ;;
+          esac
+
   ingest:
+    needs: check
+    if: ${{ needs.check.outputs.skip != 'true' }}
     runs-on: ubuntu-latest
     env:
       BRIEF_DB: state/public.db
@@ -35,10 +54,18 @@ jobs:
 
       - run: python pipeline.py ingest --public
 
+      # If main moved since checkout (a daily, redo or remove run committed), take its changes.
+      # When both changed the database, drop this ingest's commit: its items are still in the
+      # feeds for the next ingest or the daily run, and main's database must win.
       - name: Save to the repo
         run: |
           git config user.name "the-spread-bot"
           git config user.email "actions@users.noreply.github.com"
           git add state
           git commit -m "Ingest $(date -u +%FT%H:%MZ)" || { echo "nothing new"; exit 0; }
+          if ! git pull --rebase origin "$GITHUB_REF_NAME"; then
+            git rebase --abort
+            echo "::warning::main changed the database since checkout; dropping this ingest's commit"
+            exit 0
+          fi
           git push
