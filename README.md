@@ -97,6 +97,11 @@ Apple send ownership verification there, and it is visible in the feed).
 
 Until step 6 the feed isn't listed anywhere, but anyone with the URL can find it.
 
+Between briefs, **Ingest feeds** (`ingest.yml`) fetches every public source five times a day and
+commits `state/public.db`. Some feeds keep only 10-15 items and would otherwise roll over before
+the next morning. It uses no API keys and publishes nothing. Feed problems (dead, empty, or a gap
+where a feed rolled over unread) show as warnings on the Actions run page.
+
 ### Starting it on time from your own machine
 
 GitHub's scheduler is best-effort, and in October 2026 it delivered the 04:41 and 05:17 runs
@@ -145,6 +150,7 @@ automatically (the *Publish site* workflow).
 | `podcast.py`, `podcast.toml` | brief -> script -> MP3 -> podcast feed; show settings |
 | `site/` | What GitHub Pages serves: `cover.png`, `feed.xml`, `episodes/` |
 | `.github/workflows/daily.yml` | The weekday schedule |
+| `.github/workflows/ingest.yml` | Fetches the feeds every few hours between briefs (free, publishes nothing) |
 | `.github/workflows/manage.yml`, `publish.yml` | Remove/redo an episode; republish the site |
 | `trigger/` | systemd timer that starts the daily workflow on time from your own machine |
 | `brief.db` | Every item seen, with tags (local, git-ignored). CI keeps its public-only copy in `state/public.db` |

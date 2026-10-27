@@ -8,7 +8,9 @@
 #             shipping, geopolitics, macro
 # local_only: true = skipped on GitHub Actions (the site blocks GitHub's servers), used in local runs
 #
-# Feed URLs below were checked on 2026-10-12. If one dies, the pipeline logs it and moves on.
+# Feed URLs below were checked on 2026-10-12. If one dies, the pipeline warns (visible on the
+# Actions run page) and moves on. Short feeds (OilPrice keeps 15 items, Splash 10) roll over in
+# under a day, so ingest.yml polls every source every few hours between briefs.
 # Some sites block requests from GitHub's servers: those are marked local_only = true.
 
 # ---------- Official data & agencies ----------
@@ -131,19 +133,35 @@ url = "https://www.offshore-energy.biz/feed/"
 public_ok = true
 segments = ["upstream", "gas_lng", "shipping"]
 
+# Palladian sites (LNG Industry, Hydrocarbon Engineering) dropped their all-news feeds
+# (404 since 2026-10-12); these are their section feeds.
 [[source]]
-name = "LNG Industry"
+name = "LNG Industry - liquefaction"
 type = "rss"
-url = "https://www.lngindustry.com/rss/lngindustry.xml"
+url = "https://www.lngindustry.com/rss/liquefaction.xml"
 public_ok = true
 segments = ["gas_lng"]
 
 [[source]]
-name = "Hydrocarbon Engineering"
+name = "LNG Industry - LNG news"
 type = "rss"
-url = "https://www.hydrocarbonengineering.com/rss/hydrocarbonengineering.xml"
+url = "https://www.lngindustry.com/rss/liquid-natural-gas.xml"
 public_ok = true
-segments = ["refining", "petchem"]
+segments = ["gas_lng", "shipping"]
+
+[[source]]
+name = "Hydrocarbon Engineering - refining"
+type = "rss"
+url = "https://www.hydrocarbonengineering.com/rss/refining.xml"
+public_ok = true
+segments = ["refining"]
+
+[[source]]
+name = "Hydrocarbon Engineering - petrochemicals"
+type = "rss"
+url = "https://www.hydrocarbonengineering.com/rss/petrochemicals.xml"
+public_ok = true
+segments = ["petchem"]
 
 [[source]]
 name = "World Oil"

@@ -70,6 +70,13 @@ def log(msg: str) -> None:
     print(f"[{dt.datetime.now():%H:%M:%S}] {msg}", file=sys.stderr)
 
 
+def warn(msg: str) -> None:
+    """A problem the owner should see: on GitHub Actions it shows on the run's summary page."""
+    if os.environ.get("GITHUB_ACTIONS"):
+        print(f"::warning::{msg}", file=sys.stderr)
+    log(f"WARNING {msg}")
+
+
 def now_utc() -> dt.datetime:
     return dt.datetime.now(dt.timezone.utc)
 
@@ -273,21 +280,34 @@ def db() -> sqlite3.Connection:
 
 
 def ingest(sources: list[dict], fixtures: Path | None) -> int:
+    """Fetch every source into the items table. Dead, empty or overflowing feeds are warned about:
+    a feed that drops stories before we poll it again loses news without any error."""
     con, new = db(), 0
     for src in sources:
         try:
             items = fetch_from_fixture(src, fixtures) if fixtures else FETCHERS[src["type"]](src)
         except Exception as e:  # noqa: BLE001  one dead feed must not kill the run
-            log(f"skip {src['name']}: {e}")
+            warn(f"skip {src['name']}: {e}")
             continue
+        # Newest item we already had from this source, before this fetch.
+        last_seen = con.execute("SELECT max(published) FROM items WHERE source=?", (src["name"],)).fetchone()[0]
+        added = 0
         for it in items:
             iid = hashlib.sha1((it["url"] or it["title"]).encode()).hexdigest()[:16]
             cur = con.execute(
                 "INSERT OR IGNORE INTO items VALUES (?,?,?,?,?,?,?,?,NULL)",
                 (iid, src["name"], int(src.get("public_ok", False)), it["title"], it["url"],
                  it["published"] or now_utc().isoformat(), it["summary"], now_utc().isoformat()))
-            new += cur.rowcount
-        log(f"{src['name']}: {len(items)} items")
+            added += cur.rowcount
+        new += added
+        log(f"{src['name']}: {len(items)} items, {added} new")
+        dated = sorted(i["published"] for i in items if i["published"])
+        if not items and not fixtures:
+            warn(f"{src['name']}: feed returned no items")
+        elif items and added == len(items) and last_seen and dated and dated[0] > last_seen:
+            # Nothing overlaps with what we had: anything published in between never reached us.
+            warn(f"{src['name']}: possible gap, all {len(items)} items are new and the oldest ({dated[0][:16]}) "
+                 f"is after the last one seen ({last_seen[:16]}); poll it more often")
         if src["type"] == "gdelt" and not fixtures:
             time.sleep(6)  # GDELT allows one request every 5 seconds
     con.commit()
