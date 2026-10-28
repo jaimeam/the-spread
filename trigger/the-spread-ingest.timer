@@ -1,0 +1,12 @@
+[Unit]
+Description=Start The Spread's Ingest feeds workflow five times a day
+
+[Timer]
+# Same slots as ingest.yml's schedule (GitHub's is the fallback); clear of the daily run at 04:41.
+OnCalendar=*-*-* 00,08,12,16,20:23:00 UTC
+AccuracySec=1s
+WakeSystem=true
+Persistent=true
+
+[Install]
+WantedBy=timers.target

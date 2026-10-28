@@ -202,7 +202,34 @@ def fetch_ofac(src: dict) -> list[dict]:
     return parse_ofac(http_get(src["url"]))
 
 
-FETCHERS = {"rss": fetch_rss, "google_news": fetch_google_news, "gdelt": fetch_gdelt, "ofac": fetch_ofac}
+def parse_palladian(page: str, base: str) -> list[dict]:
+    """Palladian sites (LNG Industry, Hydrocarbon Engineering) have no RSS since their Oct 2026
+    relaunch; parse the /news/ page. Story links are /<section>/<DDMMYYYY>/<slug>/: the cards carry
+    the title as link text plus an excerpt, the header's latest stories only an image alt."""
+    found = {}
+    for m in re.finditer(r'<a[^>]+href="(/[a-z0-9-]+/(\d{8})/[^"/]+/)"[^>]*>([^<]+)</a>'
+                         r'(?:\s*</h\d>\s*<p class="article-card-excerpt">(.*?)</p>)?', page, re.S):
+        found.setdefault(m.group(1), (m.group(2), m.group(3), m.group(4)))
+    for m in re.finditer(r'href="(/[a-z0-9-]+/(\d{8})/[^"/]+/)"[^>]*>\s*(?:<[^>]+>\s*)*<img[^>]+alt="([^"]+)"', page):
+        found.setdefault(m.group(1), (m.group(2), m.group(3), None))
+    out = []
+    for href, (date, title, excerpt) in found.items():
+        try:
+            pub = dt.datetime.strptime(date, "%d%m%Y").replace(hour=12, tzinfo=dt.timezone.utc)
+        except ValueError:
+            continue
+        out.append({"title": _clean(title, 300), "url": base.rstrip("/") + href,
+                    "published": pub.isoformat(), "summary": _clean(excerpt)})
+    return out
+
+
+def fetch_palladian(src: dict) -> list[dict]:
+    base = urllib.parse.urlsplit(src["url"])
+    return parse_palladian(http_get(src["url"]), f"{base.scheme}://{base.netloc}")
+
+
+FETCHERS = {"rss": fetch_rss, "google_news": fetch_google_news, "gdelt": fetch_gdelt, "ofac": fetch_ofac,
+            "palladian": fetch_palladian}
 
 
 def fetch_from_fixture(src: dict, fixtures: Path) -> list[dict]:
@@ -213,6 +240,9 @@ def fetch_from_fixture(src: dict, fixtures: Path) -> list[dict]:
             text = p.read_text()
             if src["type"] == "ofac":
                 return parse_ofac(text)
+            if src["type"] == "palladian":
+                base = urllib.parse.urlsplit(src["url"])
+                return parse_palladian(text, f"{base.scheme}://{base.netloc}")
             if src["type"] == "gdelt":
                 return [dict(a, summary=a.get("summary", "")) for a in json.loads(text)]
             return parse_feed(text)

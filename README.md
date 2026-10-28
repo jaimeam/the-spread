@@ -107,17 +107,18 @@ where a feed rolled over unread) show as warnings on the Actions run page.
 GitHub's scheduler is best-effort, and in October 2026 it delivered the 04:41 and 05:17 runs
 about 5 hours late. So a machine that is always on (a mini PC, a home server) starts the
 workflow at 04:41 UTC on weekdays instead, and the GitHub schedule stays as a late fallback.
-Both skip a day whose episode already exists.
+Both skip a day whose episode already exists. The same machine starts Ingest feeds every day at
+00:23, 08:23, 12:23, 16:23 and 20:23 UTC (`the-spread-ingest.timer`).
 
 1. GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token.
    Repository access: only `the-spread`. Permissions: **Actions: Read and write**. Note the expiry date.
 2. On the machine (any systemd Linux): `git clone https://github.com/jaimeam/the-spread`,
    then `cd the-spread/trigger && sudo ./install.sh` and paste the token. It checks the token
-   (without starting anything) and enables the timer.
-3. Logs: `journalctl -u the-spread-trigger`. Next run: `systemctl list-timers the-spread-trigger.timer`.
+   (without starting anything) and enables both timers.
+3. Logs: `journalctl -u the-spread-trigger -u the-spread-ingest`. Next runs: `systemctl list-timers 'the-spread-*'`.
    New token: `sudo ./install.sh --new-token`.
 
-The timer wakes the machine from suspend, and runs at boot if the machine was off at 04:41.
+The timers wake the machine from suspend, and run at boot if the machine was off at their time.
 
 ### Removing or redoing an episode
 
@@ -152,7 +153,7 @@ automatically (the *Publish site* workflow).
 | `.github/workflows/daily.yml` | The weekday schedule |
 | `.github/workflows/ingest.yml` | Fetches the feeds every few hours between briefs (free, publishes nothing) |
 | `.github/workflows/manage.yml`, `publish.yml` | Remove/redo an episode; republish the site |
-| `trigger/` | systemd timer that starts the daily workflow on time from your own machine |
+| `trigger/` | systemd timers that start the daily and ingest workflows on time from your own machine |
 | `brief.db` | Every item seen, with tags (local, git-ignored). CI keeps its public-only copy in `state/public.db` |
 | `briefs/` | Output. Only `*-public.md` is committed; private briefs stay local |
 

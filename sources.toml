@@ -1,6 +1,6 @@
 # Source list for The Spread.
 #
-# type:       rss | ofac | gdelt | google_news
+# type:       rss | ofac | gdelt | google_news | palladian
 # public_ok:  true  = safe to summarise in a public edition (free / official / primary)
 #             false = only for your private brief (e.g. your own paid subscriptions,
 #                     or headline-only aggregators of paywalled outlets)
@@ -133,35 +133,21 @@ url = "https://www.offshore-energy.biz/feed/"
 public_ok = true
 segments = ["upstream", "gas_lng", "shipping"]
 
-# Palladian sites (LNG Industry, Hydrocarbon Engineering) dropped their all-news feeds
-# (404 since 2026-10-12); these are their section feeds.
+# Palladian sites (LNG Industry, Hydrocarbon Engineering) have had no RSS since their relaunch
+# (404 since 2026-10-12); type palladian reads their /news/ page (12 latest stories).
 [[source]]
-name = "LNG Industry - liquefaction"
-type = "rss"
-url = "https://www.lngindustry.com/rss/liquefaction.xml"
-public_ok = true
-segments = ["gas_lng"]
-
-[[source]]
-name = "LNG Industry - LNG news"
-type = "rss"
-url = "https://www.lngindustry.com/rss/liquid-natural-gas.xml"
+name = "LNG Industry"
+type = "palladian"
+url = "https://www.lngindustry.com/news/"
 public_ok = true
 segments = ["gas_lng", "shipping"]
 
 [[source]]
-name = "Hydrocarbon Engineering - refining"
-type = "rss"
-url = "https://www.hydrocarbonengineering.com/rss/refining.xml"
+name = "Hydrocarbon Engineering"
+type = "palladian"
+url = "https://www.hydrocarbonengineering.com/news/"
 public_ok = true
-segments = ["refining"]
-
-[[source]]
-name = "Hydrocarbon Engineering - petrochemicals"
-type = "rss"
-url = "https://www.hydrocarbonengineering.com/rss/petrochemicals.xml"
-public_ok = true
-segments = ["petchem"]
+segments = ["refining", "petchem", "gas_lng"]
 
 [[source]]
 name = "World Oil"
