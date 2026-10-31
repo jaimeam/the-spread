@@ -141,16 +141,20 @@ Sources marked `local_only` (blocked from GitHub's servers) are fetched here, si
 
 ### Listener stats
 
-Episode MP3 links (from `op3_from` in `podcast.toml` on) go through [OP3](https://op3.dev), which counts
-downloads, excludes bots, and updates once a day. The machine's stats job runs `stats.py`, which reads
-those counts and publishes [stats.html](https://jaimeam.github.io/the-spread/stats.html), the `stats.svg`
-card shown at the top of this README, and `stats.json`. No credits used. OP3's own page for the show:
-https://op3.dev/show/e0804b8a-fcbb-5fd2-b9bf-53881813334f. Until OP3 has found the show (through
-Podcast Index, after a few days of downloads), the page and card say there's no data yet.
+Episode MP3 links (from `op3_from` in `podcast.toml` on) go through [OP3](https://op3.dev), which logs every
+request. OP3 hasn't registered the show, so `stats.py` reads its raw hit log (`/hits`, filtered by our URL
+prefix), drops bots (Spotify's copy fetch, Apple's directory checks, crawlers and scripts) and counts one
+download per app, network and episode per day. The log only reaches back about a week, so each run also
+folds the days it saw into `site/stats-history.json`, which only ever adds days or raises a count: the chart
+starts on the first recorded day and grows. OP3 sees Apple Podcasts and other apps that fetch our link;
+Spotify serves its own copy, so Spotify listens aren't counted. The machine's stats job publishes
+[stats.html](https://jaimeam.github.io/the-spread/stats.html), the `stats.svg` card shown at the top of this
+README, `stats.json` and the history. No credits used. If OP3 registers the show later, its own 30-day
+counts are added to the page.
 
 One-time setup: sign in at https://op3.dev/api/keys, create an API key, copy its **bearer token**, and put it
 in `/etc/the-spread/env` as `OP3_TOKEN`. To use the GitHub workflow by hand too, add it as the repository
-secret `OP3_TOKEN`. `python stats.py render` rebuilds the page from `site/stats.json` without calling OP3.
+secret `OP3_TOKEN`. `python stats.py render` rebuilds the page from `site/stats.json` and `stats-history.json` without calling OP3.
 
 ### Removing or redoing an episode
 
@@ -179,7 +183,7 @@ automatically (the *Publish site* workflow).
 |---|---|
 | `sources.toml` | Every feed, with `public_ok` marking what may appear in a public edition |
 | `exposure_map.toml` | Chokepoints, assets and policies, each with its transmission chain. **This is your edge; refine it.** |
-| `stats.py` | Listener stats from OP3 -> `site/stats.html`, `stats.svg`, `stats.json` |
+| `stats.py` | Listener stats from OP3 -> `site/stats.html`, `stats.svg`, `stats.json`, `stats-history.json` |
 | `pipeline.py` | ingest -> SQLite -> tag (Claude Haiku) -> brief (Claude Opus) |
 | `podcast.py`, `podcast.toml` | brief -> script -> MP3 -> podcast feed; show settings |
 | `site/` | What GitHub Pages serves: `cover.png`, `feed.xml`, `episodes/` |

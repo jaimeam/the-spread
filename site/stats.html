@@ -14,14 +14,14 @@ main { max-width:960px; margin:0 auto; padding:32px 20px 64px; }
 h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:40px 0 12px; }
 .sub, .note { color:var(--ink-2); } .note { font-size:13px; }
 a { color:inherit; }
-.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:16px; margin-top:24px; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:24px; }
 .tile { border:1px solid var(--grid); border-radius:8px; padding:14px 16px; }
 .tile .v { font-size:30px; font-weight:600; font-variant-numeric:tabular-nums; }
 .tile .k { color:var(--ink-2); font-size:13px; }
 svg text { fill:var(--muted); font-size:11px; font-variant-numeric:tabular-nums; }
 svg .grid { stroke:var(--grid); stroke-width:1; }
 svg .bar { fill:var(--bar); } svg g.col:hover .bar { fill:var(--bar-hover); }
-svg .hit { fill:transparent; }
+svg .hit { fill:transparent; } svg .bar.today { opacity:.5; } svg .gap { stroke:var(--muted); stroke-dasharray:2 2; }
 svg .tip { opacity:0; pointer-events:none; } svg g.col:hover .tip { opacity:1; }
 svg .tip text { fill:var(--ink); font-size:12px; }
 svg .tip rect { fill:var(--surface); stroke:var(--grid); }
@@ -29,9 +29,10 @@ table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums;
 th, td { text-align:right; padding:6px 8px; border-bottom:1px solid var(--grid); white-space:nowrap; }
 th { color:var(--ink-2); font-weight:500; font-size:13px; }
 th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align:left; }
-td:nth-child(2) { white-space:normal; }
+td:nth-child(2) { white-space:normal; min-width:16em; }
+.chart { overflow-x:auto; } .chart svg { min-width:600px; }
 .two { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:32px; }
-.row { display:grid; grid-template-columns:1fr 3fr auto; gap:10px; align-items:center; margin:6px 0; }
+.row { display:grid; grid-template-columns:minmax(8.5em,1fr) 3fr auto; gap:10px; align-items:center; margin:6px 0; }
 .row .name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .row .track { background:var(--track); border-radius:4px; height:10px; }
 .row .fill { background:var(--bar); height:10px; border-radius:0 4px 4px 0; }
@@ -39,6 +40,32 @@ td:nth-child(2) { white-space:normal; }
 </style></head>
 <body><main>
 <h1>Listener stats</h1>
-<p class="sub">The Spread: Daily Oil &amp; Gas Briefing. No download counts yet: OP3 hasn't picked up the show. Downloads are counted by <a href="https://op3.dev">OP3</a>,
-the open podcast analytics service, and this page fills in once it has. <a href="feed.xml">Podcast feed</a>.</p>
+<p class="sub">The Spread: Daily Oil &amp; Gas Briefing. Downloads logged by <a href="https://op3.dev">OP3</a>, the open podcast analytics service,
+bots excluded. Page updated 2026-10-31T12:50Z.</p>
+<p class="note">OP3 counts the apps that fetch the episode from our link: Apple Podcasts and other podcast apps, and browsers. Spotify serves its own copy of each episode, so Spotify listens don't reach OP3 and aren't counted here.</p>
+<div class="tiles"><div class="tile"><div class="v">3</div><div class="k">Downloads, last 24 hours</div></div><div class="tile"><div class="v">16</div><div class="k">Downloads, last 7 days</div></div><div class="tile"><div class="v">11</div><div class="k">Listeners, last 7 days (est.)</div></div><div class="tile"><div class="v">16</div><div class="k">Downloads since 25 Oct</div></div></div>
+
+<h2>Downloads per day</h2>
+<div class="chart"><svg viewBox="0 0 920 220" width="100%" role="img" aria-label="Downloads per day, 7 days"><line class="grid" x1="34" x2="912" y1="196.0" y2="196.0"/><text x="28" y="200.0" text-anchor="end">0</text><line class="grid" x1="34" x2="912" y1="149.5" y2="149.5"/><text x="28" y="153.5" text-anchor="end">2</text><line class="grid" x1="34" x2="912" y1="103.0" y2="103.0"/><text x="28" y="107.0" text-anchor="end">4</text><line class="grid" x1="34" x2="912" y1="56.5" y2="56.5"/><text x="28" y="60.5" text-anchor="end">6</text><line class="grid" x1="34" x2="912" y1="10.0" y2="10.0"/><text x="28" y="14.0" text-anchor="end">8</text><g class="col"><title>Sun 25 Oct: 1 downloads</title><rect class="hit" x="34.0" y="10" width="125.4" height="186"/><path class="bar" d="M84.7,196.0V176.8Q84.7,172.8 88.7,172.8H104.7Q108.7,172.8 108.7,176.8V196.0Z"/><g class="tip"><rect x="36.0" y="10" width="156" height="22" rx="4"/><text x="114.0" y="25" text-anchor="middle">Sun 25 Oct: 1</text></g></g><text x="96.7" y="214" text-anchor="middle">25 Oct</text><g class="col"><title>Mon 26 Oct: 2 downloads</title><rect class="hit" x="159.4" y="10" width="125.4" height="186"/><path class="bar" d="M210.1,196.0V153.5Q210.1,149.5 214.1,149.5H230.1Q234.1,149.5 234.1,153.5V196.0Z"/><g class="tip"><rect x="144.1" y="10" width="156" height="22" rx="4"/><text x="222.1" y="25" text-anchor="middle">Mon 26 Oct: 2</text></g></g><text x="222.1" y="214" text-anchor="middle">26 Oct</text><g class="col"><title>Tue 27 Oct: 4 downloads</title><rect class="hit" x="284.9" y="10" width="125.4" height="186"/><path class="bar" d="M335.6,196.0V107.0Q335.6,103.0 339.6,103.0H355.6Q359.6,103.0 359.6,107.0V196.0Z"/><g class="tip"><rect x="269.6" y="10" width="156" height="22" rx="4"/><text x="347.6" y="25" text-anchor="middle">Tue 27 Oct: 4</text></g></g><text x="347.6" y="214" text-anchor="middle">27 Oct</text><g class="col"><title>Wed 28 Oct: 1 downloads</title><rect class="hit" x="410.3" y="10" width="125.4" height="186"/><path class="bar" d="M461.0,196.0V176.8Q461.0,172.8 465.0,172.8H481.0Q485.0,172.8 485.0,176.8V196.0Z"/><g class="tip"><rect x="395.0" y="10" width="156" height="22" rx="4"/><text x="473.0" y="25" text-anchor="middle">Wed 28 Oct: 1</text></g></g><text x="473.0" y="214" text-anchor="middle">28 Oct</text><g class="col"><title>Thu 29 Oct: 2 downloads</title><rect class="hit" x="535.7" y="10" width="125.4" height="186"/><path class="bar" d="M586.4,196.0V153.5Q586.4,149.5 590.4,149.5H606.4Q610.4,149.5 610.4,153.5V196.0Z"/><g class="tip"><rect x="520.4" y="10" width="156" height="22" rx="4"/><text x="598.4" y="25" text-anchor="middle">Thu 29 Oct: 2</text></g></g><text x="598.4" y="214" text-anchor="middle">29 Oct</text><g class="col"><title>Fri 30 Oct: 5 downloads</title><rect class="hit" x="661.1" y="10" width="125.4" height="186"/><path class="bar" d="M711.9,196.0V83.8Q711.9,79.8 715.9,79.8H731.9Q735.9,79.8 735.9,83.8V196.0Z"/><g class="tip"><rect x="645.9" y="10" width="156" height="22" rx="4"/><text x="723.9" y="25" text-anchor="middle">Fri 30 Oct: 5</text></g></g><text x="723.9" y="214" text-anchor="middle">30 Oct</text><g class="col"><title>Sat 31 Oct: 1 downloads so far</title><rect class="hit" x="786.6" y="10" width="125.4" height="186"/><path class="bar today" d="M837.3,196.0V176.8Q837.3,172.8 841.3,172.8H857.3Q861.3,172.8 861.3,176.8V196.0Z"/><g class="tip"><rect x="754.0" y="10" width="156" height="22" rx="4"/><text x="832.0" y="25" text-anchor="middle">Sat 31 Oct: 1 so far</text></g></g><text x="849.3" y="214" text-anchor="middle">31 Oct</text></svg></div>
+<p class="note">Recorded: 25 Oct – 31 Oct 2026 (7 days). OP3's log only reaches back about a week, so this chart starts
+on the first day this page counted and grows from there.
+Today, drawn faded, is still counting. Hover a column for the day's count.</p>
+
+<h2>Episodes</h2>
+<div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>Episode</th><th>Last 24 h</th><th>Last 7 days</th><th>Since 25 Oct</th></tr></thead>
+<tbody><tr><td>2026-10-30</td><td>Europe to release 42m bbl; Tanker sinking off Oman after projectile strike</td><td>2</td><td>5</td><td>5</td></tr><tr><td>2026-10-29</td><td>Qatar LNG halt to year-end; Diesel tanker for NY idles</td><td>1</td><td>3</td><td>3</td></tr><tr><td>2026-10-28</td><td>Ras Tanura fire contained; Russia swaps crude for diesel</td><td>0</td><td>1</td><td>1</td></tr><tr><td>2026-10-27</td><td>Houthis claim pipeline hits; India trims Russian crude</td><td>0</td><td>1</td><td>1</td></tr><tr><td>2026-10-26</td><td>$116 Brent despite Gulf flows; Freight walls off US crude</td><td>0</td><td>3</td><td>3</td></tr><tr><td>2026-10-23</td><td>Oil jumps 4% on Saudi attacks; Iran claims seven ships hit</td><td>0</td><td>2</td><td>2</td></tr><tr><td>2026-10-22</td><td>Hormuz: two more tankers hit as Gulf crude keeps flowing</td><td>0</td><td>1</td><td>1</td></tr><tr><td>2026-10-21</td><td>Hormuz: engine-room hits and $1m-a-day VLCCs</td><td>0</td><td>0</td><td>0</td></tr><tr><td>2026-10-20</td><td>Iran&#x27;s terminals idle as Iraq nears pre-war exports</td><td>0</td><td>0</td><td>0</td></tr></tbody></table></div>
+
+<div class="two">
+<section><h2>Apps</h2><div class="row"><span class="name">Apple Podcasts</span><span class="track"><span class="fill" style="display:block;width:100.0%"></span></span><span class="n">12</span></div><div class="row"><span class="name">Web browser</span><span class="track"><span class="fill" style="display:block;width:25.0%"></span></span><span class="n">3</span></div><div class="row"><span class="name">Echo</span><span class="track"><span class="fill" style="display:block;width:8.3%"></span></span><span class="n">1</span></div></section>
+<section><h2>Countries</h2><div class="row"><span class="name">US</span><span class="track"><span class="fill" style="display:block;width:100.0%"></span></span><span class="n">10</span></div><div class="row"><span class="name">ES</span><span class="track"><span class="fill" style="display:block;width:50.0%"></span></span><span class="n">5</span></div><div class="row"><span class="name">CA</span><span class="track"><span class="fill" style="display:block;width:10.0%"></span></span><span class="n">1</span></div></section>
+</div>
+<p class="note">Apps and countries cover 25 Oct – 31 Oct 2026 (7 days).</p>
+
+<p class="note" style="margin-top:40px">How it's counted: a download is a request for an episode
+from a podcast app or browser, once per app, network and episode per day. Not counted: requests that only
+check the file, and automated ones, in the last 7 days: Other bots and scripts 51, Apple (directory check) 16, Spotify (copies the episode) 5. Listeners are estimated from
+OP3's hashed IP addresses, so two people on one network count once. Only episodes from
+2026-10-20 on are counted: older episodes keep their original MP3 link.
+Data: <a href="stats.json">stats.json</a> · <a href="stats-history.json">stats-history.json</a> ·
+<a href="feed.xml">podcast feed</a>.</p>
 </main></body></html>

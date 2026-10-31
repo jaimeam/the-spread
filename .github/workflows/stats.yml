@@ -1,5 +1,5 @@
 # Listener stats page: fetches download counts from OP3 (op3.dev) and publishes
-# site/stats.html, site/stats.svg (the README preview) and site/stats.json.
+# site/stats.html, site/stats.svg (the README preview), site/stats.json and site/stats-history.json.
 # No Claude or ElevenLabs calls, no credits. Needs the OP3_TOKEN secret (a bearer token
 # from https://op3.dev/api/keys); without it the run stops with a warning.
 
@@ -57,7 +57,7 @@ jobs:
         run: |
           git config user.name "the-spread-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add site/stats.html site/stats.svg site/stats.json
+          git add site/stats.html site/stats.svg site/stats.json site/stats-history.json
           git commit -m "Stats $(date -u +%F)" || { echo "nothing new"; exit 0; }
           if ! git pull --rebase origin "$GITHUB_REF_NAME"; then
             git rebase --abort

@@ -1,0 +1,73 @@
+{
+ "updated": "2026-10-31T12:50Z",
+ "window": [
+  "2026-10-24T12:50Z",
+  "2026-10-31T12:50Z"
+ ],
+ "op3_from": "2026-10-20",
+ "downloads_24h": 3,
+ "downloads_7d": 16,
+ "listeners_7d": 11,
+ "bots_7d": {
+  "Other bots and scripts": 51,
+  "Apple (directory check)": 16,
+  "Spotify (copies the episode)": 5
+ },
+ "episodes": [
+  {
+   "date": "2026-10-30",
+   "title": "Europe to release 42m bbl; Tanker sinking off Oman after projectile strike | 30 Oct",
+   "downloads_24h": 2,
+   "downloads_7d": 5
+  },
+  {
+   "date": "2026-10-29",
+   "title": "Qatar LNG halt to year-end; Diesel tanker for NY idles | 29 Oct",
+   "downloads_24h": 1,
+   "downloads_7d": 3
+  },
+  {
+   "date": "2026-10-28",
+   "title": "Ras Tanura fire contained; Russia swaps crude for diesel | 28 Oct",
+   "downloads_24h": 0,
+   "downloads_7d": 1
+  },
+  {
+   "date": "2026-10-27",
+   "title": "Houthis claim pipeline hits; India trims Russian crude | 27 Oct",
+   "downloads_24h": 0,
+   "downloads_7d": 1
+  },
+  {
+   "date": "2026-10-26",
+   "title": "$116 Brent despite Gulf flows; Freight walls off US crude | 26 Oct",
+   "downloads_24h": 0,
+   "downloads_7d": 3
+  },
+  {
+   "date": "2026-10-23",
+   "title": "Oil jumps 4% on Saudi attacks; Iran claims seven ships hit | 23 Oct",
+   "downloads_24h": 0,
+   "downloads_7d": 2
+  },
+  {
+   "date": "2026-10-22",
+   "title": "Hormuz: two more tankers hit as Gulf crude keeps flowing | 22 Oct",
+   "downloads_24h": 0,
+   "downloads_7d": 1
+  },
+  {
+   "date": "2026-10-21",
+   "title": "Hormuz: engine-room hits and $1m-a-day VLCCs | 21 Oct",
+   "downloads_24h": 0,
+   "downloads_7d": 0
+  },
+  {
+   "date": "2026-10-20",
+   "title": "Iran's terminals idle as Iraq nears pre-war exports | 20 Oct",
+   "downloads_24h": 0,
+   "downloads_7d": 0
+  }
+ ],
+ "op3_show": null
+}
