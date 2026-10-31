@@ -1,8 +1,8 @@
 [Unit]
-Description=Start The Spread's Ingest feeds workflow five times a day
+Description=Run The Spread's feed ingest five times a day
 
 [Timer]
-# Same slots as ingest.yml's schedule (GitHub's is the fallback); clear of the daily run at 04:41.
+# Clear of the daily run at 04:41 (and the-spread-run takes one job at a time anyway).
 OnCalendar=*-*-* 00,08,12,16,20:23:00 UTC
 AccuracySec=1s
 WakeSystem=true

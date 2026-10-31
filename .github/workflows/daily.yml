@@ -10,12 +10,11 @@
 name: The Spread daily
 
 on:
-  # GitHub's schedule is best-effort: runs at :00 are often late and sometimes dropped.
-  # So run off the hour, early enough to publish before 05:00 UTC (07:00 Madrid in summer,
-  # 06:00 in winter), with a backup slot that does nothing if today's episode already exists.
+  # The owner's mini PC makes the episode at 04:41 UTC (trigger/the-spread-run) and pushes it.
+  # This is only the fallback if it didn't: it does nothing if today's episode already exists.
+  # The mini PC won't start after 05:15 UTC, so the two never overlap. GitHub can start it hours late.
   schedule:
-    - cron: "41 4 * * 1-5"
-    - cron: "17 5 * * 1-5"  # backup
+    - cron: "47 5 * * 1-5"
   workflow_dispatch:         # "Run workflow" button for manual runs
     inputs:
       dry_run:

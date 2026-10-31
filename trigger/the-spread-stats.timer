@@ -1,9 +1,8 @@
 [Unit]
-Description=Start The Spread's Listener stats workflow twice a day
+Description=Run The Spread's listener stats twice a day
 
 [Timer]
-# Same slots as stats.yml's schedule (GitHub's is the fallback). The workflow waits for the day's
-# episode on weekdays, so the 18:37 run covers a late one.
+# OP3 updates once a day; the second run covers a missed first one.
 OnCalendar=*-*-* 10,18:37:00 UTC
 AccuracySec=1s
 Persistent=true

@@ -1,0 +1,88 @@
+#!/bin/bash
+# Runs a job of The Spread on this machine, then pushes to main. GitHub then only deploys the
+# site: "Publish site" runs on any push touching site/. Run by the the-spread-* services.
+#   the-spread-run daily     today's brief + episode (weekdays; skips if already published).
+#                            Uses Claude + ElevenLabs credits and publishes to Spotify.
+#   the-spread-run ingest    fetch every public source into state/public.db (no keys, no credits)
+#   the-spread-run stats     listener stats from OP3 -> site/stats.* (no credits)
+#   the-spread-run --check   check the clone, Python and the GitHub token (runs and pushes nothing)
+# Secrets come from /etc/the-spread/env (EnvironmentFile) and the push token from
+# $CREDENTIALS_DIRECTORY/github-token. The repo is a dedicated clone in $STATE_DIRECTORY/repo:
+# it is reset to origin/main before every job, so never edit files there.
+set -euo pipefail
+
+job=${1:-}
+state=${STATE_DIRECTORY:-/var/lib/the-spread}
+repo=$state/repo
+url=${THE_SPREAD_REPO:-https://github.com/jaimeam/the-spread}   # override only for tests
+python=${PYTHON:-python3}
+token=$(<"${CREDENTIALS_DIRECTORY:-/etc/the-spread}/github-token") || { echo "cannot read the GitHub token"; exit 1; }
+# Same header actions/checkout uses, so the token never lands in .git/config.
+auth="http.$url/.extraheader=AUTHORIZATION: basic $(printf 'x-access-token:%s' "$token" | base64 -w0)"
+git() { command git -c "$auth" -c user.name=the-spread-bot -c user.email=actions@users.noreply.github.com "$@"; }
+
+export BRIEF_DB=state/public.db
+export PODCAST_BASE_URL=https://jaimeam.github.io/the-spread
+
+# One job at a time (a daily run waits for an ingest to finish, and so on).
+exec 9>"$state/lock"
+flock 9
+
+# Retry network failures, e.g. right after waking from suspend.
+retry() { for i in $(seq 1 10); do "$@" && return 0; echo "attempt $i failed, retrying in 30s"; sleep 30; done; return 1; }
+
+[ -d "$repo/.git" ] || retry git clone -q "$url" "$repo"
+cd "$repo"
+retry git fetch -q origin main
+git checkout -q -B main origin/main
+git reset -q --hard origin/main
+git clean -qfd
+
+# Commit what changed in the given paths and push. If main moved meanwhile (a manual
+# "Manage episodes" run on GitHub), rebase onto it and try again.
+save() {
+  local msg=$1; shift
+  git add -A "$@"
+  git diff --cached --quiet && { echo "nothing new to commit"; return 0; }
+  git commit -q -m "$msg"
+  for i in 1 2 3 4 5; do
+    git push -q origin HEAD:main && { echo "pushed: $msg"; return 0; }
+    sleep $((i * 10))
+    retry git fetch -q origin main
+    git rebase -q origin/main || { git rebase --abort; echo "main changed the same files; not pushed"; return 1; }
+  done
+  echo "push failed"; return 1
+}
+
+today=$(date -u +%F)
+case $job in
+  --check)
+    "$python" -c 'import sys; assert sys.version_info >= (3, 11), sys.version' \
+      || { echo "needs Python 3.11+ (set PYTHON= in /etc/the-spread/env)"; exit 1; }
+    git push -q --dry-run origin HEAD:main \
+      || { echo "the token can't push: it needs Contents: read and write on the-spread"; exit 1; }
+    echo "OK: clone up to date, $("$python" --version), token may push" ;;
+
+  daily)
+    if [ "$(date -u +%u)" -gt 5 ]; then echo "weekend (UTC): nothing to do"; exit 0; fi
+    if [ -f "briefs/$today-public.md" ]; then echo "today's brief is already published"; exit 0; fi
+    # GitHub's fallback run (daily.yml) starts at 05:47 UTC. Starting after 05:15 here, e.g. at boot after
+    # the machine was off, could overlap it and make the episode twice, so leave the day to GitHub then.
+    if [ "$(date -u +%H%M)" -ge 0515 ] && [ "${2:-}" != --force ]; then
+      echo "past 05:15 UTC: leaving today to GitHub's fallback run (--force to run anyway)"; exit 0
+    fi
+    hours=$([ "$(date -u +%u)" = 1 ] && echo 78 || echo 30)   # Monday covers the weekend
+    "$python" pipeline.py run --public --require-llm --hours "$hours"
+    "$python" podcast.py episode "briefs/$today-public.md"
+    save "Brief $today" briefs scripts site state ;;
+
+  ingest)
+    "$python" pipeline.py ingest --public
+    save "Ingest $(date -u +%FT%H:%MZ)" state ;;
+
+  stats)
+    "$python" stats.py
+    save "Stats $today" site/stats.html site/stats.svg site/stats.json ;;
+
+  *) echo "usage: the-spread-run daily|ingest|stats|--check"; exit 2 ;;
+esac

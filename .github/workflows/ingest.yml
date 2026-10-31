@@ -5,9 +5,7 @@
 name: Ingest feeds
 
 on:
-  # Off the hour, and clear of the daily run (04:41, backup 05:17). Weekends too: Monday's brief looks back 78h.
-  schedule:
-    - cron: "23 0,8,12,16,20 * * *"
+  # Manual only: the owner's mini PC runs the ingest itself five times a day (trigger/the-spread-run).
   workflow_dispatch:
 
 permissions:

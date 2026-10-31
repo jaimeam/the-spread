@@ -2,15 +2,11 @@
 # site/stats.html, site/stats.svg (the README preview) and site/stats.json.
 # No Claude or ElevenLabs calls, no credits. Needs the OP3_TOKEN secret (a bearer token
 # from https://op3.dev/api/keys); without it the run stops with a warning.
-# OP3 updates its counts once a day, so once a day is enough.
 
 name: Listener stats
 
 on:
-  # The mini PC starts it at these times (trigger/the-spread-stats.timer); GitHub's schedule is the fallback.
-  schedule:
-    - cron: "37 10 * * *"
-    - cron: "37 18 * * *"   # second chance if the morning one skipped or GitHub dropped it
+  # Manual only: the owner's mini PC runs stats.py itself at 10:37 and 18:37 UTC (trigger/the-spread-run).
   workflow_dispatch:
 
 permissions:

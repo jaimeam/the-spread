@@ -1,10 +1,14 @@
 [Unit]
-Description=Start The Spread's Listener stats workflow on GitHub
+Description=Run The Spread's listener stats on this machine
 Wants=network-online.target
 After=network-online.target
 
 [Service]
 Type=oneshot
 DynamicUser=yes
+StateDirectory=the-spread
+Environment=HOME=/var/lib/the-spread
+EnvironmentFile=/etc/the-spread/env
 LoadCredential=github-token:/etc/the-spread/github-token
-ExecStart=/usr/local/bin/the-spread-dispatch stats
+ExecStart=/usr/local/bin/the-spread-run stats
+TimeoutStartSec=2h
