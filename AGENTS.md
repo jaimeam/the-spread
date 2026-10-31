@@ -23,6 +23,8 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
   Never change `guid` in `podcast.toml` either (the show's Podcast Index ID, used by OP3 stats).
 - Download stats: MP3 links for episodes dated from `op3_from` on go through `op3.dev` (public stats, then a
   redirect to GitHub Pages). Don't move older episodes onto OP3: changing their link can make Spotify re-fetch them.
+  `stats.yml` (daily, secret `OP3_TOKEN`) runs `stats.py` and publishes `site/stats.html`, `stats.svg` (README card)
+  and `stats.json`. It calls only OP3, no credits, so it is free to run. Only aggregates are published, never per-download rows.
 - Licensing guard: only `public_ok = true` sources reach the public edition (the one CI publishes).
   Google News stays `public_ok = false` unless the owner decides otherwise.
 

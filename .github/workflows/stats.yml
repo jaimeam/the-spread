@@ -1,0 +1,81 @@
+# Listener stats page: fetches download counts from OP3 (op3.dev) and publishes
+# site/stats.html, site/stats.svg (the README preview) and site/stats.json.
+# No Claude or ElevenLabs calls, no credits. Needs the OP3_TOKEN secret (a bearer token
+# from https://op3.dev/api/keys); without it the run stops with a warning.
+# OP3 updates its counts once a day, so once a day is enough.
+
+name: Listener stats
+
+on:
+  schedule:
+    - cron: "37 10 * * *"
+    - cron: "37 18 * * *"   # second chance if the morning one skipped or GitHub dropped it
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Its own group, like ingest: sharing the daily run's group could cancel a waiting episode run.
+concurrency:
+  group: the-spread-stats
+  cancel-in-progress: false
+
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.save.outputs.changed }}
+    env:
+      OP3_TOKEN: ${{ secrets.OP3_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      # The daily run pushes without pulling, so don't push while today's episode may still be
+      # in the making (GitHub has started it up to ~5h late): wait until its brief is in the repo.
+      - id: check
+        run: |
+          skip=false
+          if [ -z "$OP3_TOKEN" ]; then
+            echo "::warning::OP3_TOKEN secret is not set; see the Listener stats section of the README"; skip=true
+          elif [ "$(date -u +%u)" -le 5 ] && [ ! -f "briefs/$(date -u +%F)-public.md" ]; then
+            echo "Today's episode isn't in the repo yet; leaving stats for the next run."; skip=true
+          fi
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-python@v5
+        if: ${{ steps.check.outputs.skip != 'true' }}
+        with:
+          python-version: "3.12"
+
+      - if: ${{ steps.check.outputs.skip != 'true' }}
+        run: python stats.py
+
+      - id: save
+        if: ${{ steps.check.outputs.skip != 'true' }}
+        name: Save to the repo
+        run: |
+          git config user.name "the-spread-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add site/stats.html site/stats.svg site/stats.json
+          git commit -m "Stats $(date -u +%F)" || { echo "nothing new"; exit 0; }
+          if ! git pull --rebase origin "$GITHUB_REF_NAME"; then
+            git rebase --abort
+            echo "::warning::main changed the stats files since checkout; dropping this commit"
+            exit 0
+          fi
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+  # Pushes made with the workflow's token don't trigger "Publish site", so call it.
+  publish:
+    needs: stats
+    if: ${{ needs.stats.outputs.changed == 'true' }}
+    uses: ./.github/workflows/publish.yml
+    permissions:
+      contents: read
+      pages: write
+      id-token: write

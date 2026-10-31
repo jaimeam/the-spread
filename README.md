@@ -4,6 +4,10 @@ A daily brief on oil & gas, refining, petchem and midstream: what moved, and
 why. It ingests free and official sources, tags each item against
 an exposure map, and has Claude write the brief.
 
+[![Podcast downloads, from OP3](https://jaimeam.github.io/the-spread/stats.svg)](https://jaimeam.github.io/the-spread/stats.html)
+
+**[Listener stats →](https://jaimeam.github.io/the-spread/stats.html)** downloads per day and per episode, apps and countries.
+
 ## Run it
 
 Needs Python 3.11+ and nothing else (standard library only). macOS ships 3.9 as `python3`;
@@ -120,6 +124,18 @@ Both skip a day whose episode already exists. The same machine starts Ingest fee
 
 The timers wake the machine from suspend, and run at boot if the machine was off at their time.
 
+### Listener stats
+
+Episode MP3 links (from `op3_from` in `podcast.toml` on) go through [OP3](https://op3.dev), which counts
+downloads, excludes bots, and updates once a day. **Listener stats** (`stats.yml`) reads those counts every
+day and publishes [stats.html](https://jaimeam.github.io/the-spread/stats.html), the `stats.svg` card shown
+at the top of this README, and `stats.json`. No credits used. OP3's own page for the show:
+https://op3.dev/show/e0804b8a-fcbb-5fd2-b9bf-53881813334f.
+
+One-time setup: sign in at https://op3.dev/api/keys, create an API key, copy its **bearer token**, and add it
+as the repository secret `OP3_TOKEN`. Then Actions → Listener stats → Run workflow.
+`python stats.py render` rebuilds the page from `site/stats.json` without calling OP3.
+
 ### Removing or redoing an episode
 
 Actions → **Manage episodes** → Run workflow, then pick:
@@ -147,6 +163,7 @@ automatically (the *Publish site* workflow).
 |---|---|
 | `sources.toml` | Every feed, with `public_ok` marking what may appear in a public edition |
 | `exposure_map.toml` | Chokepoints, assets and policies, each with its transmission chain. **This is your edge; refine it.** |
+| `stats.py` | Listener stats from OP3 -> `site/stats.html`, `stats.svg`, `stats.json` |
 | `pipeline.py` | ingest -> SQLite -> tag (Claude Haiku) -> brief (Claude Opus) |
 | `podcast.py`, `podcast.toml` | brief -> script -> MP3 -> podcast feed; show settings |
 | `site/` | What GitHub Pages serves: `cover.png`, `feed.xml`, `episodes/` |
