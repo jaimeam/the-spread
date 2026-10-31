@@ -287,7 +287,10 @@ def main() -> None:
     if sys.argv[1:2] == ["render"]:
         s = json.loads(OUT_JSON.read_text())
     else:
-        s = collect()
+        s = json.loads(json.dumps(collect()))  # same shapes as the saved file, for the comparison below
+        old = json.loads(OUT_JSON.read_text()) if OUT_JSON.exists() else {}
+        if {**old, "updated": s["updated"]} == s:
+            s["updated"] = old["updated"]  # same numbers: leave the files alone, so nothing to commit
         OUT_JSON.write_text(json.dumps(s, indent=1) + "\n")
     render(s)
     print(f"stats: {s['monthly_downloads']} downloads in 30 days, {len(s['episodes'])} episodes -> site/stats.html")
