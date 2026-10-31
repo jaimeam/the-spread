@@ -112,14 +112,16 @@ GitHub's scheduler is best-effort, and in October 2026 it delivered the 04:41 an
 about 5 hours late. So a machine that is always on (a mini PC, a home server) starts the
 workflow at 04:41 UTC on weekdays instead, and the GitHub schedule stays as a late fallback.
 Both skip a day whose episode already exists. The same machine starts Ingest feeds every day at
-00:23, 08:23, 12:23, 16:23 and 20:23 UTC (`the-spread-ingest.timer`).
+00:23, 08:23, 12:23, 16:23 and 20:23 UTC (`the-spread-ingest.timer`), and Listener stats at
+10:37 and 18:37 UTC (`the-spread-stats.timer`).
 
 1. GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token.
    Repository access: only `the-spread`. Permissions: **Actions: Read and write**. Note the expiry date.
 2. On the machine (any systemd Linux): `git clone https://github.com/jaimeam/the-spread`,
    then `cd the-spread/trigger && sudo ./install.sh` and paste the token. It checks the token
-   (without starting anything) and enables both timers.
-3. Logs: `journalctl -u the-spread-trigger -u the-spread-ingest`. Next runs: `systemctl list-timers 'the-spread-*'`.
+   (without starting anything) and enables the timers. Already installed? `git pull`, then
+   `sudo ./install.sh` again to add new timers (the token is kept).
+3. Logs: `journalctl -u the-spread-trigger -u the-spread-ingest -u the-spread-stats`. Next runs: `systemctl list-timers 'the-spread-*'`.
    New token: `sudo ./install.sh --new-token`.
 
 The timers wake the machine from suspend, and run at boot if the machine was off at their time.
@@ -127,8 +129,8 @@ The timers wake the machine from suspend, and run at boot if the machine was off
 ### Listener stats
 
 Episode MP3 links (from `op3_from` in `podcast.toml` on) go through [OP3](https://op3.dev), which counts
-downloads, excludes bots, and updates once a day. **Listener stats** (`stats.yml`) reads those counts every
-day and publishes [stats.html](https://jaimeam.github.io/the-spread/stats.html), the `stats.svg` card shown
+downloads, excludes bots, and updates once a day. **Listener stats** (`stats.yml`, started by the mini PC at
+10:37 and 18:37 UTC, with GitHub's schedule as fallback) reads those counts and publishes [stats.html](https://jaimeam.github.io/the-spread/stats.html), the `stats.svg` card shown
 at the top of this README, and `stats.json`. No credits used. OP3's own page for the show:
 https://op3.dev/show/e0804b8a-fcbb-5fd2-b9bf-53881813334f.
 

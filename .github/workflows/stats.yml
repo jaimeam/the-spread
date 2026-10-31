@@ -7,6 +7,7 @@
 name: Listener stats
 
 on:
+  # The mini PC starts it at these times (trigger/the-spread-stats.timer); GitHub's schedule is the fallback.
   schedule:
     - cron: "37 10 * * *"
     - cron: "37 18 * * *"   # second chance if the morning one skipped or GitHub dropped it

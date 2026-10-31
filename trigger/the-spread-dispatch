@@ -1,13 +1,14 @@
 #!/bin/bash
-# Starts a workflow on GitHub. Run by the-spread-trigger.service and the-spread-ingest.service.
+# Starts a workflow on GitHub. Run by the-spread-trigger, -ingest and -stats services.
 #   the-spread-dispatch          start The Spread daily (skip_if_done=true, so it does nothing
 #                                if today's episode already exists)
 #   the-spread-dispatch ingest   start Ingest feeds (fetch only, no keys, publishes nothing)
+#   the-spread-dispatch stats    start Listener stats (reads OP3, no credits, republishes the site)
 #   the-spread-dispatch --check  only check the token may start workflows (starts nothing)
 set -uo pipefail
 
 workflow=daily inputs='{"skip_if_done":"true"}'
-if [ "${1:-}" = ingest ]; then workflow=ingest inputs='{}'; shift; fi
+case "${1:-}" in ingest|stats) workflow=$1 inputs='{}'; shift ;; esac
 url=https://api.github.com/repos/jaimeam/the-spread/actions/workflows/$workflow.yml
 token_file=${CREDENTIALS_DIRECTORY:-/etc/the-spread}/github-token
 token=$(<"$token_file") || { echo "cannot read $token_file"; exit 1; }

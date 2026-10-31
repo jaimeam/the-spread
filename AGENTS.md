@@ -35,6 +35,7 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
   The on-time start comes from the owner's mini PC: a systemd timer (`trigger/`) dispatches the workflow at
   04:41 UTC with `skip_if_done=true`; the GitHub schedule is the fallback. Public edition only.
   It also dispatches `ingest.yml` daily at 00:23/08:23/12:23/16:23/20:23 UTC (`the-spread-ingest.timer`).
+  And `stats.yml` daily at 10:37/18:37 UTC (`the-spread-stats.timer`).
   Monday looks back 78h, other days 30h. `dry_run` input = brief + script as an artifact, no audio, no publish.
 - The bot commits to `main` every run (`briefs/`, `scripts/`, `site/`, `state/public.db`). Run `git pull` before working.
 - CI state lives in `state/public.db` (`BRIEF_DB`). The local `brief.db` is separate and git-ignored.
