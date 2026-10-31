@@ -17,9 +17,13 @@ repo=$state/repo
 url=${THE_SPREAD_REPO:-https://github.com/jaimeam/the-spread}   # override only for tests
 python=${PYTHON:-python3}
 token=$(<"${CREDENTIALS_DIRECTORY:-/etc/the-spread}/github-token") || { echo "cannot read the GitHub token"; exit 1; }
-# Same header actions/checkout uses, so the token never lands in .git/config.
-auth="http.$url/.extraheader=AUTHORIZATION: basic $(printf 'x-access-token:%s' "$token" | base64 -w0)"
-git() { command git -c "$auth" -c user.name=the-spread-bot -c user.email=actions@users.noreply.github.com "$@"; }
+# Same header actions/checkout uses, so the token never lands in .git/config. Passed through the
+# environment, not `git -c`: command lines are visible to every user on the machine, environments aren't.
+auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$token" | base64 -w0)"
+git() {
+  GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0="http.$url/.extraheader" GIT_CONFIG_VALUE_0="$auth" \
+    command git -c user.name=the-spread-bot -c user.email=actions@users.noreply.github.com "$@"
+}
 
 export BRIEF_DB=state/public.db
 export PODCAST_BASE_URL=https://jaimeam.github.io/the-spread
@@ -82,7 +86,7 @@ case $job in
 
   stats)
     "$python" stats.py
-    save "Stats $today" site/stats.html site/stats.svg site/stats.json ;;
+    save "Stats $today" site ;;   # stats.py writes only site/stats.*; site/ is a clean checkout otherwise
 
   *) echo "usage: the-spread-run daily|ingest|stats|--check"; exit 2 ;;
 esac

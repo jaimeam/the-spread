@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 90" width="600" height="90" role="img" aria-label="No download counts yet: OP3 hasn't picked up the show.">
+<style>text { font-family:system-ui,-apple-system,'Segoe UI',sans-serif; fill:#52514e; font-size:12px; }
+.h { fill:#0b0b0b; font-size:15px; font-weight:600; }</style>
+<rect width="600" height="90" rx="10" fill="#fcfcfb" stroke="#e4e3df"/>
+<text x="24" y="38" class="h">Listener stats</text>
+<text x="24" y="62">No download counts yet: OP3 hasn't picked up the show.</text>
+</svg>

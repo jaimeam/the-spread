@@ -6,6 +6,8 @@ After=network-online.target
 [Service]
 Type=oneshot
 DynamicUser=yes
+# One user for all three jobs: they share the clone in the state directory.
+User=the-spread
 StateDirectory=the-spread
 Environment=HOME=/var/lib/the-spread
 EnvironmentFile=/etc/the-spread/env

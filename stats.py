@@ -13,6 +13,7 @@ import json
 import os
 import sys
 import tomllib
+import urllib.error
 import urllib.parse
 import urllib.request
 from collections import Counter
@@ -62,7 +63,15 @@ def downloads(show_uuid: str, start: str) -> list[dict]:
 def collect(fetch=get, fetch_downloads=downloads, today: date | None = None) -> dict:
     c = cfg()
     today = today or datetime.now(timezone.utc).date()
-    show = fetch(f"/shows/{c['guid']}")
+    try:
+        show = fetch(f"/shows/{c['guid']}")
+    except urllib.error.HTTPError as e:
+        if e.code != 404:
+            raise
+        # OP3 finds a show through Podcast Index after a few days of downloads; until then, a placeholder.
+        render_waiting(c)
+        print(f"stats: OP3 doesn't know the show yet (no show for podcast guid {c['guid']}); wrote a placeholder")
+        sys.exit(0)
     uuid = show["showUuid"]
     counts = fetch("/queries/show-download-counts", showUuid=uuid)
     show_counts = counts["showDownloadCounts"].get(uuid, {})
@@ -281,6 +290,30 @@ def render(s: dict) -> None:
     c = cfg()
     (SITE / "stats.html").write_text(page(s, c))
     (SITE / "stats.svg").write_text(card(s))
+
+
+def render_waiting(c: dict) -> None:
+    """Page and card for before OP3 has found the show, so the README image isn't broken."""
+    msg = "No download counts yet: OP3 hasn't picked up the show."
+    (SITE / "stats.html").write_text(f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Listener stats · {html.escape(c["title"])}</title>
+<style>{CSS}</style></head>
+<body><main>
+<h1>Listener stats</h1>
+<p class="sub">{html.escape(c["title"])}. {msg} Downloads are counted by <a href="https://op3.dev">OP3</a>,
+the open podcast analytics service, and this page fills in once it has. <a href="feed.xml">Podcast feed</a>.</p>
+</main></body></html>
+""")
+    (SITE / "stats.svg").write_text(f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 90" width="600" height="90" role="img" aria-label="{msg}">
+<style>text {{ font-family:system-ui,-apple-system,'Segoe UI',sans-serif; fill:#52514e; font-size:12px; }}
+.h {{ fill:#0b0b0b; font-size:15px; font-weight:600; }}</style>
+<rect width="600" height="90" rx="10" fill="#fcfcfb" stroke="#e4e3df"/>
+<text x="24" y="38" class="h">Listener stats</text>
+<text x="24" y="62">{msg}</text>
+</svg>
+""")
 
 
 def main() -> None:

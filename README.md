@@ -25,8 +25,8 @@ python pipeline.py run --no-llm --fixtures fixtures --hours 999   # offline smok
 python pipeline.py run --public --require-llm   # what CI runs: fails rather than falling back
 ```
 
-Monday's CI run looks back 78 hours to cover the weekend. To run it locally every morning, use cron (`0 7 * * 1-5 cd /path && python pipeline.py run`)
-or a scheduled task.
+Monday's scheduled run looks back 78 hours to cover the weekend. For a private brief every morning, use cron
+(`0 7 * * 1-5 cd /path && python pipeline.py run`) or a scheduled task.
 
 ## Choosing models
 
@@ -84,59 +84,73 @@ Apple send ownership verification there, and it is visible in the feed).
   there automatically after each run.
 - **Other apps:** any podcast app that accepts a feed URL (Pocket Casts, Overcast, Apple Podcasts).
 
-## Running it every morning (GitHub Actions)
+## Running it every morning
 
-1. Create a GitHub repo and push this folder to it. GitHub Pages on a private repo needs a
-   paid GitHub plan; on the free plan, make the repo public. That's fine because the workflow
-   only ever uses public-edition sources.
-2. Add the secrets listed at the top of `.github/workflows/daily.yml`. The run fails, instead of
-   publishing a keyword digest, if the model keys are missing.
-3. Settings → Pages → Source: **GitHub Actions**.
-4. Actions → The Spread daily → **Run workflow** once to test. Tick **Dry run** to get just the
-   brief and script (downloadable under the run's Artifacts) with no audio cost and nothing published.
-5. Add `https://<you>.github.io/<repo>/feed.xml` to your podcast app (Pocket Casts,
-   Overcast and Apple Podcasts all accept a feed URL).
-6. When you're ready to go public, submit the same feed URL in Spotify for Creators.
-   New episodes then appear on Spotify automatically.
+An always-on machine (a mini PC, a home server) runs every job and pushes the results to `main`;
+GitHub then only deploys the site (*Publish site* runs on any push touching `site/`). GitHub's own
+scheduler is best-effort (in October 2026 it delivered the morning runs about 5 hours late), so
+it is kept only as a fallback for the daily episode.
 
-Until step 6 the feed isn't listed anywhere, but anyone with the URL can find it.
+| Job | When (UTC) | What |
+|---|---|---|
+| daily (`the-spread-trigger.timer`) | weekdays 04:41 | brief + episode + feed. Uses Claude + ElevenLabs credits, publishes to Spotify |
+| ingest (`the-spread-ingest.timer`) | 00:23, 08:23, 12:23, 16:23, 20:23 | fetches every public source into `state/public.db`. Some feeds keep only 10-15 items and would otherwise roll over before the next morning. No keys, publishes nothing |
+| stats (`the-spread-stats.timer`) | 10:37, 18:37 | [Listener stats](#listener-stats) from OP3. No credits |
 
-Between briefs, **Ingest feeds** (`ingest.yml`) fetches every public source five times a day and
-commits `state/public.db`. Some feeds keep only 10-15 items and would otherwise roll over before
-the next morning. It uses no API keys and publishes nothing. Feed problems (dead, empty, or a gap
-where a feed rolled over unread) show as warnings on the Actions run page.
+The daily job skips weekends and a day that's already published, and won't start after 05:15 UTC
+(`--force` overrides). GitHub's fallback (`daily.yml`) runs at 05:47 UTC and does nothing if the
+episode already exists, so the two never overlap. Monday's run looks back 78 hours to cover the weekend.
 
-### Starting it on time from your own machine
+### Setting up the machine
 
-GitHub's scheduler is best-effort, and in October 2026 it delivered the 04:41 and 05:17 runs
-about 5 hours late. So a machine that is always on (a mini PC, a home server) starts the
-workflow at 04:41 UTC on weekdays instead, and the GitHub schedule stays as a late fallback.
-Both skip a day whose episode already exists. The same machine starts Ingest feeds every day at
-00:23, 08:23, 12:23, 16:23 and 20:23 UTC (`the-spread-ingest.timer`), and Listener stats at
-10:37 and 18:37 UTC (`the-spread-stats.timer`).
+Any systemd Linux with Python 3.11+, git and flock (util-linux).
 
 1. GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token.
-   Repository access: only `the-spread`. Permissions: **Actions: Read and write**. Note the expiry date.
-2. On the machine (any systemd Linux): `git clone https://github.com/jaimeam/the-spread`,
-   then `cd the-spread/trigger && sudo ./install.sh` and paste the token. It checks the token
-   (without starting anything) and enables the timers. Already installed? `git pull`, then
-   `sudo ./install.sh` again to add new timers (the token is kept).
-3. Logs: `journalctl -u the-spread-trigger -u the-spread-ingest -u the-spread-stats`. Next runs: `systemctl list-timers 'the-spread-*'`.
-   New token: `sudo ./install.sh --new-token`.
+   Repository access: only `the-spread`. Permissions: **Contents: Read and write**. Note the expiry date.
+   The jobs push with it, and that push is what starts *Publish site* (pushes made with a
+   workflow's own `GITHUB_TOKEN` don't start other workflows).
+2. `git clone https://github.com/jaimeam/the-spread`, then `cd the-spread/trigger && sudo ./install.sh`.
+   The first run writes `/etc/the-spread/env` (from `env.example`, root only) and stops: fill in the keys
+   (`sudo nano /etc/the-spread/env`), including `OP3_TOKEN`, then run `sudo ./install.sh` again and paste
+   the token. It installs `the-spread-run` and the units, checks Python, the clone and that the token
+   may push (in the same sandbox the jobs use, pushing nothing), then enables the timers.
+3. Logs: `journalctl -u the-spread-trigger -u the-spread-ingest -u the-spread-stats`. Next runs:
+   `systemctl list-timers 'the-spread-*'`. Run a job now: `sudo systemctl start the-spread-ingest`
+   (or `-stats`; `-trigger` is the daily episode, which spends credits). New token:
+   `sudo ./install.sh --new-token`. After changing `trigger/`: `git pull`, `sudo ./install.sh`.
 
+The jobs run as a sandboxed system user (`DynamicUser`) in their own clone at `/var/lib/the-spread/repo`,
+reset to `origin/main` before every job, so never edit files there. One job runs at a time. If `main`
+moved during a job (e.g. a *Manage episodes* run), the job rebases its commit before pushing.
 The timers wake the machine from suspend, and run at boot if the machine was off at their time.
+Feed problems (dead, empty, or a gap where a feed rolled over unread) show as warnings in the ingest log.
+Sources marked `local_only` (blocked from GitHub's servers) are fetched here, since `GITHUB_ACTIONS` isn't set.
+
+### GitHub as fallback
+
+1. GitHub Pages on a private repo needs a paid plan; on the free plan, make the repo public. That's fine
+   because only public-edition sources are ever used.
+2. Keep the secrets listed at the top of `.github/workflows/daily.yml`: the 05:47 fallback and
+   *Manage episodes* use them. The run fails, instead of publishing a keyword digest, if the model keys are missing.
+3. Settings → Pages → Source: **GitHub Actions**.
+4. Actions → The Spread daily → **Run workflow** to run it by hand. Tick **Dry run** to get just the
+   brief and script (downloadable under the run's Artifacts) with no audio cost and nothing published.
+   *Ingest feeds* and *Listener stats* can also be run by hand from the Actions tab.
+5. Add `https://<you>.github.io/<repo>/feed.xml` to your podcast app (Pocket Casts,
+   Overcast and Apple Podcasts all accept a feed URL), and submit it in Spotify for Creators to go public.
 
 ### Listener stats
 
 Episode MP3 links (from `op3_from` in `podcast.toml` on) go through [OP3](https://op3.dev), which counts
-downloads, excludes bots, and updates once a day. **Listener stats** (`stats.yml`, started by the mini PC at
-10:37 and 18:37 UTC, with GitHub's schedule as fallback) reads those counts and publishes [stats.html](https://jaimeam.github.io/the-spread/stats.html), the `stats.svg` card shown
-at the top of this README, and `stats.json`. No credits used. OP3's own page for the show:
-https://op3.dev/show/e0804b8a-fcbb-5fd2-b9bf-53881813334f.
+downloads, excludes bots, and updates once a day. The machine's stats job runs `stats.py`, which reads
+those counts and publishes [stats.html](https://jaimeam.github.io/the-spread/stats.html), the `stats.svg`
+card shown at the top of this README, and `stats.json`. No credits used. OP3's own page for the show:
+https://op3.dev/show/e0804b8a-fcbb-5fd2-b9bf-53881813334f. Until OP3 has found the show (through
+Podcast Index, after a few days of downloads), the page and card say there's no data yet.
 
-One-time setup: sign in at https://op3.dev/api/keys, create an API key, copy its **bearer token**, and add it
-as the repository secret `OP3_TOKEN`. Then Actions → Listener stats → Run workflow.
-`python stats.py render` rebuilds the page from `site/stats.json` without calling OP3.
+One-time setup: sign in at https://op3.dev/api/keys, create an API key, copy its **bearer token**, and put it
+in `/etc/the-spread/env` as `OP3_TOKEN`. To use the GitHub workflow by hand too, add it as the repository
+secret `OP3_TOKEN`. `python stats.py render` rebuilds the page from `site/stats.json` without calling OP3.
 
 ### Removing or redoing an episode
 
@@ -169,10 +183,10 @@ automatically (the *Publish site* workflow).
 | `pipeline.py` | ingest -> SQLite -> tag (Claude Haiku) -> brief (Claude Opus) |
 | `podcast.py`, `podcast.toml` | brief -> script -> MP3 -> podcast feed; show settings |
 | `site/` | What GitHub Pages serves: `cover.png`, `feed.xml`, `episodes/` |
-| `.github/workflows/daily.yml` | The weekday schedule |
-| `.github/workflows/ingest.yml` | Fetches the feeds every few hours between briefs (free, publishes nothing) |
-| `.github/workflows/manage.yml`, `publish.yml` | Remove/redo an episode; republish the site |
-| `trigger/` | systemd timers that start the daily and ingest workflows on time from your own machine |
+| `trigger/` | `the-spread-run` (runs a job and pushes), its systemd units and timers, `install.sh`, `env.example` |
+| `.github/workflows/daily.yml` | The 05:47 UTC weekday fallback for the daily episode |
+| `.github/workflows/ingest.yml`, `stats.yml` | Ingest feeds and Listener stats, by hand only (the machine runs them) |
+| `.github/workflows/manage.yml`, `publish.yml` | Remove/redo an episode; republish the site (runs on every push touching `site/`) |
 | `brief.db` | Every item seen, with tags (local, git-ignored). CI keeps its public-only copy in `state/public.db` |
 | `briefs/` | Output. Only `*-public.md` is committed; private briefs stay local |
 

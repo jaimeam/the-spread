@@ -12,3 +12,6 @@ briefs/*.md
 
 # GitHub token for trigger/install.sh. Never commit.
 token.txt
+
+# OP3 stats API key and bearer token (op3.dev/api/keys). Never commit.
+op3.env

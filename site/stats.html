@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Listener stats · The Spread: Daily Oil &amp; Gas Briefing</title>
+<style>
+:root { color-scheme: light; --surface:#fcfcfb; --ink:#0b0b0b; --ink-2:#52514e; --muted:#8a8984;
+  --grid:#e4e3df; --bar:#2a78d6; --bar-hover:#1c5cab; --track:#efeeea; }
+@media (prefers-color-scheme: dark) { :root { color-scheme: dark; --surface:#1a1a19; --ink:#f0efec;
+  --ink-2:#c3c2b7; --muted:#8f8e86; --grid:#33322f; --bar:#3987e5; --bar-hover:#6da7ec; --track:#2a2927; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--surface); color:var(--ink);
+  font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { max-width:960px; margin:0 auto; padding:32px 20px 64px; }
+h1 { font-size:24px; margin:0 0 4px; } h2 { font-size:17px; margin:40px 0 12px; }
+.sub, .note { color:var(--ink-2); } .note { font-size:13px; }
+a { color:inherit; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:16px; margin-top:24px; }
+.tile { border:1px solid var(--grid); border-radius:8px; padding:14px 16px; }
+.tile .v { font-size:30px; font-weight:600; font-variant-numeric:tabular-nums; }
+.tile .k { color:var(--ink-2); font-size:13px; }
+svg text { fill:var(--muted); font-size:11px; font-variant-numeric:tabular-nums; }
+svg .grid { stroke:var(--grid); stroke-width:1; }
+svg .bar { fill:var(--bar); } svg g.col:hover .bar { fill:var(--bar-hover); }
+svg .hit { fill:transparent; }
+svg .tip { opacity:0; pointer-events:none; } svg g.col:hover .tip { opacity:1; }
+svg .tip text { fill:var(--ink); font-size:12px; }
+svg .tip rect { fill:var(--surface); stroke:var(--grid); }
+table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+th, td { text-align:right; padding:6px 8px; border-bottom:1px solid var(--grid); white-space:nowrap; }
+th { color:var(--ink-2); font-weight:500; font-size:13px; }
+th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align:left; }
+td:nth-child(2) { white-space:normal; }
+.two { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:32px; }
+.row { display:grid; grid-template-columns:1fr 3fr auto; gap:10px; align-items:center; margin:6px 0; }
+.row .name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.row .track { background:var(--track); border-radius:4px; height:10px; }
+.row .fill { background:var(--bar); height:10px; border-radius:0 4px 4px 0; }
+.row .n { color:var(--ink-2); font-variant-numeric:tabular-nums; min-width:3ch; text-align:right; }
+</style></head>
+<body><main>
+<h1>Listener stats</h1>
+<p class="sub">The Spread: Daily Oil &amp; Gas Briefing. No download counts yet: OP3 hasn't picked up the show. Downloads are counted by <a href="https://op3.dev">OP3</a>,
+the open podcast analytics service, and this page fills in once it has. <a href="feed.xml">Podcast feed</a>.</p>
+</main></body></html>

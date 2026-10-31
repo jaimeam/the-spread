@@ -30,7 +30,7 @@ install -m 644 the-spread-trigger.service the-spread-trigger.timer \
 systemctl daemon-reload
 
 # Check in the same sandbox the jobs run in: clones the repo, checks Python and that the token may push.
-systemd-run --wait --pipe --quiet -p DynamicUser=yes -p StateDirectory=the-spread \
+systemd-run --wait --pipe --quiet -p DynamicUser=yes -p User=the-spread -p StateDirectory=the-spread \
   -p Environment=HOME=/var/lib/the-spread -p EnvironmentFile=/etc/the-spread/env \
   -p LoadCredential=github-token:/etc/the-spread/github-token \
   /usr/local/bin/the-spread-run --check \
