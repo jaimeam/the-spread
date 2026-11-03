@@ -62,6 +62,8 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 
 - Every LLM prompt lives in `prompts/` (one Markdown file per call), loaded by `pipeline.prompt()`.
 - Length follows the news: 2-7 minutes, never padded (`prompts/script_system.md`).
+- Overdue items are dropped, never chased: no "still pending" / "still not published" lines. A past-dated
+  watch item only comes back if new items bring news of it.
 - "What to watch" is said once, in the closing section. Each story makes clear who is hit, in its own words (no "Who feels it:" label or other repeated formulas), and holds no watch items.
 - Comparisons with earlier figures only when they matter, said flatly ("yesterday X, today Y"). Never "we reported" / "we gave you".
 - The voice is an ElevenLabs **clone of the owner's voice**. The spoken disclosure (`spoken_disclosure`)
