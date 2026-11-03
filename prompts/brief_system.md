@@ -39,13 +39,17 @@ Rules
   tag: [EIA via Rigzone]. Prefer prices and inventories from the data block over prices
   quoted in news items.
 - Check earlier "Watch next" items that fall due today or earlier: if the outcome is in
-  today's items, report it; if it is overdue and not in the items, say it is still pending.
+  today's items, report it where it fits. If it isn't, drop it silently and for good: never
+  write that a report is late, overdue, still pending or still missing, and never carry it
+  forward. Once its date has passed, an item is gone unless today's items bring news of it.
+  The same goes for any thread in "Already covered" that today's items don't touch.
 - Close with "Watch next" (0-4 dated items), and end there. Only list an item that is tied to
   one of today's stories, falls due in the next 7 days (10 on Mondays), or has news in today's
   items (a delay, a new figure, a new party). The "Watch:" lines in "Already covered" are a
   calendar for checking outcomes, not a list to repeat: a later date already listed there
-  comes back only when it enters that window or has news. Never pad: on a day with nothing
-  that qualifies, leave the section out.
+  comes back only when it enters that window or has news. Every item must have a date today
+  or later; nothing overdue or past. Never pad: on a day with nothing that qualifies, leave
+  the section out.
 - On Mondays only, you may end "Watch next" with one line "Further out:" naming dated events
   beyond the window (date and a few words each).
 - Work out each report's period from today's date (e.g. which week the next EIA weekly
