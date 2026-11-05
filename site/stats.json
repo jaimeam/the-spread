@@ -1,29 +1,35 @@
 {
- "updated": "2026-11-04T17:38Z",
+ "updated": "2026-11-05T17:38Z",
  "window": [
-  "2026-10-28T17:38Z",
-  "2026-11-04T17:38Z"
+  "2026-10-29T17:38Z",
+  "2026-11-05T17:38Z"
  ],
  "op3_from": "2026-10-20",
- "downloads_24h": 22,
- "downloads_7d": 44,
+ "downloads_24h": 3,
+ "downloads_7d": 45,
  "listeners_7d": 33,
  "bots_7d": {
-  "Other bots and scripts": 74,
+  "Other bots and scripts": 78,
   "Apple (directory check)": 17,
   "Spotify (copies the episode)": 5
  },
  "episodes": [
   {
+   "date": "2026-11-05",
+   "title": "Oil crashes 9% after midterms; Fire halts Visund gas output | 5 Nov",
+   "downloads_24h": 3,
+   "downloads_7d": 3
+  },
+  {
    "date": "2026-11-04",
    "title": "Dubai flips to contango; Diesel stays short to 2027 | 4 Nov",
-   "downloads_24h": 21,
+   "downloads_24h": 0,
    "downloads_7d": 21
   },
   {
    "date": "2026-11-03",
    "title": "Brent sinks 7% on Iran talks; Germany misses gas fill goal | 3 Nov",
-   "downloads_24h": 1,
+   "downloads_24h": 0,
    "downloads_7d": 4
   },
   {
@@ -42,7 +48,7 @@
    "date": "2026-10-29",
    "title": "Qatar LNG halt to year-end; Diesel tanker for NY idles | 29 Oct",
    "downloads_24h": 0,
-   "downloads_7d": 4
+   "downloads_7d": 2
   },
   {
    "date": "2026-10-28",
@@ -90,7 +96,7 @@
  "op3_show": {
   "uuid": "4353d64c48f749c2b27d9ed74084b6ba",
   "page": "https://op3.dev/show/4353d64c48f749c2b27d9ed74084b6ba",
-  "monthly_downloads": 10,
-  "weekly_avg_downloads": 10
+  "monthly_downloads": 28,
+  "weekly_avg_downloads": 27
  }
 }
