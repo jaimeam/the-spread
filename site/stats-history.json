@@ -155,17 +155,34 @@
    }
   },
   "2026-11-05": {
-   "downloads": 3,
+   "downloads": 16,
    "episodes": {
-    "2026-11-05": 3
+    "2026-11-05": 16
    },
    "apps": {
-    "Apple Podcasts": 2,
+    "Apple Podcasts": 9,
+    "Overcast": 6,
     "Web browser": 1
    },
    "countries": {
+    "ES": 2,
+    "US": 14
+   }
+  },
+  "2026-11-06": {
+   "downloads": 17,
+   "episodes": {
+    "2026-11-06": 17
+   },
+   "apps": {
+    "Apple Podcasts": 9,
+    "Overcast": 6,
+    "Web browser": 2
+   },
+   "countries": {
+    "DE": 1,
     "ES": 1,
-    "US": 2
+    "US": 15
    }
   }
  }
