@@ -184,6 +184,18 @@
     "ES": 1,
     "US": 15
    }
+  },
+  "2026-11-07": {
+   "downloads": 1,
+   "episodes": {
+    "2026-11-06": 1
+   },
+   "apps": {
+    "Web browser": 1
+   },
+   "countries": {
+    "DE": 1
+   }
   }
  }
 }

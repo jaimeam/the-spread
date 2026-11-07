@@ -1,15 +1,15 @@
 {
- "updated": "2026-11-06T17:38Z",
+ "updated": "2026-11-07T17:38Z",
  "window": [
-  "2026-10-30T17:38Z",
-  "2026-11-06T17:38Z"
+  "2026-10-31T17:38Z",
+  "2026-11-07T17:38Z"
  ],
  "op3_from": "2026-10-20",
- "downloads_24h": 30,
- "downloads_7d": 71,
- "listeners_7d": 42,
+ "downloads_24h": 1,
+ "downloads_7d": 70,
+ "listeners_7d": 40,
  "bots_7d": {
-  "Other bots and scripts": 40,
+  "Other bots and scripts": 42,
   "Apple (directory check)": 17,
   "Spotify (copies the episode)": 5
  },
@@ -17,13 +17,13 @@
   {
    "date": "2026-11-06",
    "title": "Crude rebounds 4% after rout; Iran exempts China and India | 6 Nov",
-   "downloads_24h": 17,
-   "downloads_7d": 17
+   "downloads_24h": 1,
+   "downloads_7d": 18
   },
   {
    "date": "2026-11-05",
    "title": "Oil crashes 9% after midterms; Fire halts Visund gas output | 5 Nov",
-   "downloads_24h": 13,
+   "downloads_24h": 0,
    "downloads_7d": 16
   },
   {
@@ -48,7 +48,7 @@
    "date": "2026-10-30",
    "title": "Europe to release 42m bbl; Tanker sinking off Oman after projectile strike | 30 Oct",
    "downloads_24h": 0,
-   "downloads_7d": 3
+   "downloads_7d": 1
   },
   {
    "date": "2026-10-29",
@@ -102,7 +102,7 @@
  "op3_show": {
   "uuid": "4353d64c48f749c2b27d9ed74084b6ba",
   "page": "https://op3.dev/show/4353d64c48f749c2b27d9ed74084b6ba",
-  "monthly_downloads": 43,
-  "weekly_avg_downloads": 40
+  "monthly_downloads": 58,
+  "weekly_avg_downloads": 50
  }
 }
