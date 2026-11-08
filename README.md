@@ -66,8 +66,8 @@ python podcast.py episode briefs/2026-10-12-public.md --script-only  # just the 
 2. Record yourself reading something like a brief, in your normal "radio" tone: a quiet room,
    no music, consistent distance from the mic, MP3 at 192 kbps or higher.
 3. When it's ready, copy the voice ID (Voices → your voice → ID) into `ELEVENLABS_VOICE_ID`.
-4. Change `description`, `disclosure` and `spoken_disclosure` in `podcast.toml` to say it's an AI
-   clone of your voice (the spoken one is said once, right after the date).
+4. Keep `description`, `disclosure` and `spoken_disclosure` in `podcast.toml` saying the show is
+   written and read with AI (the spoken one is said once, right after the date).
 
 Edit `podcast.toml` before going live: the title, and above all `email` (Spotify and
 Apple send ownership verification there, and it is visible in the feed).
