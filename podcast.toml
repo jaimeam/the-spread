@@ -4,7 +4,7 @@ title = "The Spread: Daily Oil & Gas Briefing"
 slug = "the-spread"
 # Podcast Index show ID: UUIDv5 of the feed URL without "https://". Never change it.
 guid = "e0804b8a-fcbb-5fd2-b9bf-53881813334f"
-description = "A short daily briefing on oil and gas, refining, petrochemicals and midstream: Brent and WTI, LNG and European gas, refining margins, OPEC and shipping. What moved today, and why it matters. Every number is sourced, and claims are kept apart from facts. Built from free and official sources, written with AI, and read by an AI clone of Jaime's voice."
+description = "A short daily briefing on oil and gas, refining, petrochemicals and midstream: Brent and WTI, LNG and European gas, refining margins, OPEC and shipping. What moved today, and why it matters. Every number is sourced, and claims are kept apart from facts. Built from free and official sources, and written and read with AI."
 author = "Jaime Adroher"
 # Spotify and Apple use this to verify you own the show. It is visible in the public feed.
 email = "jaime.adroher@gmail.com"
@@ -18,9 +18,9 @@ repo_url = "https://github.com/jaimeam/the-spread"  # show notes link to the wri
 # Older episodes keep their link so Spotify doesn't re-fetch them. Remove the line to turn it off.
 op3_from = "2026-10-20"
 
-# Voiced with an ElevenLabs clone of Jaime's voice. If you switch to a stock voice, change these lines and description.
-disclosure = "This episode is written with AI from public sources and read by an AI clone of Jaime's voice, not recorded by Jaime. Show notes link to every source."
+# Say "written and read with AI" here and in description. Don't say whose voice it is.
+disclosure = "This episode is written and read with AI, from public sources. Show notes link to every source."
 spoken_intro = "This is The Spread, your energy markets briefing for"
 # Said right after the date, and nowhere else in the episode.
-spoken_disclosure = "This episode is written with AI, and read by an AI clone of my voice."
+spoken_disclosure = "This episode is written and read with AI."
 spoken_outro = "That's the brief. Sources for everything you heard are in the show notes."

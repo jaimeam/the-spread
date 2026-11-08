@@ -66,8 +66,8 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
   watch item only comes back if new items bring news of it.
 - "What to watch" is said once, in the closing section. Each story makes clear who is hit, in its own words (no "Who feels it:" label or other repeated formulas), and holds no watch items.
 - Comparisons with earlier figures only when they matter, said flatly ("yesterday X, today Y"). Never "we reported" / "we gave you".
-- The voice is an ElevenLabs **clone of the owner's voice**. The spoken disclosure (`spoken_disclosure`)
-  is said once, right after the date, and nowhere else in the audio. Show notes and the show description also disclose it.
+- The voice comes from ElevenLabs. Disclosures say the show is **written and read with AI**, and never say whose voice it is.
+  The spoken disclosure (`spoken_disclosure`) is said once, right after the date, and nowhere else in the audio. Show notes and the show description also disclose it.
 - Fixed running order: intro, date and disclosure → headline → "On the markets" → stories → quick hits →
   "What to watch next" → outro. Stories are linked by topic, not numbered.
 - A revised count for the same event is a revision, not a trend. Anything older than a day is dated.
