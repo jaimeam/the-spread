@@ -302,7 +302,10 @@ def db() -> sqlite3.Connection:
         item_id TEXT, edition TEXT, brief_date TEXT, PRIMARY KEY (item_id, edition))""")
     # Short summaries of past briefs: the brief writer's memory of what it already said.
     con.execute("""CREATE TABLE IF NOT EXISTS ledger (
-        brief_date TEXT, edition TEXT, brief_hash TEXT, summary TEXT, PRIMARY KEY (brief_date, edition))""")
+        brief_date TEXT, edition TEXT, brief_hash TEXT, summary TEXT, incomplete INTEGER NOT NULL DEFAULT 0,
+        PRIMARY KEY (brief_date, edition))""")
+    if "incomplete" not in {c[1] for c in con.execute("PRAGMA table_info(ledger)")}:  # databases from before the flag
+        con.execute("ALTER TABLE ledger ADD COLUMN incomplete INTEGER NOT NULL DEFAULT 0")
     # The data block and look-back each brief was written with, so a redo can use the same.
     con.execute("""CREATE TABLE IF NOT EXISTS inputs (
         brief_date TEXT, edition TEXT, data TEXT, hours INTEGER, PRIMARY KEY (brief_date, edition))""")
@@ -375,12 +378,20 @@ def _post(url: str, body: dict, headers: dict) -> dict:
     raise RuntimeError("unreachable")
 
 
+class Truncated(RuntimeError):
+    """The model hit max_tokens. `text` is what it had written by then, possibly nothing."""
+
+    def __init__(self, message: str, text: str = ""):
+        super().__init__(message)
+        self.text = text
+
+
 def llm(prompt: str, spec: str, max_tokens: int = 16000, system: str = "", effort: str = "medium") -> str:
     """Send one prompt to whichever provider `spec` names and return the text.
 
     Current Claude models always think first, and thinking counts against max_tokens,
     so keep it generous (you pay only for what's used). `effort` sets how hard it thinks.
-    A truncated or refused answer raises rather than being written out half-finished.
+    A truncated (Truncated) or refused answer raises rather than being written out half-finished.
     """
     provider, model = split_model(spec)
     key = os.environ[PROVIDER_KEYS[provider]]
@@ -396,9 +407,14 @@ def llm(prompt: str, spec: str, max_tokens: int = 16000, system: str = "", effor
         resp = _post("https://api.anthropic.com/v1/messages", body, headers)
         u = resp.get("usage", {})
         log(f"{spec}: {u.get('input_tokens', 0):,} in / {u.get('output_tokens', 0):,} out tokens")
-        if resp.get("stop_reason") in ("max_tokens", "refusal"):
-            raise RuntimeError(f"{spec} stopped early: {resp['stop_reason']} {resp.get('stop_details') or ''}")
-        return "".join(b.get("text", "") for b in resp["content"] if b.get("type") == "text")
+        stop = resp.get("stop_reason")
+        early = f"{spec} stopped early: {stop} {resp.get('stop_details') or ''}"
+        if stop == "refusal":
+            raise RuntimeError(early)
+        text = "".join(b.get("text", "") for b in resp.get("content") or [] if b.get("type") == "text")
+        if stop == "max_tokens":
+            raise Truncated(early, text)
+        return text
     # mistral: OpenAI-style chat completions
     msgs = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": prompt}]
     resp = _post("https://api.mistral.ai/v1/chat/completions",
@@ -406,7 +422,7 @@ def llm(prompt: str, spec: str, max_tokens: int = 16000, system: str = "", effor
                  {"Authorization": f"Bearer {key}"})
     choice = resp["choices"][0]
     if choice.get("finish_reason") == "length":
-        raise RuntimeError(f"{spec} stopped early: hit max_tokens")
+        raise Truncated(f"{spec} stopped early: hit max_tokens", choice["message"].get("content") or "")
     return choice["message"]["content"]
 
 
@@ -578,6 +594,8 @@ def brief_files(public: bool) -> dict[str, Path]:
 
 
 NOT_STORIES = {"also noted", "still developing", "watch next"}
+LEDGER_TOKENS = 16000  # thinking counts against this; a truncated entry gets one retry at double
+LEDGER_INCOMPLETE = "(incomplete entry: cut off when it was written, stories may be missing)"
 
 
 def recent_titles(public: bool, before: str, n: int = 7) -> str:
@@ -591,18 +609,42 @@ def recent_titles(public: bool, before: str, n: int = 7) -> str:
     return "\n".join(out[-n:])
 
 
+def write_ledger_entry(date: str, brief: str) -> tuple[str, bool]:
+    """(entry, incomplete). The ledger is bookkeeping, so a cut-off entry is kept: it must not cost the episode."""
+    request = prompt("ledger", brief=brief)
+    try:
+        return llm(request, TAG_MODEL, LEDGER_TOKENS, effort="low").strip(), False
+    except Truncated as e:
+        partial = e.text
+        log(f"ledger for {date}: {e}; retrying with max_tokens {2 * LEDGER_TOKENS}")
+    try:
+        return llm(request, TAG_MODEL, 2 * LEDGER_TOKENS, effort="low").strip(), False
+    except Truncated as e:
+        partial = max(partial, e.text, key=len)
+    except Exception as e:  # noqa: BLE001  a failed retry (timeout, API error) still leaves the first attempt's text
+        log(f"ledger for {date}: retry failed: {e!r}")
+    warn(f"ledger for {date} is incomplete: cut off at max_tokens, kept {len(partial.strip())} characters")
+    return partial.strip(), True
+
+
+def ledger_text(summary: str, incomplete: int | bool) -> str:
+    """An entry as the brief writer reads it, so it knows a cut-off entry may be missing stories."""
+    return f"{LEDGER_INCOMPLETE}\n{summary}".strip() if incomplete else summary
+
+
 def ledger_summary(date: str, public: bool, brief: str) -> str:
-    """Cached per brief; regenerated only if the brief file changed."""
+    """Cached per brief, incomplete entries too; regenerated only if the brief file changed."""
     h = hashlib.sha1(brief.encode()).hexdigest()[:16]
     con = db()
-    row = con.execute("SELECT brief_hash, summary FROM ledger WHERE brief_date=? AND edition=?",
+    row = con.execute("SELECT brief_hash, summary, incomplete FROM ledger WHERE brief_date=? AND edition=?",
                       (date, edition(public))).fetchone()
     if row and row[0] == h:
-        return row[1]
-    summary = llm(prompt("ledger", brief=brief), TAG_MODEL, 4000, effort="low").strip()
-    con.execute("INSERT OR REPLACE INTO ledger VALUES (?,?,?,?)", (date, edition(public), h, summary))
+        return ledger_text(row[1], row[2])
+    summary, incomplete = write_ledger_entry(date, brief)
+    con.execute("INSERT OR REPLACE INTO ledger (brief_date, edition, brief_hash, summary, incomplete) "
+                "VALUES (?,?,?,?,?)", (date, edition(public), h, summary, int(incomplete)))
     con.commit()
-    return summary
+    return ledger_text(summary, incomplete)
 
 
 def ledger_context(public: bool, days: int, before: str | None = None) -> str:

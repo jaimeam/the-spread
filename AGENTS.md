@@ -84,7 +84,9 @@ A daily oil & gas / refining / petchem / midstream brief, turned into a podcast 
 ## Gotchas
 
 - Current Claude models always think, and thinking counts against `max_tokens`. Keep limits generous
-  (brief/script 16k, tagging 8k). `llm()` raises on `max_tokens` / `refusal` rather than saving half an answer.
+  (brief/script/ledger 16k, tagging 8k). `llm()` raises on `max_tokens` / `refusal` rather than saving half an answer.
+  The exception is the ledger entry (bookkeeping): if truncated it retries once at double the cap, then keeps the partial text
+  with `incomplete = 1` in the `ledger` table, and the episode carries on.
 - Some sites block GitHub's servers but work locally: OIES (403), GDELT (429). They're marked
   `local_only = true` in `sources.toml` and skipped when `GITHUB_ACTIONS` is set (so only the GitHub fallback skips them). Check a new feed both
   locally and in CI logs before relying on it. Most corporate and agency sites (OPEC, IEA, BP, Shell, FERC) block scripts.
