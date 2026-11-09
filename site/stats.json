@@ -1,24 +1,30 @@
 {
- "updated": "2026-11-08T17:38Z",
+ "updated": "2026-11-09T17:38Z",
  "window": [
-  "2026-11-01T17:38Z",
-  "2026-11-08T17:38Z"
+  "2026-11-02T17:38Z",
+  "2026-11-09T17:38Z"
  ],
  "op3_from": "2026-10-20",
- "downloads_24h": 1,
- "downloads_7d": 71,
- "listeners_7d": 40,
+ "downloads_24h": 8,
+ "downloads_7d": 78,
+ "listeners_7d": 45,
  "bots_7d": {
-  "Other bots and scripts": 39,
-  "Apple (directory check)": 17,
+  "Other bots and scripts": 37,
+  "Apple (directory check)": 18,
   "Spotify (copies the episode)": 5
  },
  "episodes": [
   {
+   "date": "2026-11-09",
+   "title": "Iraq claims Hormuz lane deal; Sixth Russian refinery hit | 9 Nov",
+   "downloads_24h": 2,
+   "downloads_7d": 2
+  },
+  {
    "date": "2026-11-06",
    "title": "Crude rebounds 4% after rout; Iran exempts China and India | 6 Nov",
    "downloads_24h": 1,
-   "downloads_7d": 19
+   "downloads_7d": 20
   },
   {
    "date": "2026-11-05",
@@ -29,26 +35,26 @@
   {
    "date": "2026-11-04",
    "title": "Dubai flips to contango; Diesel stays short to 2027 | 4 Nov",
-   "downloads_24h": 0,
-   "downloads_7d": 21
+   "downloads_24h": 1,
+   "downloads_7d": 22
   },
   {
    "date": "2026-11-03",
    "title": "Brent sinks 7% on Iran talks; Germany misses gas fill goal | 3 Nov",
-   "downloads_24h": 0,
-   "downloads_7d": 4
+   "downloads_24h": 1,
+   "downloads_7d": 5
   },
   {
    "date": "2026-11-02",
    "title": "Pakistan LNG ship attacked; EU gas tops \u20ac101/MWh | 2 Nov",
-   "downloads_24h": 0,
-   "downloads_7d": 2
+   "downloads_24h": 2,
+   "downloads_7d": 3
   },
   {
    "date": "2026-10-30",
    "title": "Europe to release 42m bbl; Tanker sinking off Oman after projectile strike | 30 Oct",
-   "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_24h": 1,
+   "downloads_7d": 2
   },
   {
    "date": "2026-10-29",
