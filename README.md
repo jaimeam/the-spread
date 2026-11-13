@@ -142,15 +142,16 @@ Sources marked `local_only` (blocked from GitHub's servers) are fetched here, si
 ### Listener stats
 
 Episode MP3 links (from `op3_from` in `podcast.toml` on) go through [OP3](https://op3.dev), which logs every
-request. OP3 hasn't registered the show, so `stats.py` reads its raw hit log (`/hits`, filtered by our URL
-prefix), drops bots (Spotify's copy fetch, Apple's directory checks, crawlers and scripts) and counts one
-download per app, network and episode per day. The log only reaches back about a week, so each run also
-folds the days it saw into `site/stats-history.json`, which only ever adds days or raises a count: the chart
-starts on the first recorded day and grows. OP3 sees Apple Podcasts and other apps that fetch our link;
-Spotify serves its own copy, so Spotify listens aren't counted. The machine's stats job publishes
-[stats.html](https://jaimeam.github.io/the-spread/stats.html), the `stats.svg` card shown at the top of this
-README, `stats.json` and the history. No credits used. If OP3 registers the show later, its own 30-day
-counts are added to the page.
+request. `stats.py` looks up OP3's show id from the feed's `podcast:guid` (`/shows/{guid}`; the two ids differ),
+then reads the show's whole download log in one request (`/downloads/show/{showUuid}`). It drops bots
+(Apple's directory checks, crawlers, scripts and bare HTTP libraries) and counts one download per network,
+app and episode per UTC day, the same rule as the morning message. OP3 builds the log a day or two late, so
+every number runs to OP3's last built day (`asof`), not the time of the run. Each run recounts the days the
+log covers into `site/stats-history.json`; older days (recorded from OP3's hit log before) are kept. OP3 sees
+Apple Podcasts and other apps that fetch our link; Spotify serves its own copy, so Spotify listens aren't
+counted. The machine's stats job publishes [stats.html](https://jaimeam.github.io/the-spread/stats.html), the
+`stats.svg` card shown at the top of this README, `stats.json` and the history. No credits used. OP3's own
+30-day and weekly counts are shown alongside as a cross-check.
 
 One-time setup: sign in at https://op3.dev/api/keys, create an API key, copy its **bearer token**, and put it
 in `/etc/the-spread/env` as `OP3_TOKEN`. To use the GitHub workflow by hand too, add it as the repository

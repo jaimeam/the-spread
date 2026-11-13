@@ -4,14 +4,19 @@
     python stats.py render    # re-render the page and card from the saved JSON, offline
 
 Episode MP3 links from `op3_from` (podcast.toml) on go through op3.dev, which logs every request.
-OP3 hasn't registered the show, so its per-show counts 404; the main source is its raw hit log
-(/hits, filtered by our URL prefix), which only reaches back about a week. So each run counts the
-last 7 days and folds the complete days into site/stats-history.json, which keeps every day it has
-seen: the long chart grows from the first recorded day and never shows a day nobody observed.
+The single data source is OP3's download log for the show, /downloads/show/{showUuid}: one request
+returns the whole history (it pages with a continuationToken only past `limit`). The showUuid is
+OP3's own id, not the feed's podcast:guid, so every run looks it up first via /shows/{guid}.
+OP3 builds that log in daily batches, so it runs a day or two behind; every window on the page ends
+at OP3's `asof` day, not at the time of the run. (/hits, the raw request log, is not used: it caps
+at 100 rows, has no paging and ignores from/to/since.)
+
+Each run recounts every day the download log covers and writes it into site/stats-history.json.
+Days older than the log's first row (recorded earlier from /hits) are kept exactly as they are.
 OP3 only sees apps that fetch our MP3 link (Apple Podcasts and other direct clients). Spotify
 serves its own copy, so Spotify listens never reach OP3.
 
-Only aggregates are saved, never per-request rows or hashed IPs. Standard library only.
+Only aggregates are saved, never per-download rows, hashed IPs or audience ids. Standard library only.
 """
 
 import html
@@ -32,9 +37,8 @@ SITE = ROOT / "site"
 OUT_JSON = SITE / "stats.json"
 HISTORY = SITE / "stats-history.json"
 API = "https://op3.dev/api/1"
-PREFIX = "https://op3.dev/e/jaimeam.github.io/the-spread/*"
-WINDOW = timedelta(days=7)  # what /hits reliably returns (-8d still works, -14d is empty)
-TOP = 8                     # apps / countries listed
+PAGE = 1000  # rows per /downloads request; more pages follow via continuationToken
+TOP = 8                    # apps / countries listed
 CARD_DAYS = 30
 
 
@@ -56,83 +60,81 @@ def get(path: str, **params) -> dict:
         return json.load(r)
 
 
-def hits(start: datetime, fetch=get) -> list[dict]:
-    """Every request to our OP3 links since `start`. 1000 is the largest page OP3 accepts."""
+def lookup_show(c: dict, fetch=get) -> dict:
+    """OP3's show record. The podcast:guid in our feed and OP3's showUuid are different ids, and
+    every query needs the showUuid, so it is looked up on each run rather than stored."""
+    try:
+        return fetch(f"/shows/{c['guid']}")
+    except urllib.error.HTTPError as e:
+        sys.exit(f"stats: OP3 has no show for podcast guid {c['guid']} ({e.code})")
+
+
+def downloads(uuid: str, fetch=get) -> list[dict]:
+    """The show's whole download log. One page holds everything today; a continuationToken only
+    appears when a page is cut at `limit`, and is followed if it does."""
     rows, token = [], None
     while True:
-        params = {"format": "json", "limit": 1000, "url": PREFIX,
-                  "start": start.strftime("%Y-%m-%dT%H:%M:%S.000Z")}
+        params = {"format": "json", "limit": PAGE}
         if token:
             params["continuationToken"] = token
-        page = fetch("/hits", **params)
+        page = fetch(f"/downloads/show/{uuid}", **params)
         rows += page.get("rows", [])
         token = page.get("continuationToken")
         if not token:
-            if len(page.get("rows", [])) >= 1000:
-                print("stats: warning: /hits returned a full page and no continuation token; counts may be short")
             return rows
 
 
-def registered_show(c: dict, fetch=get) -> dict | None:
-    """OP3's own counts, once it has registered the show (it finds shows through Podcast Index).
-    A bonus: the page works from the hit log without it."""
+def show_counts(uuid: str, fetch=get) -> dict:
+    """OP3's own totals (show-download-counts): a cross-check, and `asof`, the last day OP3 has built."""
     try:
-        show = fetch(f"/shows/{c['guid']}")
-        uuid = show["showUuid"]
-        counts = fetch("/queries/show-download-counts", showUuid=uuid)["showDownloadCounts"].get(uuid, {})
+        return fetch("/queries/show-download-counts", showUuid=uuid)
     except urllib.error.HTTPError as e:
-        if e.code != 404:
-            print(f"stats: warning: OP3 show lookup failed ({e.code}); using the hit log only")
-        return None
-    return {"uuid": uuid, "page": show.get("statsPageUrl") or f"https://op3.dev/show/{uuid}",
-            "monthly_downloads": counts.get("monthlyDownloads"),
-            "weekly_avg_downloads": counts.get("weeklyAvgDownloads")}
+        print(f"stats: warning: OP3 show-download-counts failed ({e.code}); no cross-check")
+        return {}
 
 
 # --------------------------------------------------------------------------- count
 
-# Requests that aren't someone listening. Spotify/1.0 fetches each new episode once to copy it
-# to Spotify's own servers; iTMS/itms is Apple checking the episode for its directory. Bare HTTP
-# libraries (the okhttp/Guzzle bursts hit every episode within minutes) and scripts count as bots.
-BOTS = [(re.compile(r"^Spotify/1\.0"), "Spotify (copies the episode)"),
-        (re.compile(r"^itms", re.I), "Apple (directory check)"),
-        (re.compile(r"bot|crawl|spider|^curl/|^wget|python|guzzle|^okhttp|go-http|axios|node-fetch|"
-                    r"^java/|libwww|httpclient|feedfetcher|podscan", re.I), "Other bots and scripts")]
-APPS = [("AppleCoreMedia", "Apple Podcasts"), ("Podcasts/", "Apple Podcasts"), ("PodcastAddict", "Podcast Addict"),
-        ("Overcast", "Overcast"), ("PocketCasts", "Pocket Casts"), ("Pocket Casts", "Pocket Casts"),
-        ("AntennaPod", "AntennaPod"), ("Castro", "Castro"), ("CastBox", "Castbox"), ("Podverse", "Podverse"),
-        ("Fountain", "Fountain"), ("Player FM", "Player FM"), ("PodcastRepublic", "Podcast Republic"),
-        ("Deezer", "Deezer"), ("iHeart", "iHeartRadio"), ("AmazonMusic", "Amazon Music"),
-        ("Mozilla/", "Web browser")]
+# Downloads that aren't someone listening, matched on OP3's agentName / agentType. iTMS/itms is
+# Apple checking the episode for its directory; the rest are crawlers, scripts and bare HTTP
+# libraries. Same list as the morning message, so both count the same downloads.
+BOTS = [(re.compile(r"itms", re.I), "Apple (directory check)"),
+        (re.compile(r"bot|crawl|spider|curl|wget|python|guzzle|okhttp|go-http|axios|node-fetch|"
+                    r"java/|libwww|httpclient|feedfetcher|podscan", re.I), "Other bots and scripts")]
+APPS = {"AppleCoreMedia": "Apple Podcasts", "PodcastAddict": "Podcast Addict", "PocketCasts": "Pocket Casts",
+        "CastBox": "Castbox", "PodcastRepublic": "Podcast Republic", "iHeart": "iHeartRadio",
+        "AmazonMusic": "Amazon Music"}
 
 
-def bot(ua: str) -> str | None:
-    return next((name for rx, name in BOTS if rx.search(ua)), None)
+def bot(name: str, kind: str) -> str | None:
+    return next((label for rx, label in BOTS if rx.search(name) or rx.search(kind)), None)
 
 
-def app(ua: str) -> str:
-    return next((name for key, name in APPS if key in ua), ua.split("/")[0].strip() or "Unknown")
+def app(name: str, kind: str) -> str:
+    if kind == "browser":
+        return "Web browser"
+    return APPS.get(name, name or "Unknown")
 
 
-def count(rows: list[dict]) -> tuple[list[dict], Counter]:
-    """Downloads: GETs from a listening app, one per IP + app + episode per UTC day (an app asks
-    for the same file in several byte ranges). HEAD requests only check the file. Returns
-    (downloads, bot requests by kind)."""
-    seen, out, bots = set(), [], Counter()
+def count(rows: list[dict]) -> tuple[list[dict], list[tuple[str, str]]]:
+    """One download per hashedIpAddress + agentName + episode + UTC day (episode = the first 10
+    characters of OP3's episodeId), bots excluded: the same rule as the morning message.
+    Returns (downloads, [(bot kind, time)])."""
+    seen, out, bots = set(), [], []
     for r in rows:
-        ua = r.get("userAgent") or ""
-        if kind := bot(ua):
-            bots[kind] += 1
+        name, kind = r.get("agentName") or "", r.get("agentType") or ""
+        if label := bot(name, kind):
+            bots.append((label, r["time"]))
             continue
-        if r.get("method") != "GET":
-            continue
-        ep = (r.get("url") or "").rsplit("/", 1)[-1][:10]  # episodes/2026-10-23.mp3 or DATE-<unix>.mp3
-        key = (r.get("hashedIpAddress"), ua, ep, r["time"][:10])
+        day = r["time"][:10]
+        key = (r.get("hashedIpAddress"), name, (r.get("episodeId") or "")[:10], day)
         if key in seen:
             continue
         seen.add(key)
-        out.append({"time": r["time"], "day": r["time"][:10], "episode": ep, "app": app(ua),
-                    "country": r.get("country") or "??", "ip": r.get("hashedIpAddress")})
+        # The page names episodes by date, taken from the MP3 name (DATE.mp3 or DATE-<unix>.mp3).
+        ep = (r.get("url") or "").rsplit("/", 1)[-1][:10]
+        out.append({"time": r["time"], "day": day, "episode": ep, "app": app(name, kind),
+                    "country": r.get("countryCode") or "??", "listener": r.get("audienceId")})
     return out, bots
 
 
@@ -148,17 +150,14 @@ def per_day(dls: list[dict]) -> dict:
 
 
 def merge(history: dict, days: dict, first: date, last: date) -> dict:
-    """Write each day from `first` to `last` (all fully inside the fetched window) into the history.
-    A later run sees at least as many requests for a day, so a lower count never replaces a
-    higher one. Days outside the window are left exactly as they are."""
+    """Write every day from `first` (the log's first day) to `last` (OP3's asof) into the history,
+    recounted from the log, zero if nobody downloaded. Days outside that span are left as they are."""
     out = dict(history)
     d = first
     while d <= last:
         k = d.isoformat()
         x = days.get(k, {"downloads": 0, "episodes": {}, "apps": {}, "countries": {}})
-        new = {"downloads": x["downloads"], **{f: dict(sorted(x[f].items())) for f in ("episodes", "apps", "countries")}}
-        if k not in out or new["downloads"] >= out[k]["downloads"]:
-            out[k] = new
+        out[k] = {"downloads": x["downloads"], **{f: dict(sorted(x[f].items())) for f in ("episodes", "apps", "countries")}}
         d += timedelta(1)
     return dict(sorted(out.items()))
 
@@ -166,33 +165,51 @@ def merge(history: dict, days: dict, first: date, last: date) -> dict:
 def collect(fetch=get, now: datetime | None = None) -> tuple[dict, dict]:
     c = cfg()
     now = now or datetime.now(timezone.utc)
-    start = now - WINDOW
-    dls, bots = count(hits(start, fetch))
-    # Complete days start after the window opens; today counts too, as it stands now.
-    first = start.date() + timedelta(1)
-    history = json.loads(HISTORY.read_text())["days"] if HISTORY.exists() else {}
-    history = merge(history, per_day(dls), first, now.date())
+    show = lookup_show(c, fetch)
+    uuid = show["showUuid"]
+    rows = downloads(uuid, fetch)
+    q = show_counts(uuid, fetch)
+    op3 = q.get("showDownloadCounts", {}).get(uuid, {})
+    dls, bots = count(rows)
 
-    since_24h = (now - timedelta(hours=24)).strftime("%Y-%m-%dT%H:%M:%S")
-    d24 = [d for d in dls if d["time"] >= since_24h]
-    by_ep_24, by_ep_7 = Counter(d["episode"] for d in d24), Counter(d["episode"] for d in dls)
+    # Windows end with OP3's last built day, not with the run: the log runs a day or two behind.
+    last_row = max((r["time"][:10] for r in rows), default=None)
+    asof = date.fromisoformat(max(filter(None, [q.get("asof"), last_row]), default=now.date().isoformat()))
+    end = datetime.combine(asof + timedelta(1), datetime.min.time(), timezone.utc)
+    iso = lambda t: t.strftime("%Y-%m-%dT%H:%M:%S")
+    s24, s7, e = iso(end - timedelta(days=1)), iso(end - timedelta(days=7)), iso(end)
+    d24 = [d for d in dls if s24 <= d["time"] < e]
+    d7 = [d for d in dls if s7 <= d["time"] < e]
+
+    history = json.loads(HISTORY.read_text())["days"] if HISTORY.exists() else {}
+    if last_row:
+        history = merge(history, per_day(dls), date.fromisoformat(min(r["time"][:10] for r in rows)), asof)
+
+    by_ep_24, by_ep_7 = Counter(d["episode"] for d in d24), Counter(d["episode"] for d in d7)
     titles = {e["date"]: e["title"] for e in json.loads((SITE / "episodes.json").read_text())}
     eps = sorted({e for e in titles if e >= c.get("op3_from", "")} | set(by_ep_7), reverse=True)
+    month = sum(1 for d in dls if iso(end - timedelta(days=30)) <= d["time"] < e)
+    if op3.get("monthlyDownloads") is not None and op3["monthlyDownloads"] != month:
+        print(f"stats: note: OP3 counts {op3['monthlyDownloads']} downloads in 30 days, this page {month}")
     stats = {
         "updated": now.strftime("%Y-%m-%dT%H:%MZ"),
-        "window": [start.strftime("%Y-%m-%dT%H:%MZ"), now.strftime("%Y-%m-%dT%H:%MZ")],
+        "asof": asof.isoformat(),
+        "window": [(end - timedelta(days=7)).strftime("%Y-%m-%dT%H:%MZ"), end.strftime("%Y-%m-%dT%H:%MZ")],
         "op3_from": c.get("op3_from"),
         "downloads_24h": len(d24),
-        "downloads_7d": len(dls),
-        "listeners_7d": len({d["ip"] for d in dls if d["ip"]}),
-        "bots_7d": dict(bots.most_common()),
-        "episodes": [{"date": e, "title": titles.get(e, ""), "downloads_24h": by_ep_24[e],
-                      "downloads_7d": by_ep_7[e]} for e in eps],
-        "op3_show": registered_show(c, fetch),
+        "downloads_7d": len(d7),
+        "listeners_7d": len({d["listener"] for d in d7 if d["listener"]}),
+        "countries_7d": dict(Counter(d["country"] for d in d7).most_common()),
+        "bots_7d": dict(Counter(k for k, t in bots if s7 <= t < e).most_common()),
+        "episodes": [{"date": ep, "title": titles.get(ep, ""), "downloads_24h": by_ep_24[ep],
+                      "downloads_7d": by_ep_7[ep]} for ep in eps],
+        "op3_show": {"uuid": uuid, "page": show.get("statsPageUrl") or f"https://op3.dev/show/{uuid}",
+                     "monthly_downloads": op3.get("monthlyDownloads"),
+                     "weekly_avg_downloads": op3.get("weeklyAvgDownloads")},
     }
-    return stats, {"note": "Downloads per UTC day counted from OP3's hit log by stats.py. "
-                           "Days are only ever added or raised, never invented.", "days": history}
-
+    return stats, {"note": "Downloads per UTC day counted by stats.py from OP3's download log (one per IP + app + "
+                           "episode + day, bots excluded). Days the log covers are recounted each run; "
+                           "older days, recorded from OP3's hit log, are kept as they were.", "days": history}
 
 # --------------------------------------------------------------------------- render
 
@@ -247,15 +264,21 @@ def nice_max(v: int) -> int:
     return step * 4
 
 
-def series(days: dict, today: str) -> list[dict]:
-    """Every day from the first recorded one to today. A day the history doesn't have stays None:
-    no bar, marked as not recorded."""
+def end_day(s: dict) -> str:
+    """Last day the numbers cover: OP3's asof (older saved files: the day of the run)."""
+    return s.get("asof") or s["updated"][:10]
+
+
+def series(days: dict, today: str, current: str | None = None) -> list[dict]:
+    """Every day from the first recorded one to `today` (the last day covered). A day the history
+    doesn't have stays None: no bar, marked as not recorded. `current`, if given, is drawn as
+    still counting."""
     if not days:
         return []
     d, end, out = date.fromisoformat(min(days)), date.fromisoformat(max(max(days), today)), []
     while d <= end:
         k = d.isoformat()
-        out.append({"date": k, "downloads": days[k]["downloads"] if k in days else None, "today": k == today})
+        out.append({"date": k, "downloads": days[k]["downloads"] if k in days else None, "today": k == current})
         d += timedelta(1)
     return out
 
@@ -338,7 +361,7 @@ SOURCE_NOTE = ("OP3 counts the apps that fetch the episode from our link: Apple 
 def page(s: dict, h: dict, c: dict) -> str:
     title = html.escape(c["title"])
     days = h["days"]
-    daily = series(days, s["updated"][:10])
+    daily = series(days, end_day(s))
     since = daily[0]["date"] if daily else None
     since_label = f"{date.fromisoformat(since):%-d %b}" if since else "?"
     all_eps = totals(days, "episodes")
@@ -347,9 +370,11 @@ def page(s: dict, h: dict, c: dict) -> str:
         f'<tr><td>{html.escape(e["date"])}</td><td>{html.escape(e["title"].rsplit(" | ", 1)[0])}</td>'
         f'<td>{fmt(e["downloads_24h"])}</td><td>{fmt(e["downloads_7d"])}</td><td>{fmt(all_eps.get(e["date"], 0))}</td></tr>'
         for e in s["episodes"])
-    tiles = [("Downloads, last 24 hours", s["downloads_24h"]),
-             ("Downloads, last 7 days", s["downloads_7d"]),
-             ("Listeners, last 7 days (est.)", s["listeners_7d"]),
+    asof = f"{date.fromisoformat(end_day(s)):%-d %b}"
+    countries = (Counter(s["countries_7d"]) if "countries_7d" in s else totals(days, "countries")).most_common(TOP)
+    tiles = [(f"Downloads on {asof} (last day OP3 has)", s["downloads_24h"]),
+             (f"Downloads, 7 days to {asof}", s["downloads_7d"]),
+             (f"Listeners, 7 days to {asof}", s["listeners_7d"]),
              (f"Downloads since {since_label}", sum(d["downloads"] or 0 for d in daily))]
     show = s.get("op3_show")
     if show:
@@ -365,30 +390,30 @@ def page(s: dict, h: dict, c: dict) -> str:
 <body><main>
 <h1>Listener stats</h1>
 <p class="sub">{title}. Downloads logged by <a href="{op3}">OP3</a>, the open podcast analytics service,
-bots excluded. Page updated {html.escape(s["updated"])}.</p>
+bots excluded. Counts run to {asof} (OP3 adds each day's downloads a day or two later);
+page updated {html.escape(s["updated"])}.</p>
 <p class="note">{SOURCE_NOTE}</p>
 <div class="tiles">{"".join(f'<div class="tile"><div class="v">{fmt(v)}</div><div class="k">{k}</div></div>' for k, v in tiles)}</div>
 
 <h2>Downloads per day</h2>
 {f'<div class="chart">{daily_svg(daily)}</div>' if daily else '<p class="note">No days recorded yet.</p>'}
-<p class="note">Recorded: {span(daily)}. OP3's log only reaches back about a week, so this chart starts
-on the first day this page counted and grows from there{f"; {missing} day{'s' * (missing != 1)} were not recorded" if missing else ""}.
-Today, drawn faded, is still counting. Hover a column for the day's count.</p>
+<p class="note">Recorded: {span(daily)}{f"; {missing} day{'s' * (missing != 1)} were not recorded" if missing else ""}.
+Hover a column for the day's count.</p>
 
 <h2>Episodes</h2>
-<div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>Episode</th><th>Last 24 h</th><th>Last 7 days</th><th>Since {since_label}</th></tr></thead>
+<div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>Episode</th><th>{asof}</th><th>7 days</th><th>Since {since_label}</th></tr></thead>
 <tbody>{eps or '<tr><td colspan="5">No episodes counted yet.</td></tr>'}</tbody></table></div>
 
 <div class="two">
 <section><h2>Apps</h2>{bar_list(totals(days, "apps").most_common(TOP))}</section>
-<section><h2>Countries</h2>{bar_list(totals(days, "countries").most_common(TOP))}</section>
+<section><h2>Countries, 7 days</h2>{bar_list(countries)}</section>
 </div>
-<p class="note">Apps and countries cover {span(daily)}.</p>
+<p class="note">Apps cover {span(daily)}; countries the 7 days to {asof}.</p>
 
-<p class="note" style="margin-top:40px">How it's counted: a download is a request for an episode
-from a podcast app or browser, once per app, network and episode per day. Not counted: requests that only
-check the file, and automated ones, in the last 7 days: {html.escape(bots)}. Listeners are estimated from
-OP3's hashed IP addresses, so two people on one network count once. Only episodes from
+<p class="note" style="margin-top:40px">How it's counted: a download is one in OP3's download log
+from a podcast app or browser, once per app, network and episode per UTC day. Not counted: automated
+downloads, in the 7 days: {html.escape(bots)}. Listeners are OP3's distinct audience ids (an estimate:
+OP3 derives them from network and app). Only episodes from
 {html.escape(s.get("op3_from") or "?")} on are counted: older episodes keep their original MP3 link.
 Data: <a href="stats.json">stats.json</a> · <a href="stats-history.json">stats-history.json</a> ·
 <a href="feed.xml">podcast feed</a>.</p>
@@ -399,11 +424,11 @@ Data: <a href="stats.json">stats.json</a> · <a href="stats-history.json">stats-
 def card(s: dict, h: dict) -> str:
     """Preview image for the README: headline numbers + up to the last 30 recorded days. Light colors
     only (GitHub shows README images on both themes, so the card brings its own background)."""
-    daily = series(h["days"], s["updated"][:10])[-CARD_DAYS:]
+    daily = series(h["days"], end_day(s))[-CARD_DAYS:]
     chart = daily_svg(daily, width=560, height=130, tips=False)
     chart = chart.replace("<svg ", '<svg x="20" y="88" width="560" height="130" ', 1).replace(' width="100%"', "")
     since = f"{date.fromisoformat(daily[0]['date']):%-d %b}" if daily else "?"
-    nums = [(s["downloads_24h"], "downloads, 24 h"), (s["downloads_7d"], "downloads, 7 days"),
+    nums = [(s["downloads_24h"], f"downloads, {date.fromisoformat(end_day(s)):%-d %b}"), (s["downloads_7d"], "downloads, 7 days"),
             (s["listeners_7d"], "listeners, 7 days"), (sum(d["downloads"] or 0 for d in daily), f"since {since}")]
     tiles = "".join(f'<text x="{24 + i * 142}" y="62" class="v">{fmt(v)}</text>'
                     f'<text x="{24 + i * 142}" y="80" class="k">{k}</text>' for i, (v, k) in enumerate(nums))
@@ -414,7 +439,7 @@ def card(s: dict, h: dict) -> str:
 .gap {{ stroke:#8a8984; stroke-dasharray:2 2; }} .hit {{ fill:none; }}</style>
 <rect width="600" height="236" rx="10" fill="#fcfcfb" stroke="#e4e3df"/>
 <text x="24" y="30" class="h">Downloads per day, {len(daily)} day{"s" * (len(daily) != 1)} recorded</text>
-<text x="576" y="30" text-anchor="end">OP3, excl. Spotify · {html.escape(s["updated"])}</text>
+<text x="576" y="30" text-anchor="end">OP3, excl. Spotify · to {html.escape(end_day(s))}</text>
 {tiles}
 {chart}
 </svg>
@@ -444,7 +469,7 @@ def main() -> None:
         HISTORY.write_text(dump(h))
     render(s, h)
     print(f"stats: {s['downloads_24h']} downloads in 24 h, {s['downloads_7d']} in 7 days, "
-          f"{s['listeners_7d']} listeners; history {span(series(h['days'], s['updated'][:10]))} -> site/stats.html")
+          f"{s['listeners_7d']} listeners; history {span(series(h['days'], end_day(s)))} -> site/stats.html")
 
 
 if __name__ == "__main__":

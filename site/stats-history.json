@@ -1,5 +1,5 @@
 {
- "note": "Downloads per UTC day counted from OP3's hit log by stats.py. Days are only ever added or raised, never invented.",
+ "note": "Downloads per UTC day counted by stats.py from OP3's download log (one per IP + app + episode + day, bots excluded). Days the log covers are recounted each run; older days, recorded from OP3's hit log, are kept as they were.",
  "days": {
   "2026-10-25": {
    "downloads": 1,
@@ -83,16 +83,10 @@
    }
   },
   "2026-10-31": {
-   "downloads": 1,
-   "episodes": {
-    "2026-10-30": 1
-   },
-   "apps": {
-    "Web browser": 1
-   },
-   "countries": {
-    "US": 1
-   }
+   "downloads": 0,
+   "episodes": {},
+   "apps": {},
+   "countries": {}
   },
   "2026-11-01": {
    "downloads": 0,
@@ -101,151 +95,142 @@
    "countries": {}
   },
   "2026-11-02": {
-   "downloads": 11,
-   "episodes": {
-    "2026-10-20": 1,
-    "2026-10-21": 1,
-    "2026-10-22": 1,
-    "2026-10-23": 1,
-    "2026-10-26": 1,
-    "2026-10-27": 1,
-    "2026-10-28": 1,
-    "2026-10-29": 1,
-    "2026-10-30": 1,
-    "2026-11-02": 2
-   },
-   "apps": {
-    "Apple Podcasts": 10,
-    "Web browser": 1
-   },
-   "countries": {
-    "US": 11
-   }
+   "downloads": 0,
+   "episodes": {},
+   "apps": {},
+   "countries": {}
   },
   "2026-11-03": {
-   "downloads": 4,
+   "downloads": 2,
    "episodes": {
-    "2026-11-03": 4
+    "2026-11-03": 2
    },
    "apps": {
-    "Apple Podcasts": 3,
-    "Web browser": 1
+    "Apple Podcasts": 2
    },
    "countries": {
     "ES": 1,
-    "US": 3
+    "US": 1
    }
   },
   "2026-11-04": {
-   "downloads": 21,
+   "downloads": 18,
    "episodes": {
-    "2026-11-04": 21
+    "2026-11-04": 18
    },
    "apps": {
     "Apple Podcasts": 11,
     "Earshot": 1,
-    "Overcast": 6,
-    "Web browser": 3
+    "Overcast": 6
    },
    "countries": {
     "ES": 2,
     "PK": 1,
     "TH": 1,
-    "US": 17
-   }
-  },
-  "2026-11-05": {
-   "downloads": 16,
-   "episodes": {
-    "2026-11-05": 16
-   },
-   "apps": {
-    "Apple Podcasts": 9,
-    "Overcast": 6,
-    "Web browser": 1
-   },
-   "countries": {
-    "ES": 2,
     "US": 14
    }
   },
-  "2026-11-06": {
-   "downloads": 17,
+  "2026-11-05": {
+   "downloads": 15,
    "episodes": {
-    "2026-11-06": 17
+    "2026-11-05": 15
    },
    "apps": {
     "Apple Podcasts": 9,
-    "Overcast": 6,
-    "Web browser": 2
+    "Overcast": 6
    },
    "countries": {
-    "DE": 1,
+    "ES": 2,
+    "US": 13
+   }
+  },
+  "2026-11-06": {
+   "downloads": 15,
+   "episodes": {
+    "2026-11-06": 15
+   },
+   "apps": {
+    "Apple Podcasts": 9,
+    "Overcast": 6
+   },
+   "countries": {
     "ES": 1,
-    "US": 15
+    "US": 14
    }
   },
   "2026-11-07": {
-   "downloads": 1,
-   "episodes": {
-    "2026-11-06": 1
-   },
-   "apps": {
-    "Web browser": 1
-   },
-   "countries": {
-    "DE": 1
-   }
+   "downloads": 0,
+   "episodes": {},
+   "apps": {},
+   "countries": {}
   },
   "2026-11-08": {
-   "downloads": 1,
-   "episodes": {
-    "2026-11-06": 1
-   },
-   "apps": {
-    "Web browser": 1
-   },
-   "countries": {
-    "DE": 1
-   }
+   "downloads": 0,
+   "episodes": {},
+   "apps": {},
+   "countries": {}
   },
   "2026-11-09": {
-   "downloads": 9,
+   "downloads": 6,
    "episodes": {
     "2026-10-28": 1,
     "2026-10-30": 1,
     "2026-11-02": 2,
     "2026-11-03": 1,
-    "2026-11-04": 1,
-    "2026-11-06": 1,
-    "2026-11-09": 2
+    "2026-11-04": 1
    },
    "apps": {
-    "Web browser": 9
+    "Web browser": 6
    },
    "countries": {
-    "DE": 2,
-    "US": 7
+    "US": 6
    }
   },
   "2026-11-10": {
-   "downloads": 24,
+   "downloads": 19,
    "episodes": {
     "2026-11-04": 1,
-    "2026-11-09": 3,
-    "2026-11-10": 20
+    "2026-11-09": 2,
+    "2026-11-10": 16
    },
    "apps": {
     "Apple Podcasts": 11,
     "Overcast": 6,
-    "Web browser": 7
+    "Web browser": 2
    },
    "countries": {
     "CO": 2,
-    "DE": 2,
     "ES": 1,
     "SA": 2,
-    "US": 17
+    "US": 14
+   }
+  },
+  "2026-11-11": {
+   "downloads": 12,
+   "episodes": {
+    "2026-10-23": 1,
+    "2026-10-27": 1,
+    "2026-10-28": 1,
+    "2026-10-29": 1,
+    "2026-10-30": 1,
+    "2026-11-03": 1,
+    "2026-11-04": 1,
+    "2026-11-05": 1,
+    "2026-11-06": 1,
+    "2026-11-10": 2,
+    "2026-11-11": 1
+   },
+   "apps": {
+    "Apple Podcasts": 3,
+    "Web browser": 9
+   },
+   "countries": {
+    "DE": 3,
+    "FR": 2,
+    "GB": 2,
+    "HK": 2,
+    "SG": 1,
+    "US": 2
    }
   }
  }
