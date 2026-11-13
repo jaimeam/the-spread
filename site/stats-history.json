@@ -232,6 +232,22 @@
     "SG": 1,
     "US": 2
    }
+  },
+  "2026-11-12": {
+   "downloads": 17,
+   "episodes": {
+    "2026-11-11": 2,
+    "2026-11-12": 15
+   },
+   "apps": {
+    "Apple Podcasts": 10,
+    "Overcast": 6,
+    "Web browser": 1
+   },
+   "countries": {
+    "CO": 1,
+    "US": 16
+   }
   }
  }
 }
