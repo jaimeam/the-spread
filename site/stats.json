@@ -1,24 +1,25 @@
 {
- "updated": "2026-11-13T17:38Z",
- "asof": "2026-11-12",
+ "updated": "2026-11-14T17:38Z",
+ "asof": "2026-11-13",
  "window": [
-  "2026-11-06T00:00Z",
-  "2026-11-13T00:00Z"
+  "2026-11-07T00:00Z",
+  "2026-11-14T00:00Z"
  ],
  "op3_from": "2026-10-20",
- "downloads_24h": 17,
- "downloads_7d": 69,
- "listeners_7d": 57,
+ "downloads_24h": 4,
+ "downloads_7d": 58,
+ "listeners_7d": 49,
  "countries_7d": {
-  "US": 52,
-  "CO": 3,
+  "US": 40,
+  "CO": 4,
   "DE": 3,
-  "ES": 2,
   "SA": 2,
   "FR": 2,
   "GB": 2,
   "HK": 2,
-  "SG": 1
+  "ES": 1,
+  "SG": 1,
+  "IN": 1
  },
  "bots_7d": {},
  "episodes": [
@@ -31,13 +32,13 @@
   {
    "date": "2026-11-12",
    "title": "Gulf products stuck at 35%; Orlen cancels Qatar LNG deal | 12 Nov",
-   "downloads_24h": 15,
-   "downloads_7d": 15
+   "downloads_24h": 2,
+   "downloads_7d": 17
   },
   {
    "date": "2026-11-11",
    "title": "Russia loses 30% of refining; Peace bets sink Brent sub-$90 | 11 Nov",
-   "downloads_24h": 2,
+   "downloads_24h": 0,
    "downloads_7d": 3
   },
   {
@@ -56,7 +57,7 @@
    "date": "2026-11-06",
    "title": "Crude rebounds 4% after rout; Iran exempts China and India | 6 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 16
+   "downloads_7d": 1
   },
   {
    "date": "2026-11-05",
@@ -115,14 +116,14 @@
   {
    "date": "2026-10-23",
    "title": "Oil jumps 4% on Saudi attacks; Iran claims seven ships hit | 23 Oct",
-   "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_24h": 1,
+   "downloads_7d": 2
   },
   {
    "date": "2026-10-22",
    "title": "Hormuz: two more tankers hit as Gulf crude keeps flowing | 22 Oct",
-   "downloads_24h": 0,
-   "downloads_7d": 0
+   "downloads_24h": 1,
+   "downloads_7d": 1
   },
   {
    "date": "2026-10-21",
@@ -140,7 +141,7 @@
  "op3_show": {
   "uuid": "4353d64c48f749c2b27d9ed74084b6ba",
   "page": "https://op3.dev/show/4353d64c48f749c2b27d9ed74084b6ba",
-  "monthly_downloads": 112,
-  "weekly_avg_downloads": 55
+  "monthly_downloads": 116,
+  "weekly_avg_downloads": 54
  }
 }
