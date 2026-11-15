@@ -1,16 +1,16 @@
 {
- "updated": "2026-11-14T17:38Z",
- "asof": "2026-11-13",
+ "updated": "2026-11-15T17:38Z",
+ "asof": "2026-11-14",
  "window": [
-  "2026-11-07T00:00Z",
-  "2026-11-14T00:00Z"
+  "2026-11-08T00:00Z",
+  "2026-11-15T00:00Z"
  ],
  "op3_from": "2026-10-20",
- "downloads_24h": 4,
- "downloads_7d": 58,
+ "downloads_24h": 1,
+ "downloads_7d": 59,
  "listeners_7d": 49,
  "countries_7d": {
-  "US": 40,
+  "US": 41,
   "CO": 4,
   "DE": 3,
   "SA": 2,
@@ -26,13 +26,13 @@
   {
    "date": "2026-11-13",
    "title": "Trump says US needs no deal; US distillates up 4.1m bbl | 13 Nov",
-   "downloads_24h": 0,
-   "downloads_7d": 0
+   "downloads_24h": 1,
+   "downloads_7d": 1
   },
   {
    "date": "2026-11-12",
    "title": "Gulf products stuck at 35%; Orlen cancels Qatar LNG deal | 12 Nov",
-   "downloads_24h": 2,
+   "downloads_24h": 0,
    "downloads_7d": 17
   },
   {
@@ -116,13 +116,13 @@
   {
    "date": "2026-10-23",
    "title": "Oil jumps 4% on Saudi attacks; Iran claims seven ships hit | 23 Oct",
-   "downloads_24h": 1,
+   "downloads_24h": 0,
    "downloads_7d": 2
   },
   {
    "date": "2026-10-22",
    "title": "Hormuz: two more tankers hit as Gulf crude keeps flowing | 22 Oct",
-   "downloads_24h": 1,
+   "downloads_24h": 0,
    "downloads_7d": 1
   },
   {
@@ -141,7 +141,7 @@
  "op3_show": {
   "uuid": "4353d64c48f749c2b27d9ed74084b6ba",
   "page": "https://op3.dev/show/4353d64c48f749c2b27d9ed74084b6ba",
-  "monthly_downloads": 116,
-  "weekly_avg_downloads": 54
+  "monthly_downloads": 117,
+  "weekly_avg_downloads": 55
  }
 }
