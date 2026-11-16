@@ -1,17 +1,17 @@
 {
- "updated": "2026-11-15T17:38Z",
- "asof": "2026-11-14",
+ "updated": "2026-11-16T17:38Z",
+ "asof": "2026-11-15",
  "window": [
-  "2026-11-08T00:00Z",
-  "2026-11-15T00:00Z"
+  "2026-11-09T00:00Z",
+  "2026-11-16T00:00Z"
  ],
  "op3_from": "2026-10-20",
  "downloads_24h": 1,
- "downloads_7d": 59,
- "listeners_7d": 49,
+ "downloads_7d": 60,
+ "listeners_7d": 50,
  "countries_7d": {
   "US": 41,
-  "CO": 4,
+  "CO": 5,
   "DE": 3,
   "SA": 2,
   "FR": 2,
@@ -24,10 +24,16 @@
  "bots_7d": {},
  "episodes": [
   {
+   "date": "2026-11-16",
+   "title": "IEA flags first war surplus; Two mine hits claimed | 16 Nov",
+   "downloads_24h": 0,
+   "downloads_7d": 0
+  },
+  {
    "date": "2026-11-13",
    "title": "Trump says US needs no deal; US distillates up 4.1m bbl | 13 Nov",
    "downloads_24h": 1,
-   "downloads_7d": 1
+   "downloads_7d": 2
   },
   {
    "date": "2026-11-12",
@@ -141,7 +147,7 @@
  "op3_show": {
   "uuid": "4353d64c48f749c2b27d9ed74084b6ba",
   "page": "https://op3.dev/show/4353d64c48f749c2b27d9ed74084b6ba",
-  "monthly_downloads": 117,
+  "monthly_downloads": 118,
   "weekly_avg_downloads": 55
  }
 }
