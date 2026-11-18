@@ -1,44 +1,49 @@
 {
- "updated": "2026-11-17T17:38Z",
- "asof": "2026-11-16",
+ "updated": "2026-11-18T17:38Z",
+ "asof": "2026-11-17",
  "window": [
-  "2026-11-10T00:00Z",
-  "2026-11-17T00:00Z"
+  "2026-11-11T00:00Z",
+  "2026-11-18T00:00Z"
  ],
  "op3_from": "2026-10-20",
- "downloads_24h": 6,
- "downloads_7d": 60,
- "listeners_7d": 49,
+ "downloads_24h": 2,
+ "downloads_7d": 42,
+ "listeners_7d": 36,
  "countries_7d": {
-  "US": 39,
-  "CO": 5,
+  "US": 27,
   "DE": 3,
-  "SA": 2,
-  "ES": 2,
+  "CO": 3,
   "FR": 2,
   "GB": 2,
   "HK": 2,
-  "IN": 2,
-  "SG": 1
+  "SG": 1,
+  "IN": 1,
+  "ES": 1
  },
  "bots_7d": {},
  "episodes": [
   {
-   "date": "2026-11-17",
-   "title": "UKMTO logs two Hormuz attacks; Houthis close in on Aden | 17 Nov",
+   "date": "2026-11-18",
+   "title": "Moscow's crude loadings jump; Jets strike Iran's Qeshm Island | 18 Nov",
    "downloads_24h": 0,
    "downloads_7d": 0
   },
   {
+   "date": "2026-11-17",
+   "title": "UKMTO logs two Hormuz attacks; Houthis close in on Aden | 17 Nov",
+   "downloads_24h": 2,
+   "downloads_7d": 2
+  },
+  {
    "date": "2026-11-16",
    "title": "IEA flags first war surplus; Two mine hits claimed | 16 Nov",
-   "downloads_24h": 5,
-   "downloads_7d": 5
+   "downloads_24h": 0,
+   "downloads_7d": 4
   },
   {
    "date": "2026-11-13",
    "title": "Trump says US needs no deal; US distillates up 4.1m bbl | 13 Nov",
-   "downloads_24h": 1,
+   "downloads_24h": 0,
    "downloads_7d": 3
   },
   {
@@ -57,13 +62,13 @@
    "date": "2026-11-10",
    "title": "Qatar takes Iran offer to US; Saudi bypass pipeline hit | 10 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 18
+   "downloads_7d": 2
   },
   {
    "date": "2026-11-09",
    "title": "Iraq claims Hormuz lane deal; Sixth Russian refinery hit | 9 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 2
+   "downloads_7d": 0
   },
   {
    "date": "2026-11-06",
@@ -81,7 +86,7 @@
    "date": "2026-11-04",
    "title": "Dubai flips to contango; Diesel stays short to 2027 | 4 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 2
+   "downloads_7d": 1
   },
   {
    "date": "2026-11-03",
@@ -153,7 +158,7 @@
  "op3_show": {
   "uuid": "4353d64c48f749c2b27d9ed74084b6ba",
   "page": "https://op3.dev/show/4353d64c48f749c2b27d9ed74084b6ba",
-  "monthly_downloads": 124,
-  "weekly_avg_downloads": 58
+  "monthly_downloads": 125,
+  "weekly_avg_downloads": 42
  }
 }

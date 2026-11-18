@@ -291,20 +291,30 @@
    }
   },
   "2026-11-16": {
-   "downloads": 6,
+   "downloads": 5,
    "episodes": {
     "2026-11-13": 1,
-    "2026-11-16": 5
+    "2026-11-16": 4
    },
    "apps": {
     "Apple Podcasts": 4,
-    "Melo/1.0 (+https://themelo.in)": 1,
     "Web browser": 1
    },
    "countries": {
     "ES": 1,
-    "IN": 1,
     "US": 4
+   }
+  },
+  "2026-11-17": {
+   "downloads": 2,
+   "episodes": {
+    "2026-11-17": 2
+   },
+   "apps": {
+    "Apple Podcasts": 2
+   },
+   "countries": {
+    "US": 2
    }
   }
  }
