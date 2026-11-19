@@ -1,37 +1,38 @@
 {
- "updated": "2026-11-18T17:38Z",
- "asof": "2026-11-17",
+ "updated": "2026-11-19T17:38Z",
+ "asof": "2026-11-18",
  "window": [
-  "2026-11-11T00:00Z",
-  "2026-11-18T00:00Z"
+  "2026-11-12T00:00Z",
+  "2026-11-19T00:00Z"
  ],
  "op3_from": "2026-10-20",
  "downloads_24h": 2,
- "downloads_7d": 42,
- "listeners_7d": 36,
+ "downloads_7d": 32,
+ "listeners_7d": 25,
  "countries_7d": {
   "US": 27,
-  "DE": 3,
   "CO": 3,
-  "FR": 2,
-  "GB": 2,
-  "HK": 2,
-  "SG": 1,
   "IN": 1,
   "ES": 1
  },
  "bots_7d": {},
  "episodes": [
   {
-   "date": "2026-11-18",
-   "title": "Moscow's crude loadings jump; Jets strike Iran's Qeshm Island | 18 Nov",
+   "date": "2026-11-19",
+   "title": "CENTCOM widens Iran blockade; Crude falls 3% despite attacks | 19 Nov",
    "downloads_24h": 0,
    "downloads_7d": 0
   },
   {
+   "date": "2026-11-18",
+   "title": "Moscow's crude loadings jump; Jets strike Iran's Qeshm Island | 18 Nov",
+   "downloads_24h": 2,
+   "downloads_7d": 2
+  },
+  {
    "date": "2026-11-17",
    "title": "UKMTO logs two Hormuz attacks; Houthis close in on Aden | 17 Nov",
-   "downloads_24h": 2,
+   "downloads_24h": 0,
    "downloads_7d": 2
   },
   {
@@ -56,13 +57,13 @@
    "date": "2026-11-11",
    "title": "Russia loses 30% of refining; Peace bets sink Brent sub-$90 | 11 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 3
+   "downloads_7d": 2
   },
   {
    "date": "2026-11-10",
    "title": "Qatar takes Iran offer to US; Saudi bypass pipeline hit | 10 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 2
+   "downloads_7d": 0
   },
   {
    "date": "2026-11-09",
@@ -74,25 +75,25 @@
    "date": "2026-11-06",
    "title": "Crude rebounds 4% after rout; Iran exempts China and India | 6 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_7d": 0
   },
   {
    "date": "2026-11-05",
    "title": "Oil crashes 9% after midterms; Fire halts Visund gas output | 5 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_7d": 0
   },
   {
    "date": "2026-11-04",
    "title": "Dubai flips to contango; Diesel stays short to 2027 | 4 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_7d": 0
   },
   {
    "date": "2026-11-03",
    "title": "Brent sinks 7% on Iran talks; Germany misses gas fill goal | 3 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_7d": 0
   },
   {
    "date": "2026-11-02",
@@ -104,25 +105,25 @@
    "date": "2026-10-30",
    "title": "Europe to release 42m bbl; Tanker sinking off Oman after projectile strike | 30 Oct",
    "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_7d": 0
   },
   {
    "date": "2026-10-29",
    "title": "Qatar LNG halt to year-end; Diesel tanker for NY idles | 29 Oct",
    "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_7d": 0
   },
   {
    "date": "2026-10-28",
    "title": "Ras Tanura fire contained; Russia swaps crude for diesel | 28 Oct",
    "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_7d": 0
   },
   {
    "date": "2026-10-27",
    "title": "Houthis claim pipeline hits; India trims Russian crude | 27 Oct",
    "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_7d": 0
   },
   {
    "date": "2026-10-26",
@@ -134,7 +135,7 @@
    "date": "2026-10-23",
    "title": "Oil jumps 4% on Saudi attacks; Iran claims seven ships hit | 23 Oct",
    "downloads_24h": 0,
-   "downloads_7d": 2
+   "downloads_7d": 1
   },
   {
    "date": "2026-10-22",
@@ -158,7 +159,7 @@
  "op3_show": {
   "uuid": "4353d64c48f749c2b27d9ed74084b6ba",
   "page": "https://op3.dev/show/4353d64c48f749c2b27d9ed74084b6ba",
-  "monthly_downloads": 125,
+  "monthly_downloads": 127,
   "weekly_avg_downloads": 42
  }
 }
