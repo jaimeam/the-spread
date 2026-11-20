@@ -1,32 +1,38 @@
 {
- "updated": "2026-11-19T17:38Z",
- "asof": "2026-11-18",
+ "updated": "2026-11-20T17:38Z",
+ "asof": "2026-11-19",
  "window": [
-  "2026-11-12T00:00Z",
-  "2026-11-19T00:00Z"
+  "2026-11-13T00:00Z",
+  "2026-11-20T00:00Z"
  ],
  "op3_from": "2026-10-20",
  "downloads_24h": 2,
- "downloads_7d": 32,
- "listeners_7d": 25,
+ "downloads_7d": 17,
+ "listeners_7d": 12,
  "countries_7d": {
-  "US": 27,
-  "CO": 3,
+  "US": 13,
+  "CO": 2,
   "IN": 1,
   "ES": 1
  },
  "bots_7d": {},
  "episodes": [
   {
-   "date": "2026-11-19",
-   "title": "CENTCOM widens Iran blockade; Crude falls 3% despite attacks | 19 Nov",
+   "date": "2026-11-20",
+   "title": "War cost 2.8bn barrels; EU delays methane rules | 20 Nov",
    "downloads_24h": 0,
    "downloads_7d": 0
   },
   {
+   "date": "2026-11-19",
+   "title": "CENTCOM widens Iran blockade; Crude falls 3% despite attacks | 19 Nov",
+   "downloads_24h": 2,
+   "downloads_7d": 2
+  },
+  {
    "date": "2026-11-18",
    "title": "Moscow's crude loadings jump; Jets strike Iran's Qeshm Island | 18 Nov",
-   "downloads_24h": 2,
+   "downloads_24h": 0,
    "downloads_7d": 2
   },
   {
@@ -51,13 +57,13 @@
    "date": "2026-11-12",
    "title": "Gulf products stuck at 35%; Orlen cancels Qatar LNG deal | 12 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 17
+   "downloads_7d": 2
   },
   {
    "date": "2026-11-11",
    "title": "Russia loses 30% of refining; Peace bets sink Brent sub-$90 | 11 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 2
+   "downloads_7d": 0
   },
   {
    "date": "2026-11-10",
@@ -159,7 +165,7 @@
  "op3_show": {
   "uuid": "4353d64c48f749c2b27d9ed74084b6ba",
   "page": "https://op3.dev/show/4353d64c48f749c2b27d9ed74084b6ba",
-  "monthly_downloads": 127,
+  "monthly_downloads": 129,
   "weekly_avg_downloads": 42
  }
 }
