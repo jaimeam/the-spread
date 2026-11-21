@@ -1,32 +1,33 @@
 {
- "updated": "2026-11-20T17:38Z",
- "asof": "2026-11-19",
+ "updated": "2026-11-21T17:38Z",
+ "asof": "2026-11-20",
  "window": [
-  "2026-11-13T00:00Z",
-  "2026-11-20T00:00Z"
+  "2026-11-14T00:00Z",
+  "2026-11-21T00:00Z"
  ],
  "op3_from": "2026-10-20",
- "downloads_24h": 2,
- "downloads_7d": 17,
- "listeners_7d": 12,
+ "downloads_24h": 3,
+ "downloads_7d": 16,
+ "listeners_7d": 11,
  "countries_7d": {
-  "US": 13,
-  "CO": 2,
-  "IN": 1,
-  "ES": 1
+  "US": 12,
+  "CO": 1,
+  "ES": 1,
+  "VE": 1,
+  "KZ": 1
  },
  "bots_7d": {},
  "episodes": [
   {
    "date": "2026-11-20",
    "title": "War cost 2.8bn barrels; EU delays methane rules | 20 Nov",
-   "downloads_24h": 0,
-   "downloads_7d": 0
+   "downloads_24h": 1,
+   "downloads_7d": 1
   },
   {
    "date": "2026-11-19",
    "title": "CENTCOM widens Iran blockade; Crude falls 3% despite attacks | 19 Nov",
-   "downloads_24h": 2,
+   "downloads_24h": 0,
    "downloads_7d": 2
   },
   {
@@ -44,8 +45,8 @@
   {
    "date": "2026-11-16",
    "title": "IEA flags first war surplus; Two mine hits claimed | 16 Nov",
-   "downloads_24h": 0,
-   "downloads_7d": 4
+   "downloads_24h": 2,
+   "downloads_7d": 6
   },
   {
    "date": "2026-11-13",
@@ -57,7 +58,7 @@
    "date": "2026-11-12",
    "title": "Gulf products stuck at 35%; Orlen cancels Qatar LNG deal | 12 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 2
+   "downloads_7d": 0
   },
   {
    "date": "2026-11-11",
@@ -141,13 +142,13 @@
    "date": "2026-10-23",
    "title": "Oil jumps 4% on Saudi attacks; Iran claims seven ships hit | 23 Oct",
    "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_7d": 0
   },
   {
    "date": "2026-10-22",
    "title": "Hormuz: two more tankers hit as Gulf crude keeps flowing | 22 Oct",
    "downloads_24h": 0,
-   "downloads_7d": 1
+   "downloads_7d": 0
   },
   {
    "date": "2026-10-21",
@@ -165,7 +166,7 @@
  "op3_show": {
   "uuid": "4353d64c48f749c2b27d9ed74084b6ba",
   "page": "https://op3.dev/show/4353d64c48f749c2b27d9ed74084b6ba",
-  "monthly_downloads": 129,
-  "weekly_avg_downloads": 42
+  "monthly_downloads": 132,
+  "weekly_avg_downloads": 41
  }
 }

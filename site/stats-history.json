@@ -340,6 +340,22 @@
    "countries": {
     "US": 2
    }
+  },
+  "2026-11-20": {
+   "downloads": 3,
+   "episodes": {
+    "2026-11-16": 2,
+    "2026-11-20": 1
+   },
+   "apps": {
+    "Apple Podcasts": 1,
+    "Web browser": 2
+   },
+   "countries": {
+    "KZ": 1,
+    "US": 1,
+    "VE": 1
+   }
   }
  }
 }
