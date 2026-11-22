@@ -356,6 +356,21 @@
     "US": 1,
     "VE": 1
    }
+  },
+  "2026-11-21": {
+   "downloads": 2,
+   "episodes": {
+    "2026-11-05": 1,
+    "2026-11-20": 1
+   },
+   "apps": {
+    "Apple Podcasts": 1,
+    "Web browser": 1
+   },
+   "countries": {
+    "CA": 1,
+    "CO": 1
+   }
   }
  }
 }

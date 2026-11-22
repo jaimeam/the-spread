@@ -1,20 +1,21 @@
 {
- "updated": "2026-11-21T17:38Z",
- "asof": "2026-11-20",
+ "updated": "2026-11-22T17:38Z",
+ "asof": "2026-11-21",
  "window": [
-  "2026-11-14T00:00Z",
-  "2026-11-21T00:00Z"
+  "2026-11-15T00:00Z",
+  "2026-11-22T00:00Z"
  ],
  "op3_from": "2026-10-20",
- "downloads_24h": 3,
- "downloads_7d": 16,
- "listeners_7d": 11,
+ "downloads_24h": 2,
+ "downloads_7d": 17,
+ "listeners_7d": 12,
  "countries_7d": {
-  "US": 12,
-  "CO": 1,
+  "US": 11,
+  "CO": 2,
   "ES": 1,
   "VE": 1,
-  "KZ": 1
+  "KZ": 1,
+  "CA": 1
  },
  "bots_7d": {},
  "episodes": [
@@ -22,7 +23,7 @@
    "date": "2026-11-20",
    "title": "War cost 2.8bn barrels; EU delays methane rules | 20 Nov",
    "downloads_24h": 1,
-   "downloads_7d": 1
+   "downloads_7d": 2
   },
   {
    "date": "2026-11-19",
@@ -45,14 +46,14 @@
   {
    "date": "2026-11-16",
    "title": "IEA flags first war surplus; Two mine hits claimed | 16 Nov",
-   "downloads_24h": 2,
+   "downloads_24h": 0,
    "downloads_7d": 6
   },
   {
    "date": "2026-11-13",
    "title": "Trump says US needs no deal; US distillates up 4.1m bbl | 13 Nov",
    "downloads_24h": 0,
-   "downloads_7d": 3
+   "downloads_7d": 2
   },
   {
    "date": "2026-11-12",
@@ -87,8 +88,8 @@
   {
    "date": "2026-11-05",
    "title": "Oil crashes 9% after midterms; Fire halts Visund gas output | 5 Nov",
-   "downloads_24h": 0,
-   "downloads_7d": 0
+   "downloads_24h": 1,
+   "downloads_7d": 1
   },
   {
    "date": "2026-11-04",
@@ -166,7 +167,7 @@
  "op3_show": {
   "uuid": "4353d64c48f749c2b27d9ed74084b6ba",
   "page": "https://op3.dev/show/4353d64c48f749c2b27d9ed74084b6ba",
-  "monthly_downloads": 132,
-  "weekly_avg_downloads": 41
+  "monthly_downloads": 134,
+  "weekly_avg_downloads": 42
  }
 }
