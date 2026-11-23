@@ -371,6 +371,18 @@
     "CA": 1,
     "CO": 1
    }
+  },
+  "2026-11-22": {
+   "downloads": 1,
+   "episodes": {
+    "2026-11-09": 1
+   },
+   "apps": {
+    "Web browser": 1
+   },
+   "countries": {
+    "GB": 1
+   }
   }
  }
 }
