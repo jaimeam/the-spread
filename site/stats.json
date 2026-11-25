@@ -1,41 +1,47 @@
 {
- "updated": "2026-11-24T17:38Z",
- "asof": "2026-11-23",
+ "updated": "2026-11-25T17:38Z",
+ "asof": "2026-11-24",
  "window": [
-  "2026-11-17T00:00Z",
-  "2026-11-24T00:00Z"
+  "2026-11-18T00:00Z",
+  "2026-11-25T00:00Z"
  ],
  "op3_from": "2026-10-20",
- "downloads_24h": 3,
- "downloads_7d": 15,
- "listeners_7d": 11,
+ "downloads_24h": 5,
+ "downloads_7d": 18,
+ "listeners_7d": 13,
  "countries_7d": {
-  "US": 8,
-  "GB": 3,
+  "US": 9,
+  "GB": 4,
+  "CO": 2,
   "VE": 1,
   "KZ": 1,
-  "CA": 1,
-  "CO": 1
+  "CA": 1
  },
  "bots_7d": {},
  "episodes": [
   {
-   "date": "2026-11-24",
-   "title": "Libya loses 350,000 b/d; Cold forecast lifts TTF 8.6% | 24 Nov",
+   "date": "2026-11-25",
+   "title": "Four more ships hit in Hormuz; Iraq contests OPEC+ capacity | 25 Nov",
    "downloads_24h": 0,
    "downloads_7d": 0
   },
   {
+   "date": "2026-11-24",
+   "title": "Libya loses 350,000 b/d; Cold forecast lifts TTF 8.6% | 24 Nov",
+   "downloads_24h": 2,
+   "downloads_7d": 2
+  },
+  {
    "date": "2026-11-23",
    "title": "Sour crude premium vanishes; Three tankers hit since Friday | 23 Nov",
-   "downloads_24h": 1,
+   "downloads_24h": 0,
    "downloads_7d": 1
   },
   {
    "date": "2026-11-20",
    "title": "War cost 2.8bn barrels; EU delays methane rules | 20 Nov",
    "downloads_24h": 1,
-   "downloads_7d": 3
+   "downloads_7d": 4
   },
   {
    "date": "2026-11-19",
@@ -52,8 +58,8 @@
   {
    "date": "2026-11-17",
    "title": "UKMTO logs two Hormuz attacks; Houthis close in on Aden | 17 Nov",
-   "downloads_24h": 0,
-   "downloads_7d": 2
+   "downloads_24h": 1,
+   "downloads_7d": 1
   },
   {
    "date": "2026-11-16",
@@ -89,7 +95,7 @@
    "date": "2026-11-09",
    "title": "Iraq claims Hormuz lane deal; Sixth Russian refinery hit | 9 Nov",
    "downloads_24h": 1,
-   "downloads_7d": 2
+   "downloads_7d": 3
   },
   {
    "date": "2026-11-06",
@@ -179,7 +185,7 @@
  "op3_show": {
   "uuid": "4353d64c48f749c2b27d9ed74084b6ba",
   "page": "https://op3.dev/show/4353d64c48f749c2b27d9ed74084b6ba",
-  "monthly_downloads": 138,
-  "weekly_avg_downloads": 43
+  "monthly_downloads": 143,
+  "weekly_avg_downloads": 36
  }
 }
