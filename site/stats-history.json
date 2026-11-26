@@ -416,6 +416,22 @@
     "GB": 1,
     "US": 3
    }
+  },
+  "2026-11-25": {
+   "downloads": 5,
+   "episodes": {
+    "2026-11-09": 1,
+    "2026-11-25": 4
+   },
+   "apps": {
+    "Apple Podcasts": 4,
+    "Web browser": 1
+   },
+   "countries": {
+    "CO": 1,
+    "GB": 1,
+    "US": 3
+   }
   }
  }
 }
