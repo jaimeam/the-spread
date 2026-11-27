@@ -1,18 +1,18 @@
 {
- "updated": "2026-11-26T17:38Z",
- "asof": "2026-11-25",
+ "updated": "2026-11-27T17:38Z",
+ "asof": "2026-11-26",
  "window": [
-  "2026-11-19T00:00Z",
-  "2026-11-26T00:00Z"
+  "2026-11-20T00:00Z",
+  "2026-11-27T00:00Z"
  ],
  "op3_from": "2026-10-20",
  "downloads_24h": 5,
- "downloads_7d": 21,
- "listeners_7d": 14,
+ "downloads_7d": 24,
+ "listeners_7d": 16,
  "countries_7d": {
-  "US": 10,
-  "GB": 5,
-  "CO": 3,
+  "US": 11,
+  "GB": 6,
+  "CO": 4,
   "VE": 1,
   "KZ": 1,
   "CA": 1
@@ -20,15 +20,21 @@
  "bots_7d": {},
  "episodes": [
   {
-   "date": "2026-11-26",
-   "title": "Drones downed over Ras Tanura; Record 75% of LR2s haul crude | 26 Nov",
+   "date": "2026-11-27",
+   "title": "Houthis strike Jeddah, Jazan; US group signs for Lukoil abroad | 27 Nov",
    "downloads_24h": 0,
    "downloads_7d": 0
   },
   {
+   "date": "2026-11-26",
+   "title": "Drones downed over Ras Tanura; Record 75% of LR2s haul crude | 26 Nov",
+   "downloads_24h": 2,
+   "downloads_7d": 2
+  },
+  {
    "date": "2026-11-25",
    "title": "Four more ships hit in Hormuz; Iraq contests OPEC+ capacity | 25 Nov",
-   "downloads_24h": 4,
+   "downloads_24h": 0,
    "downloads_7d": 4
   },
   {
@@ -46,14 +52,14 @@
   {
    "date": "2026-11-20",
    "title": "War cost 2.8bn barrels; EU delays methane rules | 20 Nov",
-   "downloads_24h": 0,
-   "downloads_7d": 4
+   "downloads_24h": 1,
+   "downloads_7d": 5
   },
   {
    "date": "2026-11-19",
    "title": "CENTCOM widens Iran blockade; Crude falls 3% despite attacks | 19 Nov",
-   "downloads_24h": 0,
-   "downloads_7d": 2
+   "downloads_24h": 1,
+   "downloads_7d": 1
   },
   {
    "date": "2026-11-18",
@@ -94,13 +100,13 @@
   {
    "date": "2026-11-10",
    "title": "Qatar takes Iran offer to US; Saudi bypass pipeline hit | 10 Nov",
-   "downloads_24h": 0,
-   "downloads_7d": 0
+   "downloads_24h": 1,
+   "downloads_7d": 1
   },
   {
    "date": "2026-11-09",
    "title": "Iraq claims Hormuz lane deal; Sixth Russian refinery hit | 9 Nov",
-   "downloads_24h": 1,
+   "downloads_24h": 0,
    "downloads_7d": 4
   },
   {
